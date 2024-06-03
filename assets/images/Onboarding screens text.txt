@@ -1,0 +1,32 @@
+Onboarding screens text
+
+Slide 1: 
+
+Heading: Stay Connected
+Message:
+Discover the convenience of buying data, airtime, Cable tv subscription, Convert airtime to cash and Electricity bills all in one place.
+
+Slide 2: 
+
+Heading: Best Data Plans
+Message:
+Choose from a Variety of Data Packages to Suit Your Internet Needs
+
+Slide 3: 
+
+Heading: Cheapest Rates
+Message:
+With our platform, you always get the best rates and prices on everything from airtime, data transactions and even your bill payments.
+
+Slide 4: 
+
+Heading: Earn Rewards
+Message:
+With MinatPay, you can earn rewards for every successful referral you make. Simply share your referral code with friends and family.
+
+Slide 5: 
+
+Heading: Customer support
+Message:
+Need help? Our support team is available 24/7 to assist you with any queries or concerns.
+
