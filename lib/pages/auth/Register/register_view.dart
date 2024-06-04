@@ -1,10 +1,12 @@
 import 'package:animate_do/animate_do.dart';
+import 'package:another_flushbar/flushbar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
+import 'package:touchable_opacity/touchable_opacity.dart';
 
 import '../../../bloc/register/register_bloc.dart';
 import '../../../bloc/register/register_event.dart';
-import '../../../config/color.constant.dart';
 import '../../../widget/Button.dart';
 
 class RegisterPage extends StatelessWidget {
@@ -22,7 +24,7 @@ class RegisterPage extends StatelessWidget {
     final bloc = BlocProvider.of<RegisterBloc>(context);
 
     return Scaffold(
-      backgroundColor: Colors.white,
+      // backgroundColor: Colors.white,
       body: SingleChildScrollView(
         child: Column(
           children: <Widget>[
@@ -82,7 +84,7 @@ class RegisterPage extends StatelessWidget {
                           margin: EdgeInsets.only(top: 50),
                           child: const Center(
                             child: Text(
-                              "Login",
+                              "Register",
                               style: TextStyle(
                                   color: Colors.white,
                                   fontSize: 40,
@@ -90,86 +92,143 @@ class RegisterPage extends StatelessWidget {
                             ),
                           ),
                         )),
-                  )
+                  ),
                 ],
               ),
             ),
             Padding(
-              padding: EdgeInsets.all(30.0),
+              padding: const EdgeInsets.symmetric(horizontal: 20.0),
               child: Column(
                 children: <Widget>[
                   FadeInUp(
-                      duration: Duration(milliseconds: 1800),
+                      duration: const Duration(milliseconds: 1800),
                       child: Container(
-                        padding: EdgeInsets.all(5),
+                        padding: const EdgeInsets.all(5),
                         child: Column(
                           children: <Widget>[
-                            Container(
-                              padding: const EdgeInsets.all(8.0),
-                              decoration: BoxDecoration(
-                                  border: Border.all(
-                                    color: AppColor.primaryColor,
-                                    width: 2,
+                            const Row(
+                              children: [
+                                Expanded(
+                                  child: TextField(
+                                    decoration: InputDecoration(
+                                      hintText: "Firstname",
+                                    ),
                                   ),
-                                  borderRadius: BorderRadius.circular(10)),
-                              child: TextField(
-                                decoration: InputDecoration(
-                                    border: InputBorder.none,
-                                    hintText: "Email or Phone number",
-                                    hintStyle:
-                                        TextStyle(color: Colors.grey[700])),
-                              ),
+                                ),
+                                SizedBox(
+                                  width: 10,
+                                ),
+                                Expanded(
+                                  child: TextField(
+                                    decoration: InputDecoration(
+                                      hintText: "Lastname",
+                                    ),
+                                  ),
+                                ),
+                              ],
                             ),
-                            SizedBox(
+                            const SizedBox(
                               height: 20,
                             ),
                             Container(
-                              padding: const EdgeInsets.all(8.0),
-                              decoration: BoxDecoration(
-                                  border: Border.all(
-                                    color: AppColor.primaryColor,
-                                    width: 2,
-                                  ),
-                                  borderRadius: BorderRadius.circular(10)),
-                              child: TextField(
-                                obscureText: true,
+                              padding: const EdgeInsets.all(4.0),
+                              child: const TextField(
                                 decoration: InputDecoration(
-                                    border: InputBorder.none,
-                                    hintText: "Password",
-                                    hintStyle:
-                                        TextStyle(color: Colors.grey[700])),
+                                  hintText: "Email",
+                                ),
                               ),
+                            ),
+                            const SizedBox(
+                              height: 20,
+                            ),
+                            const Row(
+                              children: [
+                                Expanded(
+                                  child: TextField(
+                                    decoration: InputDecoration(
+                                      hintText: "Password",
+                                    ),
+                                  ),
+                                ),
+                                SizedBox(
+                                  width: 10,
+                                ),
+                                Expanded(
+                                  child: TextField(
+                                    decoration: InputDecoration(
+                                      hintText: "Confirm Password",
+                                    ),
+                                  ),
+                                ),
+                              ],
                             ),
                           ],
                         ),
                       )),
-                  SizedBox(
+                  const SizedBox(
                     height: 30,
                   ),
                   FadeInUp(
-                      duration: const Duration(milliseconds: 1900),
-                      child: Button(
-                        onpressed: () async {},
-                        child: const Text(
-                          "Logins",
-                          style: TextStyle(
-                              color: Colors.white, fontWeight: FontWeight.bold),
-                        ),
-                      )),
+                    duration: const Duration(milliseconds: 1900),
+                    child: Button(
+                      onpressed: () async {
+                        await Flushbar(
+                          title: "Hello flush test",
+                          message:
+                              'Lorem Ipsum is simply dummy text of the printing and typesetting industry',
+                          duration: const Duration(seconds: 3),
+                          flushbarPosition: FlushbarPosition.TOP,
+                          backgroundColor: Colors.red,
+                        ).show(context);
+                      },
+                      child: const Text(
+                        "Register",
+                        style: TextStyle(
+                            color: Colors.white, fontWeight: FontWeight.bold),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(
+                    height: 20,
+                  ),
+                  Positioned(
+                    child: FadeInUp(
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          const Text("New Member?"),
+                          const SizedBox(
+                            width: 5,
+                          ),
+                          TouchableOpacity(
+                            onTap: () => context.go('/register'),
+                            child: Text(
+                              "Register",
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .labelSmall
+                                  ?.copyWith(
+                                      color:
+                                          Theme.of(context).colorScheme.primary,
+                                      fontSize: 14),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
                   const SizedBox(
                     height: 70,
                   ),
                   FadeInUp(
                     duration: const Duration(milliseconds: 2000),
-                    child: InkWell(
-                        hoverColor: Colors.black,
-                        focusColor: Colors.black,
+                    child: TouchableOpacity(
                         child: Text(
-                          "Forgot Password?",
-                          style: TextStyle(
-                            color: Theme.of(context).primaryColor,
-                          ),
-                        )),
+                      "Forgot Password?",
+                      style: TextStyle(
+                        color: Theme.of(context).primaryColor,
+                      ),
+                    )),
                   ),
                 ],
               ),

@@ -42,16 +42,20 @@ class MyApp extends StatelessWidget {
           labelSmall: TextStyle(color: AppColor.greyColor),
         ),
         inputDecorationTheme: InputDecorationTheme(
+          fillColor: AppColor.greyLightColor.withOpacity(0.1),
+          filled: true,
           border: OutlineInputBorder(
             borderSide: const BorderSide(
               color: AppColor.primaryColor,
               width: 2,
             ),
-            borderRadius: BorderRadius.circular(10),
+            borderRadius: BorderRadius.circular(8),
           ),
           // contentPadding: EdgeInsets.all(8),
-          hintStyle:
-              const TextStyle(color: Colors.red, fontFamily: AppFont.mulish),
+          hintStyle: const TextStyle(
+              color: AppColor.primaryColor,
+              fontFamily: AppFont.mulish,
+              fontSize: 20),
         ),
       ),
       routerConfig: AppRouter.router,

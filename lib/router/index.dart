@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:minat_pay/pages/auth/Dashboard/view.dart';
 import 'package:minat_pay/pages/auth/Login/login_view.dart';
 import 'package:minat_pay/pages/auth/Register/register_view.dart';
 
 import '../pages/auth/onboard/screen.dart';
+import '../pages/user/Dashboard/view.dart';
 
 class AppRouter {
   static final GoRouter router = GoRouter(
