@@ -104,9 +104,9 @@ class RegisterPage extends StatelessWidget {
                       duration: const Duration(milliseconds: 1800),
                       child: Container(
                         padding: const EdgeInsets.all(5),
-                        child: Column(
+                        child: const Column(
                           children: <Widget>[
-                            const Row(
+                            Row(
                               children: [
                                 Expanded(
                                   child: TextField(
@@ -127,21 +127,18 @@ class RegisterPage extends StatelessWidget {
                                 ),
                               ],
                             ),
-                            const SizedBox(
+                            SizedBox(
                               height: 20,
                             ),
-                            Container(
-                              padding: const EdgeInsets.all(4.0),
-                              child: const TextField(
-                                decoration: InputDecoration(
-                                  hintText: "Email",
-                                ),
+                            TextField(
+                              decoration: InputDecoration(
+                                hintText: "Email",
                               ),
                             ),
-                            const SizedBox(
+                            SizedBox(
                               height: 20,
                             ),
-                            const Row(
+                            Row(
                               children: [
                                 Expanded(
                                   child: TextField(
@@ -198,14 +195,14 @@ class RegisterPage extends StatelessWidget {
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          const Text("New Member?"),
+                          const Text("Already Have Account?"),
                           const SizedBox(
                             width: 5,
                           ),
                           TouchableOpacity(
-                            onTap: () => context.go('/register'),
+                            onTap: () => context.go('/login'),
                             child: Text(
-                              "Register",
+                              "Login",
                               style: Theme.of(context)
                                   .textTheme
                                   .labelSmall
@@ -220,17 +217,18 @@ class RegisterPage extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(
-                    height: 70,
+                    height: 20,
                   ),
                   FadeInUp(
                     duration: const Duration(milliseconds: 2000),
                     child: TouchableOpacity(
+                        onTap: () => context.goNamed("reset_password"),
                         child: Text(
-                      "Forgot Password?",
-                      style: TextStyle(
-                        color: Theme.of(context).primaryColor,
-                      ),
-                    )),
+                          "Forgot Password?",
+                          style: TextStyle(
+                            color: Theme.of(context).primaryColor,
+                          ),
+                        )),
                   ),
                 ],
               ),

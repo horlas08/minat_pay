@@ -44,10 +44,17 @@ class MyApp extends StatelessWidget {
         inputDecorationTheme: InputDecorationTheme(
           fillColor: AppColor.greyLightColor.withOpacity(0.1),
           filled: true,
-          border: OutlineInputBorder(
+          enabledBorder: OutlineInputBorder(
+            borderSide: const BorderSide(
+              color: AppColor.greyColor,
+              width: 3,
+            ),
+            borderRadius: BorderRadius.circular(8),
+          ),
+          focusedBorder: OutlineInputBorder(
             borderSide: const BorderSide(
               color: AppColor.primaryColor,
-              width: 2,
+              width: 3,
             ),
             borderRadius: BorderRadius.circular(8),
           ),
@@ -55,6 +62,7 @@ class MyApp extends StatelessWidget {
           hintStyle: const TextStyle(
               color: AppColor.primaryColor,
               fontFamily: AppFont.mulish,
+              fontWeight: FontWeight.bold,
               fontSize: 20),
         ),
       ),

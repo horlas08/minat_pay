@@ -97,38 +97,30 @@ class LoginPage extends StatelessWidget {
               ),
             ),
             Padding(
-              padding: EdgeInsets.all(30.0),
+              padding: const EdgeInsets.all(30.0),
               child: Column(
                 children: <Widget>[
                   FadeInUp(
-                      duration: Duration(milliseconds: 1800),
-                      child: Container(
-                        padding: EdgeInsets.all(5),
-                        child: Column(
-                          children: <Widget>[
-                            Container(
-                              padding: const EdgeInsets.all(4.0),
-                              child: const TextField(
-                                decoration: InputDecoration(
-                                  hintText: "Email or Username",
-                                ),
-                              ),
-                            ),
-                            const SizedBox(
-                              height: 20,
-                            ),
-                            Container(
-                              padding: const EdgeInsets.all(4.0),
-                              child: const TextField(
-                                obscureText: true,
-                                decoration: InputDecoration(
-                                  hintText: "Password",
-                                ),
-                              ),
-                            ),
-                          ],
+                    duration: Duration(milliseconds: 1800),
+                    child: const Column(
+                      children: <Widget>[
+                        TextField(
+                          decoration: InputDecoration(
+                            hintText: "Email or Username",
+                          ),
                         ),
-                      )),
+                        SizedBox(
+                          height: 20,
+                        ),
+                        TextField(
+                          obscureText: true,
+                          decoration: InputDecoration(
+                            hintText: "Password",
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
                   const SizedBox(
                     height: 30,
                   ),
@@ -187,12 +179,13 @@ class LoginPage extends StatelessWidget {
                   FadeInUp(
                     duration: const Duration(milliseconds: 2000),
                     child: TouchableOpacity(
+                        onTap: () => context.goNamed("reset_password"),
                         child: Text(
-                      "Forgot Password?",
-                      style: TextStyle(
-                        color: Theme.of(context).primaryColor,
-                      ),
-                    )),
+                          "Forgot Password?",
+                          style: TextStyle(
+                            color: Theme.of(context).primaryColor,
+                          ),
+                        )),
                   ),
                 ],
               ),
