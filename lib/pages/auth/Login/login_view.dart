@@ -109,18 +109,10 @@ class LoginPage extends StatelessWidget {
                         children: <Widget>[
                           Container(
                             padding: const EdgeInsets.all(8.0),
-                            decoration: BoxDecoration(
-                                border: Border.all(
-                                  color: AppColor.primaryColor,
-                                  width: 2,
-                                ),
-                                borderRadius: BorderRadius.circular(10)),
-                            child: TextField(
+                            child: const TextField(
                               decoration: InputDecoration(
-                                  border: InputBorder.none,
-                                  hintText: "Email or Username",
-                                  hintStyle:
-                                      TextStyle(color: Colors.grey[700])),
+                                hintText: "Emails or Username",
+                              ),
                             ),
                           ),
                           const SizedBox(
@@ -146,7 +138,7 @@ class LoginPage extends StatelessWidget {
                         ],
                       ),
                     )),
-                SizedBox(
+                const SizedBox(
                   height: 30,
                 ),
                 FadeInUp(

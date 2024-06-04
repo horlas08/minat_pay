@@ -32,14 +32,27 @@ class MyApp extends StatelessWidget {
         useMaterial3: true,
         fontFamily: AppFont.aeonik,
         textTheme: const TextTheme(
-            titleLarge: TextStyle(fontSize: 40),
-            titleMedium: TextStyle(
-              fontSize: 25,
+          titleLarge: TextStyle(fontSize: 40),
+          titleMedium: TextStyle(
+            fontSize: 25,
+          ),
+          titleSmall: TextStyle(
+            fontSize: 15,
+          ),
+          labelSmall: TextStyle(color: AppColor.greyColor),
+        ),
+        inputDecorationTheme: InputDecorationTheme(
+          border: OutlineInputBorder(
+            borderSide: const BorderSide(
+              color: AppColor.primaryColor,
+              width: 2,
             ),
-            titleSmall: TextStyle(
-              fontSize: 15,
-            ),
-            labelSmall: TextStyle(color: AppColor.greyColor)),
+            borderRadius: BorderRadius.circular(10),
+          ),
+          // contentPadding: EdgeInsets.all(8),
+          hintStyle:
+              const TextStyle(color: Colors.red, fontFamily: AppFont.mulish),
+        ),
       ),
       routerConfig: AppRouter.router,
       debugShowCheckedModeBanner: false,
