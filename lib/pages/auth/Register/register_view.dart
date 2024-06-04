@@ -148,6 +148,7 @@ class RegisterPage extends StatelessWidget {
                                     decoration: InputDecoration(
                                       hintText: "Password",
                                     ),
+                                    obscureText: true,
                                   ),
                                 ),
                                 SizedBox(
@@ -158,6 +159,7 @@ class RegisterPage extends StatelessWidget {
                                     decoration: InputDecoration(
                                       hintText: "Confirm Password",
                                     ),
+                                    obscureText: true,
                                   ),
                                 ),
                               ],
