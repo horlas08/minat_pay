@@ -9,6 +9,10 @@ class RegisterBloc extends Bloc<RegisterEvent, RegisterState> {
   }
 
   void _init(InitEvent event, Emitter<RegisterState> emit) async {
-    emit(state.clone());
+    emit(state.init());
+  }
+
+  void _password(PasswordEvent event, Emitter<bool> emit) async {
+    emit(!state.showPassword());
   }
 }

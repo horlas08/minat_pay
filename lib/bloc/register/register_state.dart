@@ -3,7 +3,7 @@ class RegisterState {
     return RegisterState();
   }
 
-  RegisterState clone() {
-    return RegisterState();
+  bool showPassword() {
+    return false;
   }
 }

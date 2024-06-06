@@ -36,6 +36,10 @@ class MyApp extends StatelessWidget {
           titleMedium: TextStyle(
             fontSize: 25,
           ),
+          bodyLarge: TextStyle(
+              fontSize: 22,
+              fontWeight: FontWeight.w900,
+              fontFamily: AppFont.mulish),
           titleSmall: TextStyle(
             fontSize: 15,
           ),
@@ -43,13 +47,21 @@ class MyApp extends StatelessWidget {
         ),
         inputDecorationTheme: InputDecorationTheme(
           contentPadding:
-              const EdgeInsets.symmetric(vertical: 30, horizontal: 20),
+              const EdgeInsets.symmetric(vertical: 25, horizontal: 20),
           fillColor: AppColor.greyLightColor.withOpacity(0.1),
           filled: true,
-
+          errorMaxLines: 2,
           enabledBorder: OutlineInputBorder(
             borderSide: const BorderSide(
               color: AppColor.greyColor,
+              width: 3,
+            ),
+            borderRadius: BorderRadius.circular(8),
+          ),
+
+          focusedErrorBorder: OutlineInputBorder(
+            borderSide: const BorderSide(
+              color: AppColor.danger,
               width: 3,
             ),
             borderRadius: BorderRadius.circular(8),
@@ -63,7 +75,7 @@ class MyApp extends StatelessWidget {
           ),
           errorStyle: const TextStyle(
               color: AppColor.danger,
-              fontSize: 15,
+              fontSize: 12,
               fontFamily: AppFont.mulish,
               fontWeight: FontWeight.bold),
           border: OutlineInputBorder(

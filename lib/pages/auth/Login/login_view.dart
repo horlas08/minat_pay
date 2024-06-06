@@ -1,5 +1,4 @@
 import 'package:animate_do/animate_do.dart';
-import 'package:another_flushbar/flushbar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:form_validator/form_validator.dart';
@@ -23,7 +22,7 @@ class LoginPage extends StatelessWidget {
 
   Widget _buildPage(BuildContext context) {
     final bloc = BlocProvider.of<LoginBloc>(context);
-
+    final _formKey = GlobalKey<FormState>();
     return Scaffold(
       // backgroundColor: Colors.white,
       body: SingleChildScrollView(
@@ -80,9 +79,9 @@ class LoginPage extends StatelessWidget {
                   ),
                   Positioned(
                     child: FadeInUp(
-                        duration: Duration(milliseconds: 1600),
+                        duration: const Duration(milliseconds: 1600),
                         child: Container(
-                          margin: EdgeInsets.only(top: 50),
+                          margin: const EdgeInsets.only(top: 50),
                           child: const Center(
                             child: Text(
                               "Login",
@@ -104,14 +103,17 @@ class LoginPage extends StatelessWidget {
                   FadeInUp(
                     duration: const Duration(milliseconds: 1800),
                     child: Form(
-                      autovalidateMode: AutovalidateMode.onUserInteraction,
+                      key: _formKey,
+                      // autovalidateMode: AutovalidateMode.onUserInteraction,
                       child: Column(
                         children: <Widget>[
                           TextFormField(
                             decoration: const InputDecoration(
                               hintText: "Email or Username",
                             ),
+                            autofocus: false,
                             validator: ValidationBuilder()
+                                .required()
                                 .email()
                                 .maxLength(50)
                                 .build(),
@@ -121,11 +123,17 @@ class LoginPage extends StatelessWidget {
                           const SizedBox(
                             height: 20,
                           ),
-                          const TextField(
-                            obscureText: true,
-                            decoration: InputDecoration(
+                          TextFormField(
+                            decoration: const InputDecoration(
                               hintText: "Password",
                             ),
+                            validator: ValidationBuilder()
+                                .required()
+                                .maxLength(50)
+                                .minLength(5)
+                                .build(),
+                            autovalidateMode:
+                                AutovalidateMode.onUserInteraction,
                           ),
                         ],
                       ),
@@ -138,14 +146,9 @@ class LoginPage extends StatelessWidget {
                     duration: const Duration(milliseconds: 1900),
                     child: Button(
                       onpressed: () async {
-                        await Flushbar(
-                          title: "Hello flush test",
-                          message:
-                              'Lorem Ipsum is simply dummy text of the printing and typesetting industry',
-                          duration: const Duration(seconds: 3),
-                          flushbarPosition: FlushbarPosition.TOP,
-                          backgroundColor: Colors.red,
-                        ).show(context);
+                        if (_formKey.currentState!.validate()) {
+                          context.replace('dashboard');
+                        }
                       },
                       child: const Text(
                         "Login",

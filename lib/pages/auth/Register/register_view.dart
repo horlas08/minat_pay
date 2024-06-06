@@ -1,16 +1,27 @@
 import 'package:animate_do/animate_do.dart';
-import 'package:another_flushbar/flushbar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:form_validator/form_validator.dart';
 import 'package:go_router/go_router.dart';
+import 'package:minat_pay/helper/helper.dart';
 import 'package:touchable_opacity/touchable_opacity.dart';
 
 import '../../../bloc/register/register_bloc.dart';
 import '../../../bloc/register/register_event.dart';
 import '../../../widget/Button.dart';
 
-class RegisterPage extends StatelessWidget {
+class RegisterPage extends StatefulWidget {
   const RegisterPage({super.key});
+
+  @override
+  State<RegisterPage> createState() => _RegisterPageState();
+}
+
+class _RegisterPageState extends State<RegisterPage> {
+  bool showPass = false;
+  bool showCPass = false;
+  final formKey = GlobalKey<FormState>();
+  final passwordFieldController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -79,9 +90,9 @@ class RegisterPage extends StatelessWidget {
                   ),
                   Positioned(
                     child: FadeInUp(
-                        duration: Duration(milliseconds: 1600),
+                        duration: const Duration(milliseconds: 1600),
                         child: Container(
-                          margin: EdgeInsets.only(top: 50),
+                          margin: const EdgeInsets.only(top: 50),
                           child: const Center(
                             child: Text(
                               "Register",
@@ -104,64 +115,124 @@ class RegisterPage extends StatelessWidget {
                       duration: const Duration(milliseconds: 1800),
                       child: Container(
                         padding: const EdgeInsets.all(5),
-                        child: const Column(
-                          children: <Widget>[
-                            Row(
-                              children: [
-                                Expanded(
-                                  child: TextField(
-                                    decoration: InputDecoration(
-                                      hintText: "Firstname",
+                        child: Form(
+                          key: formKey,
+                          // autovalidateMode: AutovalidateMode.onUserInteraction,
+                          child: Column(
+                            children: <Widget>[
+                              Row(
+                                children: [
+                                  Expanded(
+                                    child: TextFormField(
+                                      decoration: const InputDecoration(
+                                        hintText: "Firstname",
+                                        // isCollapsed: true,
+                                        helperText: '',
+                                      ),
+                                      validator: ValidationBuilder()
+                                          .required()
+                                          .build(),
+                                      autovalidateMode:
+                                          AutovalidateMode.onUserInteraction,
                                     ),
                                   ),
-                                ),
-                                SizedBox(
-                                  width: 10,
-                                ),
-                                Expanded(
-                                  child: TextField(
-                                    decoration: InputDecoration(
-                                      hintText: "Lastname",
+                                  const SizedBox(
+                                    width: 10,
+                                  ),
+                                  Expanded(
+                                    child: TextFormField(
+                                      decoration: const InputDecoration(
+                                        hintText: "Lastname",
+                                        helperText: '',
+                                      ),
+                                      validator: ValidationBuilder()
+                                          .required()
+                                          .build(),
+                                      autovalidateMode:
+                                          AutovalidateMode.onUserInteraction,
                                     ),
                                   ),
-                                ),
-                              ],
-                            ),
-                            SizedBox(
-                              height: 20,
-                            ),
-                            TextField(
-                              decoration: InputDecoration(
-                                hintText: "Email",
+                                ],
                               ),
-                            ),
-                            SizedBox(
-                              height: 20,
-                            ),
-                            Row(
-                              children: [
-                                Expanded(
-                                  child: TextField(
-                                    decoration: InputDecoration(
-                                      hintText: "Password",
+                              const SizedBox(
+                                height: 15,
+                              ),
+                              TextFormField(
+                                decoration: const InputDecoration(
+                                  hintText: "Email",
+                                  helperText: '',
+                                ),
+                                validator: ValidationBuilder()
+                                    .required()
+                                    .email()
+                                    .build(),
+                                autovalidateMode:
+                                    AutovalidateMode.onUserInteraction,
+                              ),
+                              const SizedBox(
+                                height: 15,
+                              ),
+                              Row(
+                                children: [
+                                  Expanded(
+                                    child: TextFormField(
+                                      controller: passwordFieldController,
+                                      decoration: InputDecoration(
+                                        hintText: "Password",
+                                        helperText: '',
+                                        suffixIcon: IconButton(
+                                          icon: Icon(showPass
+                                              ? Icons.remove_red_eye
+                                              : Icons.visibility_off),
+                                          onPressed: () {
+                                            setState(() {
+                                              showPass = !showPass;
+                                            });
+                                          },
+                                        ),
+                                      ),
+                                      obscureText: showPass,
+                                      validator: ValidationBuilder()
+                                          .required()
+                                          .build(),
+                                      autovalidateMode:
+                                          AutovalidateMode.onUserInteraction,
                                     ),
-                                    obscureText: true,
                                   ),
-                                ),
-                                SizedBox(
-                                  width: 10,
-                                ),
-                                Expanded(
-                                  child: TextField(
-                                    decoration: InputDecoration(
-                                      hintText: "Confirm Password",
+                                  const SizedBox(
+                                    width: 10,
+                                  ),
+                                  Expanded(
+                                    child: TextFormField(
+                                      decoration: InputDecoration(
+                                        hintText: "Confirm Password",
+                                        helperText: '',
+                                        suffixIcon: IconButton(
+                                          icon: Icon(showCPass
+                                              ? Icons.remove_red_eye
+                                              : Icons.visibility_off),
+                                          onPressed: () {
+                                            setState(() {
+                                              showCPass = !showCPass;
+                                            });
+                                          },
+                                        ),
+                                      ),
+                                      obscureText: showCPass,
+                                      validator: ValidationBuilder()
+                                          .matches(
+                                            passwordFieldController.value.text,
+                                          )
+                                          .required()
+                                          .build(),
+                                      autovalidateMode:
+                                          AutovalidateMode.onUserInteraction,
                                     ),
-                                    obscureText: true,
                                   ),
-                                ),
-                              ],
-                            ),
-                          ],
+                                ],
+                              ),
+                            ],
+                          ),
                         ),
                       )),
                   const SizedBox(
@@ -171,14 +242,7 @@ class RegisterPage extends StatelessWidget {
                     duration: const Duration(milliseconds: 1900),
                     child: Button(
                       onpressed: () async {
-                        await Flushbar(
-                          title: "Hello flush test",
-                          message:
-                              'Lorem Ipsum is simply dummy text of the printing and typesetting industry',
-                          duration: const Duration(seconds: 3),
-                          flushbarPosition: FlushbarPosition.TOP,
-                          backgroundColor: Colors.red,
-                        ).show(context);
+                        formKey.currentState?.validateGranularly();
                       },
                       child: const Text(
                         "Register",
@@ -190,30 +254,28 @@ class RegisterPage extends StatelessWidget {
                   const SizedBox(
                     height: 20,
                   ),
-                  Positioned(
-                    child: FadeInUp(
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          const Text("Already Have Account?"),
-                          const SizedBox(
-                            width: 5,
+                  FadeInUp(
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        const Text("Already Have Account?"),
+                        const SizedBox(
+                          width: 5,
+                        ),
+                        TouchableOpacity(
+                          onTap: () => context.go('/login'),
+                          child: Text(
+                            "Login",
+                            style: Theme.of(context)
+                                .textTheme
+                                .labelSmall
+                                ?.copyWith(
+                                    color:
+                                        Theme.of(context).colorScheme.primary,
+                                    fontSize: 14),
                           ),
-                          TouchableOpacity(
-                            onTap: () => context.go('/login'),
-                            child: Text(
-                              "Login",
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .labelSmall
-                                  ?.copyWith(
-                                      color:
-                                          Theme.of(context).colorScheme.primary,
-                                      fontSize: 14),
-                            ),
-                          ),
-                        ],
-                      ),
+                        ),
+                      ],
                     ),
                   ),
                   const SizedBox(
@@ -230,6 +292,9 @@ class RegisterPage extends StatelessWidget {
                           ),
                         )),
                   ),
+                  const SizedBox(
+                    height: 20,
+                  )
                 ],
               ),
             )

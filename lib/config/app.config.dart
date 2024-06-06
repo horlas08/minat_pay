@@ -1,8 +1,5 @@
 import 'package:dio/dio.dart';
 
-class AppConfig {
-  Dio dio = new Dio();
-}
-
-const String baseUrl = '';
+final Dio dio = Dio();
+const String baseUrl = 'https://app882024.minatpay.com';
 const String apiUrl = '$baseUrl/api';
