@@ -13,9 +13,9 @@ final dio = Dio(); // With default `Options`.
 
 void configureDio() {
   // Set default configs
-  dio.options.baseUrl = 'https://api.pub.dev';
-  dio.options.connectTimeout = Duration(seconds: 5);
-  dio.options.receiveTimeout = Duration(seconds: 3);
+  dio.options.baseUrl = apiUrl;
+  dio.options.connectTimeout = const Duration(seconds: 5);
+  dio.options.receiveTimeout = const Duration(seconds: 3);
 
   dio.interceptors.add(
     InterceptorsWrapper(

@@ -3,7 +3,9 @@ class RegisterState {
     return RegisterState();
   }
 
-  bool showPassword() {
-    return false;
+  RegisterSuccess success() {
+    return RegisterSuccess();
   }
 }
+
+final class RegisterSuccess extends RegisterState {}
