@@ -42,6 +42,8 @@ class MyApp extends StatelessWidget {
           labelSmall: TextStyle(color: AppColor.greyColor),
         ),
         inputDecorationTheme: InputDecorationTheme(
+          contentPadding:
+              const EdgeInsets.symmetric(vertical: 30, horizontal: 20),
           fillColor: AppColor.greyLightColor.withOpacity(0.1),
           filled: true,
           enabledBorder: OutlineInputBorder(
@@ -60,10 +62,11 @@ class MyApp extends StatelessWidget {
           ),
           // contentPadding: EdgeInsets.all(8),
           hintStyle: const TextStyle(
-              color: AppColor.primaryColor,
-              fontFamily: AppFont.mulish,
-              fontWeight: FontWeight.bold,
-              fontSize: 20),
+            color: AppColor.primaryColor,
+            fontFamily: AppFont.mulish,
+            fontWeight: FontWeight.bold,
+            fontSize: 20,
+          ),
         ),
       ),
       routerConfig: AppRouter.router,

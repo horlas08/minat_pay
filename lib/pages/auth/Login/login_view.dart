@@ -2,6 +2,7 @@ import 'package:animate_do/animate_do.dart';
 import 'package:another_flushbar/flushbar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:form_validator/form_validator.dart';
 import 'package:go_router/go_router.dart';
 import 'package:minat_pay/widget/Button.dart';
 import 'package:touchable_opacity/touchable_opacity.dart';
@@ -101,24 +102,33 @@ class LoginPage extends StatelessWidget {
               child: Column(
                 children: <Widget>[
                   FadeInUp(
-                    duration: Duration(milliseconds: 1800),
-                    child: const Column(
-                      children: <Widget>[
-                        TextField(
-                          decoration: InputDecoration(
-                            hintText: "Email or Username",
+                    duration: const Duration(milliseconds: 1800),
+                    child: Form(
+                      autovalidateMode: AutovalidateMode.onUserInteraction,
+                      child: Column(
+                        children: <Widget>[
+                          TextFormField(
+                            decoration: const InputDecoration(
+                              hintText: "Email or Username",
+                            ),
+                            validator: ValidationBuilder()
+                                .email()
+                                .maxLength(50)
+                                .build(),
+                            autovalidateMode:
+                                AutovalidateMode.onUserInteraction,
                           ),
-                        ),
-                        SizedBox(
-                          height: 20,
-                        ),
-                        TextField(
-                          obscureText: true,
-                          decoration: InputDecoration(
-                            hintText: "Password",
+                          const SizedBox(
+                            height: 20,
                           ),
-                        ),
-                      ],
+                          const TextField(
+                            obscureText: true,
+                            decoration: InputDecoration(
+                              hintText: "Password",
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
                   ),
                   const SizedBox(
