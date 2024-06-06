@@ -46,7 +46,27 @@ class MyApp extends StatelessWidget {
               const EdgeInsets.symmetric(vertical: 30, horizontal: 20),
           fillColor: AppColor.greyLightColor.withOpacity(0.1),
           filled: true,
+
           enabledBorder: OutlineInputBorder(
+            borderSide: const BorderSide(
+              color: AppColor.greyColor,
+              width: 3,
+            ),
+            borderRadius: BorderRadius.circular(8),
+          ),
+          errorBorder: OutlineInputBorder(
+            borderSide: const BorderSide(
+              color: AppColor.danger,
+              width: 3,
+            ),
+            borderRadius: BorderRadius.circular(8),
+          ),
+          errorStyle: const TextStyle(
+              color: AppColor.danger,
+              fontSize: 15,
+              fontFamily: AppFont.mulish,
+              fontWeight: FontWeight.bold),
+          border: OutlineInputBorder(
             borderSide: const BorderSide(
               color: AppColor.greyColor,
               width: 3,
@@ -60,6 +80,7 @@ class MyApp extends StatelessWidget {
             ),
             borderRadius: BorderRadius.circular(8),
           ),
+
           // contentPadding: EdgeInsets.all(8),
           hintStyle: const TextStyle(
             color: AppColor.primaryColor,
