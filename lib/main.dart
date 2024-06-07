@@ -28,7 +28,11 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MultiBlocProvider(
-      providers: const [RegisterBloc()],
+      providers: [
+        BlocProvider(
+          create: (contents) => RegisterBloc(),
+        ),
+      ],
       child: MaterialApp.router(
         title: 'MinatPay',
         theme: ThemeData(

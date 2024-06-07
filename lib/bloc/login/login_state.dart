@@ -3,7 +3,15 @@ class LoginState {
     return LoginState();
   }
 
-  LoginState clone() {
-    return LoginState();
+  LoginFailed failed() {
+    return LoginFailed();
+  }
+
+  LoginLoadingState loading() {
+    return LoginLoadingState();
   }
 }
+
+class LoginFailed extends LoginState {}
+
+class LoginLoadingState extends LoginState {}
