@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:form_validator/form_validator.dart';
 import 'package:go_router/go_router.dart';
+import 'package:intl_phone_field/intl_phone_field.dart';
 import 'package:minat_pay/helper/helper.dart';
 import 'package:touchable_opacity/touchable_opacity.dart';
 
@@ -166,6 +167,33 @@ class _RegisterPageState extends State<RegisterPage> {
                                 validator: ValidationBuilder()
                                     .required()
                                     .email()
+                                    .build(),
+                                autovalidateMode:
+                                    AutovalidateMode.onUserInteraction,
+                              ),
+                              const SizedBox(
+                                height: 15,
+                              ),
+                              IntlPhoneField(
+                                decoration: const InputDecoration(
+                                  hintText: 'Phone Number',
+                                ),
+                                initialCountryCode: 'NG',
+                                onChanged: (phone) {
+                                  print(phone.completeNumber);
+                                },
+                              ),
+                              TextFormField(
+                                decoration: const InputDecoration(
+                                  hintText: "Username",
+                                  helperText: '',
+                                ),
+                                obscureText: showCPass,
+                                validator: ValidationBuilder()
+                                    .matches(
+                                      passwordFieldController.value.text,
+                                    )
+                                    .required()
                                     .build(),
                                 autovalidateMode:
                                     AutovalidateMode.onUserInteraction,
