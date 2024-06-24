@@ -3,13 +3,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:form_validator/form_validator.dart';
 import 'package:go_router/go_router.dart';
-import 'package:intl_phone_field/intl_phone_field.dart';
+import 'package:loader_overlay/loader_overlay.dart';
+import 'package:minat_pay/config/font.constant.dart';
 import 'package:minat_pay/helper/helper.dart';
+import 'package:phone_form_field/phone_form_field.dart';
 import 'package:touchable_opacity/touchable_opacity.dart';
 
 import '../../../bloc/register/register_bloc.dart';
 import '../../../bloc/register/register_event.dart';
-import '../../../repo/register_repo.dart';
+import '../../../bloc/register/register_state.dart';
 import '../../../widget/Button.dart';
 
 class RegisterPage extends StatefulWidget {
@@ -22,20 +24,54 @@ class RegisterPage extends StatefulWidget {
 class _RegisterPageState extends State<RegisterPage> {
   bool showPass = false;
   bool showCPass = false;
+  late var phone = '';
+  late var password = '';
   final formKey = GlobalKey<FormState>();
-  final passwordFieldController = TextEditingController();
+  final passwordFieldController = TextEditingController(text: '12345678');
+  final firstnameFieldController = TextEditingController(text: 'qwww');
+  final lastnameFieldController = TextEditingController(text: 'qwerf');
+  final emailFieldController =
+      TextEditingController(text: 'qozeemmonsurudeen@gmail.com');
+  final usernameFieldController = TextEditingController(text: 'qwerr');
+  final phoneFieldController = TextEditingController(text: '090987687544');
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (BuildContext context) => RegisterBloc()..add(InitEvent()),
-      child: Builder(builder: (context) => _buildPage(context)),
-    );
+    return BlocConsumer<RegisterBloc, RegisterState>(
+        listener: (context, state) async {
+      if (state is RegisterLoading) {
+        context.loaderOverlay.show();
+      } else if (state is RegisterFailed) {
+        context.loaderOverlay.hide();
+        await alertHelper(context, 'error', state.message);
+      } else if (state is RegisterSuccess) {
+        formKey.currentState?.reset();
+        context.loaderOverlay.hide();
+        await alertHelper(context, 'success', "Registration Successfully");
+        context.mounted
+            ? context.pushNamed('email_verification',
+                pathParameters: {'email': state.email})
+            : null;
+      } else {
+        context.loaderOverlay.hide();
+      }
+    }, builder: (context, state) {
+      return _buildPage(context);
+    });
+  }
+
+  @override
+  void dispose() {
+    firstnameFieldController.dispose();
+    usernameFieldController.dispose();
+    lastnameFieldController.dispose();
+    emailFieldController.dispose();
+    phoneFieldController.dispose();
+    firstnameFieldController.dispose();
+    super.dispose();
   }
 
   Widget _buildPage(BuildContext context) {
-    final bloc = BlocProvider.of<RegisterBloc>(context);
-
     return Scaffold(
       // backgroundColor: Colors.white,
       body: SingleChildScrollView(
@@ -131,6 +167,10 @@ class _RegisterPageState extends State<RegisterPage> {
                                         // isCollapsed: true,
                                         helperText: '',
                                       ),
+                                      onTapOutside: (v) => FocusManager
+                                          .instance.primaryFocus
+                                          ?.unfocus(),
+                                      controller: firstnameFieldController,
                                       validator: ValidationBuilder()
                                           .required()
                                           .build(),
@@ -143,10 +183,14 @@ class _RegisterPageState extends State<RegisterPage> {
                                   ),
                                   Expanded(
                                     child: TextFormField(
+                                      controller: lastnameFieldController,
                                       decoration: const InputDecoration(
                                         hintText: "Lastname",
                                         helperText: '',
                                       ),
+                                      onTapOutside: (v) => FocusManager
+                                          .instance.primaryFocus
+                                          ?.unfocus(),
                                       validator: ValidationBuilder()
                                           .required()
                                           .build(),
@@ -160,10 +204,15 @@ class _RegisterPageState extends State<RegisterPage> {
                                 height: 15,
                               ),
                               TextFormField(
+                                controller: emailFieldController,
                                 decoration: const InputDecoration(
                                   hintText: "Email",
                                   helperText: '',
                                 ),
+                                onTapOutside: (v) => FocusManager
+                                    .instance.primaryFocus
+                                    ?.unfocus(),
+                                keyboardType: TextInputType.emailAddress,
                                 validator: ValidationBuilder()
                                     .required()
                                     .email()
@@ -174,27 +223,55 @@ class _RegisterPageState extends State<RegisterPage> {
                               const SizedBox(
                                 height: 15,
                               ),
-                              IntlPhoneField(
+                              PhoneFormField(
                                 decoration: const InputDecoration(
-                                  hintText: 'Phone Number',
+                                  hintText: "Phone",
+                                  helperText: '',
                                 ),
-                                initialCountryCode: 'NG',
-                                onChanged: (phone) {
-                                  print(phone.completeNumber);
-                                },
+                                onTapOutside: (v) => FocusManager
+                                    .instance.primaryFocus
+                                    ?.unfocus(),
+                                initialValue:
+                                    PhoneNumber.parse('+234'), // or use the
+                                // controller
+                                validator: PhoneValidator.compose([
+                                  PhoneValidator.required(context),
+                                  PhoneValidator.validMobile(context)
+                                ]),
+                                onChanged: (phoneNumber) =>
+                                    phone = '0${phoneNumber.nsn}',
+                                // print('changed into $phoneNumber'),
+                                enabled: true,
+                                isCountrySelectionEnabled: false,
+                                // isCountryButtonPersistent: false,
+
+                                countryButtonStyle: const CountryButtonStyle(
+                                  showDialCode: true,
+                                  showIsoCode: false,
+                                  showFlag: true,
+                                  showDropdownIcon: false,
+                                  flagSize: 20,
+                                  textStyle: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    fontFamily: AppFont.aeonik,
+                                    fontSize: 23,
+                                  ),
+                                ),
+                              ),
+                              const SizedBox(
+                                height: 15,
                               ),
                               TextFormField(
+                                controller: usernameFieldController,
                                 decoration: const InputDecoration(
                                   hintText: "Username",
                                   helperText: '',
                                 ),
-                                obscureText: showCPass,
-                                validator: ValidationBuilder()
-                                    .matches(
-                                      passwordFieldController.value.text,
-                                    )
-                                    .required()
-                                    .build(),
+                                onTapOutside: (v) => FocusManager
+                                    .instance.primaryFocus
+                                    ?.unfocus(),
+                                validator:
+                                    ValidationBuilder().required().build(),
                                 autovalidateMode:
                                     AutovalidateMode.onUserInteraction,
                               ),
@@ -220,6 +297,12 @@ class _RegisterPageState extends State<RegisterPage> {
                                           },
                                         ),
                                       ),
+                                      onTapOutside: (v) => FocusManager
+                                          .instance.primaryFocus
+                                          ?.unfocus(),
+                                      onChanged: (v) {
+                                        password = v;
+                                      },
                                       obscureText: showPass,
                                       validator: ValidationBuilder()
                                           .required()
@@ -247,10 +330,16 @@ class _RegisterPageState extends State<RegisterPage> {
                                           },
                                         ),
                                       ),
+                                      onChanged: (v) {
+                                        setState(() {});
+                                      },
+                                      onTapOutside: (v) => FocusManager
+                                          .instance.primaryFocus
+                                          ?.unfocus(),
                                       obscureText: showCPass,
                                       validator: ValidationBuilder()
                                           .matches(
-                                            passwordFieldController.value.text,
+                                            password,
                                           )
                                           .required()
                                           .build(),
@@ -272,21 +361,25 @@ class _RegisterPageState extends State<RegisterPage> {
                     child: Button(
                       onpressed: () async {
                         if (formKey.currentState!.validate()) {
-                          final res = await RegisterRepo(
-                                  firstname: 'test',
-                                  phone: '993993',
-                                  email: 'test',
-                                  username: 'test',
-                                  lastname: 'qozeem',
-                                  password: '1234')
-                              .registerResponse();
-                          print('res');
+                          FocusManager.instance.primaryFocus?.unfocus();
+                          context.read<RegisterBloc>().add(
+                                RegisterRequestEvent(
+                                  firstname: firstnameFieldController.text,
+                                  lastname: lastnameFieldController.text,
+                                  password: passwordFieldController.text,
+                                  email: emailFieldController.text,
+                                  username: usernameFieldController.text,
+                                  phone: phone,
+                                ),
+                              );
                         }
                       },
                       child: const Text(
                         "Register",
                         style: TextStyle(
-                            color: Colors.white, fontWeight: FontWeight.bold),
+                          color: Colors.white,
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
                     ),
                   ),

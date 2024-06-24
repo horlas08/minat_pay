@@ -6,8 +6,8 @@ final dio = Dio(); // With default `Options`.
 void configureDio() {
   // Set default configs
   dio.options.baseUrl = apiUrl;
-  dio.options.connectTimeout = const Duration(seconds: 15 * 60);
-  dio.options.receiveTimeout = const Duration(seconds: 13 * 60);
+  dio.options.connectTimeout = const Duration(seconds: 5);
+  dio.options.receiveTimeout = const Duration(seconds: 3);
   dio.options.contentType = Headers.jsonContentType;
   dio.options.headers = {Headers.acceptHeader: Headers.jsonContentType};
 
@@ -20,12 +20,7 @@ void configureDio() {
         // If you want to reject the request with a error message,
         // you can reject with a `DioException` using `handler.reject(dioError)`.
         print(options.baseUrl);
-        print(options.uri);
-        print(options.path);
-        print(options.path);
-        print(options.headers);
         print(options.data);
-        print(options.method);
         return handler.next(options);
       },
       onResponse: (Response response, ResponseInterceptorHandler handler) {
@@ -33,8 +28,10 @@ void configureDio() {
         // If you want to reject the request with a error message,
         // you can reject a `DioException` object using `handler.reject(dioError)`.
         // print(response.data);
-        //
-        // return handler.next(response);
+        if (response.data == '') {
+          throw Exception('Internet Issue');
+        }
+        return handler.next(response);
       },
       onError: (DioException error, ErrorInterceptorHandler handler) {
         // Do something with response error.

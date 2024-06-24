@@ -1,18 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
-import '../../config/enum.dart';
-
 class BottomNavItem extends StatelessWidget {
-  final VoidCallback onPress;
+  final void Function(int) onTap;
   final String icon;
   final String label;
-  final Menus current;
-  final Menus name;
+  final int current;
+  final int name;
 
   const BottomNavItem(
       {super.key,
-      required this.onPress,
+      required this.onTap,
       required this.icon,
       required this.current,
       required this.name,
@@ -21,18 +19,22 @@ class BottomNavItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Column(
+      crossAxisAlignment: CrossAxisAlignment.center,
+      mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        IconButton(
-          onPressed: onPress,
-          icon: SvgPicture.asset('assets/svg/$icon'),
-          padding: EdgeInsets.zero,
+        GestureDetector(
+          onTap: () {
+            // print(name);
+            // print(current);
+            onTap(name);
+          },
+          child: SvgPicture.asset('assets/svg/$icon'),
         ),
         Text(
           label,
-          style: Theme.of(context)
-              .textTheme
-              .labelSmall
-              ?.copyWith(color: Colors.white, fontWeight: FontWeight.bold),
+          style: Theme.of(context).textTheme.labelSmall?.copyWith(
+              color: name == current ? Colors.black : Colors.white,
+              fontWeight: FontWeight.bold),
         ),
       ],
     );

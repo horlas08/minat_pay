@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:minat_pay/config/color.constant.dart';
 
 class QuickActionItem extends StatelessWidget {
   final String route;
-  final IconData icon;
+  final String icon;
   final String title;
   const QuickActionItem(
       {super.key,
@@ -15,7 +17,7 @@ class QuickActionItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: () => context.go(route),
+      onTap: () => context.push(route),
       child: Column(
         children: [
           Container(
@@ -23,26 +25,22 @@ class QuickActionItem extends StatelessWidget {
             width: 50,
             decoration: BoxDecoration(
               shape: BoxShape.circle,
-              color: AppColor.blueColor.withOpacity(0.2),
+              color: AppColor.primaryColor.withOpacity(0.2),
             ),
-            child: Icon(
-              icon,
-              size: 40,
-              color: AppColor.blueColor,
+            child: OverflowBox(
+              fit: OverflowBoxFit.max,
+              child: Container(
+                padding: const EdgeInsets.all(10),
+                height: 10,
+                width: 10,
+                child: SvgPicture.asset(
+                  icon,
+                  height: 7,
+                  width: 4,
+                  fit: BoxFit.cover,
+                ),
+              ),
             ),
-            // child: AnimateIcon(
-            //   key: UniqueKey(),
-            //   onTap: () {},
-            //   iconType: IconType.continueAnimation,
-            //   height: 70,
-            //   width: 70,
-            //   color: Color.fromRGBO(
-            //       Random.secure().nextInt(255),
-            //       Random.secure().nextInt(255),
-            //       Random.secure().nextInt(255),
-            //       1),
-            //   animateIcon: AnimateIcons.tune,
-            // ),
           ),
           Text(
             title,

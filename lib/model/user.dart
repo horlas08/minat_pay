@@ -1,111 +1,71 @@
 class User {
-  final int id;
-  final String firstname;
-  final String lastname;
-  final String password;
-  final String email;
-  final String username;
-  final bool auth_factor;
-  final String phone;
+  String? username;
+  String? firstName;
+  String? lastName;
+  String? phonenumber;
+  int? id;
+  String? email;
+  bool? isVerified;
+  bool? b2fa;
 
-//<editor-fold desc="Data Methods">
-  const User({
-    required this.id,
-    required this.firstname,
-    required this.lastname,
-    required this.password,
-    required this.email,
-    required this.username,
-    required this.auth_factor,
-    required this.phone,
+  User({
+    this.username,
+    this.firstName,
+    this.lastName,
+    this.phonenumber,
+    this.id,
+    this.email,
+    this.isVerified,
+    this.b2fa,
   });
 
-  @override
-  bool operator ==(Object other) =>
-      identical(this, other) ||
-      (other is User &&
-          runtimeType == other.runtimeType &&
-          id == other.id &&
-          firstname == other.firstname &&
-          lastname == other.lastname &&
-          password == other.password &&
-          email == other.email &&
-          username == other.username &&
-          auth_factor == other.auth_factor &&
-          phone == other.phone);
-
-  @override
-  int get hashCode =>
-      id.hashCode ^
-      firstname.hashCode ^
-      lastname.hashCode ^
-      password.hashCode ^
-      email.hashCode ^
-      username.hashCode ^
-      auth_factor.hashCode ^
-      phone.hashCode;
-
-  @override
-  String toString() {
-    return 'User{' +
-        ' id: $id,' +
-        ' firstname: $firstname,' +
-        ' lastname: $lastname,' +
-        ' password: $password,' +
-        ' email: $email,' +
-        ' username: $username,' +
-        ' auth_factor: $auth_factor,' +
-        ' phone: $phone,' +
-        '}';
+  User.fromJson(Map<String, dynamic> json) {
+    username = json['username'];
+    firstName = json['firstName'];
+    lastName = json['lastName'];
+    phonenumber = json['phonenumber'];
+    id = json['id'];
+    email = json['email'];
+    isVerified = json['is_verified'];
+    b2fa = json['2fa'];
   }
 
-  User copyWith({
-    int? id,
-    String? firstname,
-    String? lastname,
-    String? password,
-    String? email,
-    String? username,
-    bool? auth_factor,
-    String? phone,
-  }) {
-    return User(
-      id: id ?? this.id,
-      firstname: firstname ?? this.firstname,
-      lastname: lastname ?? this.lastname,
-      password: password ?? this.password,
-      email: email ?? this.email,
-      username: username ?? this.username,
-      auth_factor: auth_factor ?? this.auth_factor,
-      phone: phone ?? this.phone,
-    );
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = new Map<String, dynamic>();
+    data['username'] = this.username;
+    data['firstName'] = this.firstName;
+    data['lastName'] = this.lastName;
+    data['phonenumber'] = this.phonenumber;
+    data['id'] = this.id;
+    data['email'] = this.email;
+    data['is_verified'] = this.isVerified;
+    data['2fa'] = this.b2fa;
+    return data;
   }
 
   Map<String, dynamic> toMap() {
     return {
-      'id': this.id,
-      'firstname': this.firstname,
-      'lastname': this.lastname,
-      'password': this.password,
-      'email': this.email,
       'username': this.username,
-      'auth_factor': this.auth_factor,
-      'phone': this.phone,
+      'firstName': this.firstName,
+      'lastName': this.lastName,
+      'phonenumber': this.phonenumber,
+      'id': this.id,
+      'email': this.email,
+      'isVerified': this.isVerified,
+      'b2fa': this.b2fa,
     };
   }
 
   factory User.fromMap(Map<String, dynamic> map) {
     return User(
-      id: map['id'] as int,
-      firstname: map['firstname'] as String,
-      lastname: map['lastname'] as String,
-      password: map['password'] as String,
-      email: map['email'] as String,
       username: map['username'] as String,
-      auth_factor: map['auth_factor'] as bool,
-      phone: map['phone'] as String,
+      firstName: map['firstName'] as String,
+      lastName: map['lastName'] as String,
+      phonenumber: map['phonenumber'] as String,
+      id: map['id'] as int,
+      email: map['email'] as String,
+      isVerified: map['isVerified'] as bool,
+      b2fa: map['b2fa'] as bool,
     );
   }
-
-//</editor-fold>
 }

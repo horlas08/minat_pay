@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
-import 'package:minat_pay/config/color.constant.dart';
+import 'package:minat_pay/config/font.constant.dart';
 
 import '../../../config/size_config.dart';
 import 'content.dart';
@@ -18,15 +19,16 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
   @override
   void initState() {
     _controller = PageController();
+    SystemChannels.textInput.invokeMethod('TextInput.hide');
     super.initState();
   }
 
   int _currentPage = 0;
   List colors = const [
-    Color(0xffDAD3C8),
+    Color(0xffffffff),
     Color(0xffFFE5DE),
     Color(0xffDCF6E6),
-    Color(0xff908f9c),
+    Color(0xffd4ccc9),
   ];
 
   AnimatedContainer _buildDots({
@@ -59,7 +61,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
         child: Column(
           children: [
             Expanded(
-              flex: 3,
+              flex: 5,
               child: PageView.builder(
                 physics: const BouncingScrollPhysics(),
                 controller: _controller,
@@ -81,18 +83,20 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                           contents[i].title,
                           textAlign: TextAlign.center,
                           style: TextStyle(
-                            fontFamily: "Mulish",
+                            fontFamily: AppFont.aeonik,
                             fontWeight: FontWeight.w600,
                             fontSize: (width <= 550) ? 30 : 35,
+                            color: Colors.black,
                           ),
                         ),
                         const SizedBox(height: 15),
                         Text(
                           contents[i].desc,
                           style: TextStyle(
-                            fontFamily: "Mulish",
-                            fontWeight: FontWeight.w300,
-                            fontSize: (width <= 550) ? 17 : 25,
+                            fontFamily: AppFont.mulish,
+                            fontWeight: FontWeight.bold,
+                            fontSize: (width <= 550) ? 23 : 35,
+                            color: Colors.black,
                           ),
                           textAlign: TextAlign.center,
                         )
@@ -121,21 +125,18 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                           padding: const EdgeInsets.all(30),
                           child: ElevatedButton(
                             onPressed: () {
-                              context.go('/login');
+                              context.push('/login');
                             },
-                            child: const Text("START"),
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: Colors.black,
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(50),
+                            style: ButtonStyle(
+                              minimumSize: WidgetStateProperty.all(
+                                const Size.fromHeight(65),
                               ),
-                              padding: (width <= 550)
-                                  ? const EdgeInsets.symmetric(
-                                      horizontal: 100, vertical: 20)
-                                  : EdgeInsets.symmetric(
-                                      horizontal: width * 0.2, vertical: 25),
-                              textStyle:
-                                  TextStyle(fontSize: (width <= 550) ? 13 : 17),
+                            ),
+                            child: const Text(
+                              "START",
+                              style: TextStyle(
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.bold),
                             ),
                           ),
                         )
@@ -146,7 +147,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                             children: [
                               TextButton(
                                 onPressed: () {
-                                  _controller.jumpToPage(2);
+                                  _controller.jumpToPage(3);
                                 },
                                 style: TextButton.styleFrom(
                                   elevation: 0,
@@ -188,7 +189,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                                       .labelSmall
                                       ?.copyWith(
                                           fontWeight: FontWeight.bold,
-                                          color: AppColor.primaryColor),
+                                          color: Colors.white),
                                 ),
                               ),
                             ],

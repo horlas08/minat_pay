@@ -2,11 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:minat_pay/config/color.constant.dart';
 import 'package:minat_pay/widget/user/bottom_nav_item.dart';
 
-import '../../config/enum.dart';
-
 class BottomNav extends StatelessWidget {
-  const BottomNav({super.key});
-
+  final int currentIndex;
+  final void Function(int) onTap;
+  const BottomNav({required this.currentIndex, super.key, required this.onTap});
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -28,37 +27,37 @@ class BottomNav extends StatelessWidget {
                 children: [
                   Expanded(
                     child: BottomNavItem(
-                      onPress: () {},
+                      onTap: onTap,
                       icon: "wallet-3-fill.svg",
-                      current: Menus.home,
-                      name: Menus.home,
+                      current: currentIndex,
+                      name: 0,
                       label: 'Home',
                     ),
                   ),
                   Expanded(
                     child: BottomNavItem(
-                      onPress: () {},
+                      onTap: onTap,
                       icon: "sim-card-2-line.svg",
-                      current: Menus.home,
-                      name: Menus.home,
+                      current: currentIndex,
+                      name: 1,
                       label: 'Data',
                     ),
                   ),
                   Expanded(
                     child: BottomNavItem(
-                      onPress: () {},
+                      onTap: onTap,
                       icon: "line-chart-line.svg",
-                      current: Menus.home,
-                      name: Menus.home,
+                      current: currentIndex,
+                      name: 2,
                       label: 'Airtime',
                     ),
                   ),
                   Expanded(
                     child: BottomNavItem(
-                      onPress: () {},
+                      onTap: onTap,
                       icon: "settings-fill.svg",
-                      current: Menus.home,
-                      name: Menus.home,
+                      current: currentIndex,
+                      name: 3,
                       label: 'Settings',
                     ),
                   ),

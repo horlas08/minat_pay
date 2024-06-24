@@ -1,4 +1,5 @@
 import 'package:dio/dio.dart';
+import 'package:minat_pay/config/app.config.dart';
 
 import '../helper/helper.dart';
 
@@ -19,15 +20,14 @@ class RegistrationService {
       required this.phone});
 
   Future<Response?> request() async {
-    Response? res = await curlPostRequest(path: '/register', data: {
-      'firstname': firstname,
-      "lastname": lastname,
+    final res = await curlPostRequest(path: signUpPath, data: {
+      'firstName': firstname,
+      "lastName": lastname,
       'email': email,
       'password': password,
       'username': username,
-      'mobile': '12344',
+      'phonenumber': phone,
       'password_confirmation': password,
-      'country_code': '234',
     });
     return res;
   }

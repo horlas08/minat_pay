@@ -1,12 +1,14 @@
+import 'dart:io';
+
 import 'package:bloc/bloc.dart';
 import 'package:dio/dio.dart';
-import 'package:minat_pay/repo/register_repo.dart';
+import 'package:minat_pay/repo/login_repo.dart';
 
 import 'login_event.dart';
 import 'login_state.dart';
 
 class LoginBloc extends Bloc<LoginEvent, LoginState> {
-  LoginBloc() : super(LoginState().init()) {
+  LoginBloc() : super(LoginInit()) {
     on<InitEvent>(_init);
     on<LoginRequestEvent>(_onLoginRequested);
   }
@@ -26,23 +28,20 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
       LoginRequestEvent event, Emitter<LoginState> emit) async {
     try {
       emit(state.loading());
-      final res = await RegisterRepo(
-              firstname: 'test',
-              phone: '993993',
-              email: 'test',
-              username: 'test',
-              lastname: 'qozeem',
-              password: '1234')
-          .registerResponse();
+      final res =
+          await LoginRepo(username: event.username, password: event.password)
+              .loginResponse();
+
       if (res == null) {
-        emit(state.failed());
+        emit(state.failed("Unknown Error"));
       }
-      if (res?.statusCode == 200) {
+      if (res?.statusCode == HttpStatus.ok) {
+        emit(state.success());
       } else {
-        emit(state.failed());
+        emit(state.failed(res?.data['message']));
       }
     } on DioException catch (err) {
-      emit(state.failed());
+      emit(state.failed(err.toString()));
     }
   }
 }

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:minat_pay/config/color.constant.dart';
 import 'package:minat_pay/widget/user/dashboard/quick_action_item.dart';
 import 'package:touchable_opacity/touchable_opacity.dart';
@@ -21,6 +22,7 @@ class QuickAction extends StatelessWidget {
             ),
             const Spacer(),
             TouchableOpacity(
+              onTap: () => context.pushNamed('allBills'),
               activeOpacity: 0.4,
               child: Text(
                 "View All",
@@ -39,29 +41,29 @@ class QuickAction extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: [
             QuickActionItem(
-              route: '/',
-              icon: Icons.abc_outlined,
+              route: '/user/airtime',
+              icon: 'assets/svg/smartphone.svg',
+              title: 'Airtime',
+            ),
+            QuickActionItem(
+              route: '/user/data',
+              icon: 'assets/svg/wifi.svg',
+              title: 'Data',
+            ),
+            QuickActionItem(
+              route: '/bills/transfer',
+              icon: 'assets/svg/telegram.svg',
               title: 'Transfer',
             ),
             QuickActionItem(
-              route: '/',
-              icon: Icons.abc_outlined,
-              title: 'Transfer',
+              route: '/bills/electricity',
+              icon: 'assets/svg/lightbulb.svg',
+              title: 'Electricity',
             ),
             QuickActionItem(
-              route: '/',
-              icon: Icons.abc_outlined,
-              title: 'Transfer',
-            ),
-            QuickActionItem(
-              route: '/',
-              icon: Icons.abc_outlined,
-              title: 'Transfer',
-            ),
-            QuickActionItem(
-              route: '/',
-              icon: Icons.abc_outlined,
-              title: 'Transfer',
+              route: '/bills/betting',
+              icon: 'assets/svg/basketball.svg',
+              title: 'Betting',
             ),
           ],
         ),

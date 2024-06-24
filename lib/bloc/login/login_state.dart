@@ -1,17 +1,29 @@
-class LoginState {
+sealed class LoginState {
   LoginState init() {
-    return LoginState();
+    return LoginInit();
   }
 
-  LoginFailed failed() {
-    return LoginFailed();
+  LoginFailed failed(String message) {
+    return LoginFailed(message);
   }
 
   LoginLoadingState loading() {
     return LoginLoadingState();
   }
+
+  LoginSuccess success() {
+    return LoginSuccess();
+  }
 }
 
-class LoginFailed extends LoginState {}
+class LoginInit extends LoginState {}
+
+class LoginSuccess extends LoginState {}
+
+class LoginFailed extends LoginState {
+  String message;
+
+  LoginFailed(this.message);
+}
 
 class LoginLoadingState extends LoginState {}
