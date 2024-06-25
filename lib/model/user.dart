@@ -31,28 +31,28 @@ class User {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['username'] = this.username;
-    data['firstName'] = this.firstName;
-    data['lastName'] = this.lastName;
-    data['phonenumber'] = this.phonenumber;
-    data['id'] = this.id;
-    data['email'] = this.email;
-    data['is_verified'] = this.isVerified;
-    data['2fa'] = this.b2fa;
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['username'] = username;
+    data['firstName'] = firstName;
+    data['lastName'] = lastName;
+    data['phonenumber'] = phonenumber;
+    data['id'] = id;
+    data['email'] = email;
+    data['is_verified'] = isVerified;
+    data['2fa'] = b2fa;
     return data;
   }
 
   Map<String, dynamic> toMap() {
     return {
-      'username': this.username,
-      'firstName': this.firstName,
-      'lastName': this.lastName,
-      'phonenumber': this.phonenumber,
-      'id': this.id,
-      'email': this.email,
-      'isVerified': this.isVerified,
-      'b2fa': this.b2fa,
+      'username': username,
+      'firstName': firstName,
+      'lastName': lastName,
+      'phonenumber': phonenumber,
+      'id': id,
+      'email': email,
+      'isVerified': isVerified,
+      'b2fa': b2fa,
     };
   }
 
