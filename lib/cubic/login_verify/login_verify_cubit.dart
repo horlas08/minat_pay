@@ -17,9 +17,10 @@ class LoginVerifyCubit extends Cubit<LoginVerifyState> {
         emit(LoginVerifyFailed("Check Your Connection"));
       }
       if (res?.statusCode == 200) {
-        User.fromMap(res?.data['data']['user_data']);
+        final user = User.fromMap(res?.data['data']['user_data']);
         print(res?.data['data']['user_data']);
         emit(LoginVerifySuccess());
+        print(user.toMap());
       } else {
         if (res?.data.containsKey('missing_parameters') &&
             !res?.data['missing_parameters'].isEmpty) {
