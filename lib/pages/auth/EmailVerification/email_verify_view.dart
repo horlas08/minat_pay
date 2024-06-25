@@ -31,6 +31,9 @@ class EmailVerifyPage extends HookWidget {
             context.loaderOverlay.hide();
             await alertHelper(context, 'success', state.message);
             if (context.mounted) {
+              while (context.canPop()) {
+                context.pop();
+              }
               context.pushReplacementNamed("dashboard");
             }
           } else if (state is EmailVerifyResendFailed) {

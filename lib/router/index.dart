@@ -78,21 +78,23 @@ class AppRouter {
             ),
           ),
           GoRoute(
-            path: 'login/verify',
+            path: 'login/verify/:username',
             name: 'login_verify',
             builder: (BuildContext context, GoRouterState state) =>
-                const LoginVerifyPage(),
+                LoginVerifyPage(username: state.pathParameters['username']!),
           ),
         ],
         redirect: (context, state) async {
           final SharedPreferences prefs = await SharedPreferences.getInstance();
           String? token = prefs.getString("token");
+          String? username = prefs.getString("userName");
+          String? email = prefs.getString("userEmail");
           bool? isVerified = prefs.getBool("isVerified");
           if (token != null &&
               context.mounted &&
               isVerified! &&
               !context.read<AppConfigCubit>().state.authState) {
-            return '/login/verify';
+            return '/login/verify/$username';
           }
           return null;
         },

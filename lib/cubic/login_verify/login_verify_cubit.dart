@@ -1,6 +1,7 @@
 import 'package:bloc/bloc.dart';
 import 'package:dio/dio.dart';
 
+import '../../model/user.dart';
 import '../../repo/login_verify_repo.dart';
 import 'login_verify_state.dart';
 
@@ -16,6 +17,8 @@ class LoginVerifyCubit extends Cubit<LoginVerifyState> {
         emit(LoginVerifyFailed("Check Your Connection"));
       }
       if (res?.statusCode == 200) {
+        User.fromMap(res?.data['data']['user_data']);
+        print(res?.data['data']['user_data']);
         emit(LoginVerifySuccess());
       } else {
         if (res?.data.containsKey('missing_parameters') &&

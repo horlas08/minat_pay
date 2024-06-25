@@ -25,6 +25,7 @@ class EmailVerifyBloc extends Bloc<EmailVerifyEvent, EmailVerifyState> {
       if (res?.statusCode == 200) {
         final SharedPreferences prefs = await SharedPreferences.getInstance();
         prefs.setBool("isVerified", true);
+        prefs.remove('userEmail');
         emit(EmailVerifySuccess("Successful"));
       } else {
         emit(EmailVerifyFailed(res?.data['message']));

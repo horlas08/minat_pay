@@ -53,7 +53,7 @@ class _RegisterPageState extends State<RegisterPage> {
                 pathParameters: {'email': state.email})
             : null;
       } else {
-        context.loaderOverlay.hide();
+        // context.loaderOverlay.hide();
       }
     }, builder: (context, state) {
       return _buildPage(context);

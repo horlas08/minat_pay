@@ -25,7 +25,8 @@ enum _SupportState {
 }
 
 class LoginVerifyPage extends HookWidget {
-  const LoginVerifyPage({super.key});
+  final String username;
+  const LoginVerifyPage({required this.username, super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -200,9 +201,9 @@ class LoginVerifyPage extends HookWidget {
                         duration: const Duration(milliseconds: 1600),
                         child: Container(
                           margin: const EdgeInsets.only(top: 50),
-                          child: const Center(
+                          child: Center(
                             child: Text(
-                              "Welcome Back \n Qozeem",
+                              "Welcome Back \n ${username}",
                               textAlign: TextAlign.center,
                               style: TextStyle(
                                   color: Colors.white,
@@ -255,10 +256,11 @@ class LoginVerifyPage extends HookWidget {
                     FadeInUp(
                         duration: const Duration(milliseconds: 1900),
                         child: ElevatedButton(
-                          onPressed: () {
+                          onPressed: () async {
                             FocusManager.instance.primaryFocus?.unfocus();
 
                             if (_formKey.currentState!.validate()) {
+
                               context
                                   .read<LoginVerifyCubit>()
                                   .onLoginVerifyRequested(password.value);
