@@ -51,11 +51,6 @@ class QuickAction extends StatelessWidget {
               title: 'Data',
             ),
             QuickActionItem(
-              route: '/bills/transfer',
-              icon: 'assets/svg/telegram.svg',
-              title: 'Transfer',
-            ),
-            QuickActionItem(
               route: '/bills/electricity',
               icon: 'assets/svg/lightbulb.svg',
               title: 'Electricity',

@@ -9,9 +9,10 @@ import 'package:loader_overlay/loader_overlay.dart';
 import 'package:local_auth/local_auth.dart';
 import 'package:minat_pay/config/color.constant.dart';
 import 'package:minat_pay/cubic/login_verify/login_verify_state.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:touchable_opacity/touchable_opacity.dart';
 
+import '../../../bloc/repo/app/app_bloc.dart';
+import '../../../bloc/repo/app/app_event.dart';
 import '../../../cubic/login_verify/login_verify_cubit.dart';
 import '../../../helper/helper.dart';
 
@@ -37,6 +38,7 @@ class LoginVerifyPage extends HookWidget {
     ValueNotifier<bool> mounted = useState(false);
     ValueNotifier<_SupportState> _supportState =
         useState(_SupportState.unknown);
+    ValueNotifier<bool> authenticated = useState(false);
     ValueNotifier<List<BiometricType>?> _availableBiometrics = useState(null);
 
     useEffect(() {
@@ -51,37 +53,6 @@ class LoginVerifyPage extends HookWidget {
     Future<void> _cancelAuthentication() async {
       await auth.stopAuthentication();
       _isAuthenticating.value = false;
-    }
-
-    Future<void> _authenticateWithBiometrics() async {
-      ValueNotifier<bool> authenticated = useState(false);
-      try {
-        _isAuthenticating.value = true;
-        _authorized.value = 'Authenticating';
-
-        authenticated.value = await auth.authenticate(
-          localizedReason:
-              'Scan your fingerprint (or face or whatever) to authenticate',
-          options: const AuthenticationOptions(
-            stickyAuth: true,
-            biometricOnly: true,
-          ),
-        );
-        _isAuthenticating.value = false;
-        _authorized.value = 'Authenticating';
-      } on PlatformException catch (e) {
-        print(e);
-        _isAuthenticating.value = false;
-        _authorized.value = 'Error - ${e.message}';
-        return;
-      }
-      if (!mounted.value) {
-        return;
-      }
-
-      final String message =
-          authenticated.value ? 'Authorized' : 'Not Authorized';
-      _authorized.value = message;
     }
 
     Future<void> _checkBiometrics() async {
@@ -114,12 +85,45 @@ class LoginVerifyPage extends HookWidget {
       _availableBiometrics.value = availableBiometrics;
     }
 
-    Future<void> _authenticate() async {
-      bool authenticated = false;
+    Future<void> _authenticateWithBiometrics() async {
       try {
         _isAuthenticating.value = true;
         _authorized.value = 'Authenticating';
-        authenticated = await auth.authenticate(
+
+        authenticated.value = await auth.authenticate(
+          localizedReason:
+              'Scan your fingerprint (or face or whatever) to authenticate minatpay',
+          options: const AuthenticationOptions(
+            stickyAuth: true,
+            biometricOnly: true,
+          ),
+        );
+        print("__________");
+        print(authenticated.value);
+        print("__________");
+        _isAuthenticating.value = false;
+        _authorized.value = 'Authenticating';
+      } on PlatformException catch (e) {
+        print(e);
+        _isAuthenticating.value = false;
+        _authorized.value = 'Error - ${e.message}';
+        return;
+      }
+      if (!mounted.value) {
+        return;
+      }
+
+      final String message =
+          authenticated.value ? 'Authorized' : 'Not Authorized';
+      _authorized.value = message;
+    }
+
+    Future<void> _authenticate() async {
+      // bool authenticated = false;
+      try {
+        _isAuthenticating.value = true;
+        _authorized.value = 'Authenticating';
+        authenticated.value = await auth.authenticate(
           localizedReason: 'Let OS determine authentication method',
           options: const AuthenticationOptions(
             stickyAuth: true,
@@ -135,25 +139,48 @@ class LoginVerifyPage extends HookWidget {
       if (!mounted.value) {
         return;
       }
-
-      _authorized.value = authenticated ? 'Authorized' : 'Not Authorized';
+      print(authenticated);
+      _authorized.value = authenticated.value ? 'Authorized' : 'Not Authorized';
     }
 
-    return BlocProvider(
-      create: (BuildContext context) => LoginVerifyCubit(),
-      child: Builder(
-          builder: (context) => _buildPage(context, password, _isAuthenticating,
-              _authorized, _canCheckBiometrics, _supportState)),
+    useEffect(() {
+      if (authenticated.value == true) {
+        context.read<LoginVerifyCubit>().onLoginVerifyRequested(null);
+      }
+      return null;
+    }, [authenticated.value, _authorized.value]);
+
+    return Builder(
+      builder: (context) => _buildPage(
+          context,
+          password,
+          _isAuthenticating,
+          _authorized,
+          _canCheckBiometrics,
+          _supportState,
+          _cancelAuthentication,
+          _authenticateWithBiometrics,
+          _checkBiometrics,
+          _getAvailableBiometrics,
+          _authenticate,
+          authenticated),
     );
   }
 
   Widget _buildPage(
-      BuildContext context,
-      ObjectRef<String> password,
-      ValueNotifier<bool> _isAuthenticating,
-      ValueNotifier<String> _authorized,
-      ChangeNotifier _canCheckBiometrics,
-      ValueNotifier<_SupportState> _supportState) {
+    BuildContext context,
+    ObjectRef<String> password,
+    ValueNotifier<bool> _isAuthenticating,
+    ValueNotifier<String> _authorized,
+    ChangeNotifier _canCheckBiometrics,
+    ValueNotifier<_SupportState> _supportState,
+    Future<void> Function() _cancelAuthentication,
+    Future<void> Function() _authenticateWithBiometrics,
+    Future<void> Function() _checkBiometrics,
+    Future<void> Function() _getAvailableBiometrics,
+    Future<void> Function() _authenticate,
+    ValueNotifier<bool> authenticated,
+  ) {
     return BlocListener<LoginVerifyCubit, LoginVerifyState>(
       listener: (context, state) async {
         if (state is LoginVerifyLoading) {
@@ -163,7 +190,11 @@ class LoginVerifyPage extends HookWidget {
           await alertHelper(context, 'error', state.message);
         } else if (state is LoginVerifySuccess) {
           context.loaderOverlay.hide();
-          // context.go('/user');
+          context.read<AppBloc>().add(AddUserEvent(userData: state.userData));
+          context
+              .read<AppBloc>()
+              .add(AddAccountEvent(accounts: state.accounts));
+          context.go('/user');
         }
       },
       child: Scaffold(
@@ -175,8 +206,9 @@ class LoginVerifyPage extends HookWidget {
                 height: 400,
                 decoration: const BoxDecoration(
                   image: DecorationImage(
-                      image: AssetImage('assets/images/login/background.png'),
-                      fit: BoxFit.fill),
+                    image: AssetImage('assets/images/login/background.png'),
+                    fit: BoxFit.fill,
+                  ),
                 ),
                 child: Stack(
                   children: <Widget>[
@@ -260,7 +292,6 @@ class LoginVerifyPage extends HookWidget {
                             FocusManager.instance.primaryFocus?.unfocus();
 
                             if (_formKey.currentState!.validate()) {
-
                               context
                                   .read<LoginVerifyCubit>()
                                   .onLoginVerifyRequested(password.value);
@@ -287,6 +318,7 @@ class LoginVerifyPage extends HookWidget {
                         child: ElevatedButton(
                           onPressed: () {
                             FocusManager.instance.primaryFocus?.unfocus();
+                            _authenticate();
                           },
                           style: ButtonStyle(
                             side: const WidgetStatePropertyAll(
@@ -319,15 +351,7 @@ class LoginVerifyPage extends HookWidget {
                           ),
                           TouchableOpacity(
                             onTap: () async {
-                              final SharedPreferences prefs =
-                                  await SharedPreferences.getInstance();
-                              prefs.clear();
-                              if (context.mounted) {
-                                while (context.canPop() == true) {
-                                  context.pop();
-                                }
-                                context.go('/login');
-                              }
+                              await handleLogOut(context);
                             },
                             child: Text(
                               "Logout",

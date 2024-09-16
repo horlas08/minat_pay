@@ -10,7 +10,7 @@ Future paymentModal({required BuildContext context, String? title}) {
       isDismissible: true,
       enableDrag: true,
       isScrollControlled: true,
-      useRootNavigator: true,
+      useRootNavigator: false,
       showDragHandle: true,
       builder: (context) {
         return Stack(children: [

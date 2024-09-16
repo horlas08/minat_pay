@@ -1,12 +1,38 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:minat_pay/config/font.constant.dart';
+import 'package:minat_pay/helper/helper.dart';
 
 List<String> transactionList = [];
+String getTimeFromDateAndTime(String date) {
+  DateTime dateTime;
+  try {
+    dateTime = DateTime.parse(date).toLocal();
+    return DateFormat.jm().format(dateTime).toString(); //5:08 PM
+// String formattedTime = DateFormat.Hms().format(now);
+// String formattedTime = DateFormat.Hm().format(now);   // //17:08  force 24 hour time
+  } catch (e) {
+    return date;
+  }
+}
+
+String getDateAndYearWordFromString(String date) {
+  DateTime dateTime;
+  try {
+    dateTime = DateTime.parse(date).toLocal();
+    return DateFormat.yMMMMd('en_US').format(dateTime).toString(); //5:08 PM
+// String formattedTime = DateFormat.Hms().format(now);
+// String formattedTime = DateFormat.Hm().format(now);   // //17:08  force 24 hour time
+  } catch (e) {
+    return date;
+  }
+}
 
 class TransactionItem extends StatelessWidget {
-  const TransactionItem({super.key});
+  final Map<String, dynamic> data;
+  const TransactionItem({super.key, required this.data});
 
   @override
   Widget build(BuildContext context) {
@@ -35,29 +61,31 @@ class TransactionItem extends StatelessWidget {
             width: 10,
           ),
           Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                "Airtime",
+                data['type'],
                 style: Theme.of(context).textTheme.titleSmall?.copyWith(
                     fontFamily: AppFont.mulish, fontWeight: FontWeight.bold),
               ),
               Text(
-                "May 6 2024",
+                getDateAndYearWordFromString(data['datetime']),
                 style: Theme.of(context).textTheme.labelSmall,
               )
             ],
           ),
           const Spacer(),
           Column(
+            crossAxisAlignment: CrossAxisAlignment.end,
             children: [
               Text(
-                "-N120",
+                '${currency(context)}${data['amount'].toString()}',
                 style: Theme.of(context).textTheme.titleSmall?.copyWith(
                     fontFamily: AppFont.mulish, fontWeight: FontWeight.bold),
               ),
               Text(
                 style: Theme.of(context).textTheme.labelSmall,
-                "4:20 PM",
+                getTimeFromDateAndTime(data['datetime']),
               ),
             ],
           ),

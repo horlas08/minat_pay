@@ -3,17 +3,18 @@ import 'dart:io';
 import 'package:bloc/bloc.dart';
 import 'package:dio/dio.dart';
 import 'package:minat_pay/repo/login_repo.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import 'login_event.dart';
 import 'login_state.dart';
 
 class LoginBloc extends Bloc<LoginEvent, LoginState> {
   LoginBloc() : super(LoginInit()) {
-    on<InitEvent>(_init);
+    on<LoginInitEvent>(_init);
     on<LoginRequestEvent>(_onLoginRequested);
   }
 
-  void _init(InitEvent event, Emitter<LoginState> emit) async {
+  void _init(LoginInitEvent event, Emitter<LoginState> emit) async {
     emit(state.init());
   }
 
@@ -33,12 +34,30 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
               .loginResponse();
 
       if (res == null) {
-        emit(state.failed("Unknown Error"));
+        return emit(state.failed("Check Internet Connection"));
       }
-      if (res?.statusCode == HttpStatus.ok) {
-        emit(state.success());
+      if (res.statusCode == HttpStatus.ok) {
+        print(res.data);
+        final SharedPreferences prefs = await SharedPreferences.getInstance();
+        prefs.setString("token", res.data['data']['user_data']['token']);
+        prefs.setBool(
+            "isVerified", res.data['data']['user_data']['isVerified']);
+        prefs.setString("userName", res.data['data']['user_data']['username']);
+        if (!res.data['data']['user_data']['isVerified']) {
+          prefs.setString("userEmail", res.data['data']['user_data']['email']);
+        }
+        print((res.data['data']['accounts']));
+        final accounts = (res.data['data']['accounts'] as List)
+            .map((itemWord) => itemWord as Map<String, dynamic>)
+            .toList();
+        return emit(state.success(
+          res.data['data']['user_data'],
+          accounts,
+        ));
       } else {
-        emit(state.failed(res?.data['message']));
+        return emit(
+          state.failed(res.data['message']),
+        );
       }
     } on DioException catch (err) {
       emit(state.failed(err.toString()));

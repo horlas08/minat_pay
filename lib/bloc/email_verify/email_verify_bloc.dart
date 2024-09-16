@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:io';
 
 import 'package:bloc/bloc.dart';
 import 'package:dio/dio.dart';
@@ -22,7 +23,7 @@ class EmailVerifyBloc extends Bloc<EmailVerifyEvent, EmailVerifyState> {
       if (res == null) {
         emit(EmailVerifyFailed("Check Your Connection"));
       }
-      if (res?.statusCode == 200) {
+      if (res?.statusCode == HttpStatus.ok) {
         final SharedPreferences prefs = await SharedPreferences.getInstance();
         prefs.setBool("isVerified", true);
         prefs.remove('userEmail');

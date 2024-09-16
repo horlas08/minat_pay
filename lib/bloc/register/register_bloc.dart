@@ -57,6 +57,7 @@ class RegisterBloc extends Bloc<RegisterEvent, RegisterState> {
       }
     } on DioException catch (err) {
       emit(state.failed(err.toString()));
+      emit(state.init());
     }
     emit(state.init());
   }

@@ -34,7 +34,7 @@ class ScaffoldWithNavBar extends StatelessWidget {
       return 1;
     } else if (location == ('/user/airtime')) {
       return 2;
-    } else if (location == ('user/setting')) {
+    } else if (location == ('/user/setting')) {
       return 3;
     } else if (location == '/user') {
       return 0;

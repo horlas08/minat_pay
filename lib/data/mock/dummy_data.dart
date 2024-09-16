@@ -31,24 +31,20 @@ final List<Map<String, dynamic>> allBills = [
     "arrow": Icons.arrow_forward_ios_rounded,
     "route": "/bills/betting"
   },
-  {
-    "icon": Icons.telegram_outlined,
-    "name": "Transfer",
-    "arrow": Icons.arrow_forward_ios_rounded,
-    "route": "/bills/transfer"
-  },
+
   {
     "icon": Icons.phone_iphone,
     "name": "Add Funds",
     "arrow": Icons.arrow_forward_ios_rounded,
     "route": "/bills/fund"
   },
-  {
-    "icon": Icons.phone_iphone,
-    "name": "Transfer",
-    "arrow": Icons.arrow_forward_ios_rounded,
-    "route": "/bills/transfer"
-  },
+
+  // {
+  //   "icon": Icons.phone_iphone,
+  //   "name": "Transfer",
+  //   "arrow": Icons.arrow_forward_ios_rounded,
+  //   "route": "/bills/transfer"
+  // },
 ];
 final List<Map<String, dynamic>> providers = [
   {

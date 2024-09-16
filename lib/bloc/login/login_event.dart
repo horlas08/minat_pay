@@ -1,6 +1,6 @@
 sealed class LoginEvent {}
 
-class InitEvent extends LoginEvent {}
+class LoginInitEvent extends LoginEvent {}
 
 class LoginRequestEvent extends LoginEvent {
   String username;

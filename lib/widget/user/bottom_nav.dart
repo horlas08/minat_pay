@@ -37,19 +37,19 @@ class BottomNav extends StatelessWidget {
                   Expanded(
                     child: BottomNavItem(
                       onTap: onTap,
-                      icon: "sim-card-2-line.svg",
+                      icon: "line-chart-line.svg",
                       current: currentIndex,
-                      name: 1,
-                      label: 'Data',
+                      name: 2,
+                      label: 'Airtime',
                     ),
                   ),
                   Expanded(
                     child: BottomNavItem(
                       onTap: onTap,
-                      icon: "line-chart-line.svg",
+                      icon: "sim-card-2-line.svg",
                       current: currentIndex,
-                      name: 2,
-                      label: 'Airtime',
+                      name: 1,
+                      label: 'Data',
                     ),
                   ),
                   Expanded(

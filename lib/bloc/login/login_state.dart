@@ -11,14 +11,23 @@ sealed class LoginState {
     return LoginLoadingState();
   }
 
-  LoginSuccess success() {
-    return LoginSuccess();
+  LoginSuccess success(
+      Map<String, dynamic> userdata, List<Map<String, dynamic>> account) {
+    return LoginSuccess(userData: userdata, accounts: account);
   }
 }
 
 class LoginInit extends LoginState {}
 
-class LoginSuccess extends LoginState {}
+class LoginSuccess extends LoginState {
+  final Map<String, dynamic> userData;
+  final List<Map<String, dynamic>> accounts;
+
+  LoginSuccess({
+    required this.userData,
+    required this.accounts,
+  });
+}
 
 class LoginFailed extends LoginState {
   String message;

@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:minat_pay/pages/user/bills/funds/method/bank.dart';
+import 'package:minat_pay/pages/user/bills/funds/method/coupon.dart';
+import 'package:minat_pay/pages/user/bills/funds/method/manual.dart';
 
 import '../../../../config/font.constant.dart';
 
@@ -33,17 +35,17 @@ class AddFund extends StatelessWidget {
               ),
             )
           ],
-          bottom: TabBar(
+          bottom: const TabBar(
             tabs: [
               Tab(
-                icon: const Icon(Icons.account_balance),
+                icon: Icon(Icons.account_balance),
                 text: "Bank Transfer",
               ),
-              const Tab(
+              Tab(
                 icon: Icon(Icons.local_atm),
                 text: "Manual Deposit",
               ),
-              const Tab(
+              Tab(
                 icon: Icon(Icons.code_off),
                 text: "Coupon Code",
               ),
@@ -53,8 +55,8 @@ class AddFund extends StatelessWidget {
         body: const TabBarView(
           children: [
             Bank(),
-            Icon(Icons.directions_transit),
-            Icon(Icons.directions_bike),
+            Manual(),
+            Coupon(),
           ],
         ),
       ),

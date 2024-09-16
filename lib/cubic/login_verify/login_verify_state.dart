@@ -18,6 +18,14 @@ class LoginVerifyFailed extends LoginVerifyState {
   LoginVerifyFailed(this.message);
 }
 
-class LoginVerifySuccess extends LoginVerifyState {}
+class LoginVerifySuccess extends LoginVerifyState {
+  final Map<String, dynamic> userData;
+  final List<Map<String, dynamic>> accounts;
+
+  LoginVerifySuccess({
+    required this.userData,
+    required this.accounts,
+  });
+}
 
 class LoginVerifyLoading extends LoginVerifyState {}

@@ -33,7 +33,7 @@ class AllBills extends StatelessWidget {
                     name: allBills[index]['name'],
                     icon: allBills[index]['icon'],
                     onTap: () {
-                      context.go(
+                      context.push(
                         allBills[index]['route'],
                       );
                     },
