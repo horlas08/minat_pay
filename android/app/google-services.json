@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "658009879471",
+    "project_id": "minatpay-67c72",
+    "storage_bucket": "minatpay-67c72.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:658009879471:android:4e8414ebfe1cc3a883355a",
+        "android_client_info": {
+          "package_name": "com.minatpay.ng.minat_pay"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "658009879471-odvu9prlkc7dt3i709houolvgua23ien.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBTdrCKy06YrJ0AtGfOzOSrqo2KMVe4Fjg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "658009879471-odvu9prlkc7dt3i709houolvgua23ien.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
