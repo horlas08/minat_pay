@@ -79,6 +79,7 @@ class Transaction extends HookWidget {
             const Spacer(),
             TouchableOpacity(
               activeOpacity: 0.4,
+              onTap: () => context.pushNamed('transactions'),
               child: Text(
                 "View All",
                 style: Theme.of(context).textTheme.titleSmall?.copyWith(

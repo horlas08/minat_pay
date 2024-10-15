@@ -32,6 +32,7 @@ class RegistrationService {
       'phonenumber': phone,
       'password_confirmation': password,
     });
+
     return res;
   }
 }

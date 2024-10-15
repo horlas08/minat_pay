@@ -369,15 +369,15 @@ class Dashboard extends HookWidget {
                                 print(newUser);
                                 print(state.user!.hasPin);
                                 //
-                                // Future.delayed(
-                                //   Duration.zero,
-                                //   () {
-                                //     if (context.mounted &&
-                                //         state.user!.hasPin! == false) {
-                                //       showPinModal(context, state);
-                                //     }
-                                //   },
-                                // );
+                                Future.delayed(
+                                  Duration.zero,
+                                  () {
+                                    if (context.mounted &&
+                                        state.user!.hasPin! == false) {
+                                      showPinModal(context, state);
+                                    }
+                                  },
+                                );
                               },
                               onDisappear: () {
                                 print("do");
@@ -388,57 +388,6 @@ class Dashboard extends HookWidget {
                         ),
                       ),
                       const Transaction(),
-                      if (!state.user!.userType!)
-                        Container(
-                          height: 100,
-                          decoration: const BoxDecoration(
-                            borderRadius: BorderRadius.all(
-                              Radius.circular(15),
-                            ),
-                            image: DecorationImage(
-                              opacity: 0.3,
-                              fit: BoxFit.cover,
-                              image: AssetImage("assets/images/upgradeBg.jpg"),
-                            ),
-                          ),
-                          child: Row(
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              SizedBox(
-                                width: 200,
-                                child: Column(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(
-                                      "Upgarde To Agent",
-                                      style: TextStyle(fontSize: 18),
-                                    ),
-                                    Text(
-                                      "Unlock Exclusive Offer and Discount On All Our product",
-                                      style: TextStyle(fontSize: 12),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                              TextButton(
-                                style: ButtonStyle(
-                                  backgroundColor: WidgetStateProperty.all(
-                                    AppColor.primaryColor,
-                                  ),
-                                  foregroundColor: WidgetStateProperty.all(
-                                    Colors.white,
-                                  ),
-                                ),
-                                onPressed: () {
-                                  showUpgradeModal(context);
-                                },
-                                child: Text("Upgrade Now"),
-                              )
-                            ],
-                          ),
-                        )
                     ],
                   );
                 },
@@ -451,113 +400,4 @@ class Dashboard extends HookWidget {
   }
 
   storeDeviceId(BuildContext context) {}
-
-  void showUpgradeModal(BuildContext context) {
-    showGeneralDialog(
-      context: context,
-      barrierDismissible: true,
-      barrierLabel: 'close',
-      pageBuilder: (context, animation, secondaryAnimation) {
-        return AlertDialog(
-          // icon: Icon(Icons.add),
-          title: const Text(
-            "Upgrade Account",
-            textAlign: TextAlign.center,
-            style: TextStyle(fontSize: 14),
-          ),
-
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(10),
-          ),
-          content: Container(
-            // height: 100,
-            // width: double.infinity,
-            constraints: const BoxConstraints(
-              maxHeight: 180,
-              minHeight: 100,
-            ),
-            child: Form(
-                // key: _bvnKey,
-                child: Column(
-              // mainAxisAlignment: MainAxisAlignment.start,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  'leorem',
-                  textAlign: TextAlign.start,
-                  style: TextStyle(
-                    fontSize: 12,
-                    fontStyle: FontStyle.italic,
-                  ),
-                ),
-                SizedBox(
-                  height: 20,
-                ),
-                SizedBox(
-                  width: double.infinity,
-                  child: ElevatedButton(
-                    onPressed: () async {
-                      handleUpgrade(context);
-                    },
-                    child: Text(
-                      'Pay And Upgrade Now',
-                      style: TextStyle(color: Colors.white),
-                    ),
-                  ),
-                )
-              ],
-            )),
-          ),
-        );
-      },
-    );
-  }
-
-  handleUpgrade(BuildContext context) async {
-    context.loaderOverlay.show();
-    final SharedPreferences prefs = await SharedPreferences.getInstance();
-    final resp = await curlPutRequest(
-      path: upgradeToAgent,
-      data: {
-        'token': prefs.getString("token"),
-      },
-    );
-    if (resp == null) {
-      if (context.mounted) {
-        context.pop();
-        context.loaderOverlay.hide();
-        await alertHelper(context, "error", "internet Connection");
-      }
-      return;
-    }
-
-    if (resp.statusCode == HttpStatus.ok) {
-      final res = await refreshUSerDetail();
-      if (res == null && context.mounted) {
-        context.pop();
-        context.loaderOverlay.hide();
-        await alertHelper(
-            context, "error", "Unable to Update Check Internet Connection");
-        return;
-      }
-
-      if (res?.statusCode == HttpStatus.ok && context.mounted) {
-        context
-            .read<AppBloc>()
-            .add(UpdateUserEvent(userData: res?.data['data']['user_data']));
-        context.pop();
-        context.loaderOverlay.hide();
-
-        await alertHelper(context, "success", resp.data['message']);
-        return;
-      }
-    } else {
-      if (context.mounted) {
-        context.loaderOverlay.hide();
-        context.pop();
-        await alertHelper(context, 'error', resp.data['message']);
-        return;
-      }
-    }
-  }
 }

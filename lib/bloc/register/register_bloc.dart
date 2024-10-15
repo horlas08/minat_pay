@@ -41,11 +41,13 @@ class RegisterBloc extends Bloc<RegisterEvent, RegisterState> {
       }
       print(res);
       if (res?.statusCode == 200) {
+        print(res?.data['user_data']);
         final SharedPreferences prefs = await SharedPreferences.getInstance();
-        prefs.setString("token", res?.data['token']);
-        prefs.setBool("isVerified", res?.data['user_data']['is_verified']);
-        prefs.setString("userName", res?.data['user_data']['username']);
-        prefs.setString("userEmail", res?.data['user_data']['email']);
+        await prefs.setString("token", res?.data['token']);
+        await prefs.setBool(
+            "isVerified", res?.data['user_data']['is_verified']);
+        await prefs.setString("userName", res?.data['user_data']['username']);
+        await prefs.setString("userEmail", res?.data['user_data']['email']);
         emit(state.success(res?.data['code'], res?.data['user_data']['email']));
       } else {
         // emit(state.failed('${res?.data['message']}'));

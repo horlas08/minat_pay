@@ -76,6 +76,7 @@ class RegisterPage extends HookWidget {
         context.loaderOverlay.hide();
         await alertHelper(context, 'error', state.message);
       } else if (state is RegisterSuccess) {
+        print("register suucessfully");
         formKey.currentState?.reset();
         context.loaderOverlay.hide();
         await alertHelper(context, 'success', "Registration Successfully");

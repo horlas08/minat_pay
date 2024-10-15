@@ -15,29 +15,6 @@ import '../../../helper/helper.dart';
 import '../../../model/transaction_details.dart';
 import '../../../widget/app_header.dart';
 
-Future<Response?> getTransactionDetails(BuildContext context,
-    {required String id,
-    required ValueNotifier<bool> loading,
-    required ValueNotifier<TransactionDetailsModel> transactionDetail}) async {
-  final SharedPreferences prefs = await SharedPreferences.getInstance();
-  loading.value = true;
-  final res = await curlGetRequest(path: singleTransactionPath, data: {
-    'trxid': id,
-    'token': prefs.getString('token'),
-  });
-  print(id);
-  // return;
-  if (res == null && context.mounted) {
-    return alertHelper(context, 'error', "Check Your Internet Connection");
-  }
-  transactionDetail.value =
-      TransactionDetailsModel.fromMap(res?.data['transaction_details']);
-  prefs.setString("lastTransactionData", jsonEncode(transactionDetail.value));
-  loading.value = false;
-
-  // return res;
-}
-
 class TransactionDetail extends HookWidget {
   final String id;
   const TransactionDetail({
@@ -51,6 +28,33 @@ class TransactionDetail extends HookWidget {
     final ValueNotifier<Uint8List?> bytes = useState(null);
     final ValueNotifier<TransactionDetailsModel> transaction =
         useState(TransactionDetailsModel());
+    Future<Response?> getTransactionDetails(BuildContext context,
+        {required String id,
+        required ValueNotifier<bool> loading,
+        required ValueNotifier<TransactionDetailsModel>
+            transactionDetail}) async {
+      final SharedPreferences prefs = await SharedPreferences.getInstance();
+      loading.value = true;
+      final res = await curlGetRequest(path: singleTransactionPath, data: {
+        'trxid': id,
+        'token': prefs.getString('token'),
+      });
+      print(id);
+      // return;
+      if (res == null && context.mounted) {
+        return alertHelper(context, 'error', "Check Your Internet Connection");
+      }
+      print(res?.data['transaction_details']);
+      transactionDetail.value =
+          TransactionDetailsModel.fromMap(res?.data['transaction_details']);
+      print(jsonEncode(transactionDetail.value));
+      await prefs.setString(
+          "lastTransactionData", jsonEncode(transactionDetail.value));
+      loading.value = false;
+      return null;
+
+      // return res;
+    }
 
     useEffect(() {
       if (bytes.value != null) buildImage(bytes.value!);

@@ -175,35 +175,35 @@ class Receipt extends HookWidget {
                                   const SizedBox(
                                     height: 10,
                                   ),
-                                  if (transaction.value.data != null &&
-                                      transaction.value.data!.isNotEmpty)
-                                    ...List.generate(
-                                      transaction.value.data!.length,
-                                      (index) {
-                                        return TransactionRow(
-                                          left: 'Status',
-                                          right: const Row(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.center,
-                                            children: [
-                                              Icon(
-                                                Icons.check_circle,
-                                                color: AppColor.success,
-                                                size: 20,
-                                              ),
-                                              Text(
-                                                "Successful",
-                                                style: TextStyle(
-                                                  fontSize: 20,
-                                                  color: AppColor.success,
-                                                  fontWeight: FontWeight.normal,
-                                                ),
-                                              ),
-                                            ],
-                                          ),
-                                        );
-                                      },
-                                    ),
+                                  // if (transaction.value.data != null &&
+                                  //     transaction.value.data!.isNotEmpty)
+                                  //   ...List.generate(
+                                  //     transaction.value.data!.length,
+                                  //     (index) {
+                                  //       return TransactionRow(
+                                  //         left: 'Status',
+                                  //         right: const Row(
+                                  //           mainAxisAlignment:
+                                  //               MainAxisAlignment.center,
+                                  //           children: [
+                                  //             Icon(
+                                  //               Icons.check_circle,
+                                  //               color: AppColor.success,
+                                  //               size: 20,
+                                  //             ),
+                                  //             Text(
+                                  //               "Successful",
+                                  //               style: TextStyle(
+                                  //                 fontSize: 20,
+                                  //                 color: AppColor.success,
+                                  //                 fontWeight: FontWeight.normal,
+                                  //               ),
+                                  //             ),
+                                  //           ],
+                                  //         ),
+                                  //       );
+                                  //     },
+                                  //   ),
                                   const SizedBox(
                                     height: 10,
                                   ),
