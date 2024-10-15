@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
+import 'package:go_router/go_router.dart';
 import 'package:minat_pay/config/color.constant.dart';
 
 import '../../../../config/font.constant.dart';
@@ -20,7 +21,9 @@ class Transfer extends HookWidget {
         ),
         actions: [
           TextButton(
-            onPressed: () {},
+            onPressed: () {
+              context.pushNamed('transactions');
+            },
             child: const Text('History',
                 style: TextStyle(
                     fontSize: 20,

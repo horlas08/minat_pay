@@ -6,6 +6,7 @@ class TransactionDetailsModel {
   String? amount;
   String? message;
   String? datetime;
+  Map<dynamic, dynamic>? data;
 
   TransactionDetailsModel(
       {this.original,
@@ -14,7 +15,8 @@ class TransactionDetailsModel {
       this.trxid,
       this.amount,
       this.message,
-      this.datetime});
+      this.datetime,
+      this.data});
 
   TransactionDetailsModel.fromJson(Map<String, dynamic> json) {
     original =
@@ -25,6 +27,7 @@ class TransactionDetailsModel {
     amount = json['amount'];
     message = json['message'];
     datetime = json['datetime'];
+    data = json['data'] ?? {};
   }
 
   Map<String, dynamic> toJson() {
@@ -38,6 +41,7 @@ class TransactionDetailsModel {
     data['amount'] = amount;
     data['message'] = message;
     data['datetime'] = datetime;
+    data['data'] = data;
     return data;
   }
 
@@ -50,6 +54,7 @@ class TransactionDetailsModel {
       'amount': amount,
       'message': message,
       'datetime': datetime,
+      'data': data,
     };
   }
 
@@ -63,6 +68,7 @@ class TransactionDetailsModel {
       amount: map['amount'] as String,
       message: map['message'] as String,
       datetime: map['datetime'] as String,
+      data: map['data'] ?? {} as Map<String, dynamic>,
     );
   }
 }

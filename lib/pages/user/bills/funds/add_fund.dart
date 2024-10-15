@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:minat_pay/pages/user/bills/funds/method/bank.dart';
 import 'package:minat_pay/pages/user/bills/funds/method/coupon.dart';
 import 'package:minat_pay/pages/user/bills/funds/method/manual.dart';
@@ -24,7 +25,9 @@ class AddFund extends StatelessWidget {
           ),
           actions: [
             TextButton(
-              onPressed: () {},
+              onPressed: () {
+                context.pushNamed('transactions');
+              },
               child: const Text(
                 'History',
                 style: TextStyle(
@@ -43,7 +46,7 @@ class AddFund extends StatelessWidget {
               ),
               Tab(
                 icon: Icon(Icons.local_atm),
-                text: "Manual Deposit",
+                text: "ATM Funding",
               ),
               Tab(
                 icon: Icon(Icons.code_off),

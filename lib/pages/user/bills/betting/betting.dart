@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:form_validator/form_validator.dart';
@@ -40,7 +41,8 @@ class Betting extends HookWidget {
           style: BorderStyle.solid, color: AppColor.primaryColor, width: 2),
     );
     final ValueNotifier<List<BettingProviders>> networkProviders = useState([]);
-    final ValueNotifier<String?> selectedProvider = useState(null);
+    final ValueNotifier<BettingProviders> selectedProvider =
+        useState(BettingProviders());
     final ValueNotifier<bool> valid = useState(false);
     final ValueNotifier<String> userIdName = useState('');
     final ValueNotifier<BettingProviders> pickedNetwork =
@@ -84,6 +86,7 @@ class Betting extends HookWidget {
 
       return null;
     }, [selectedProvider.value]);
+
     final user = context.read<AppBloc>().state.user;
     Future<List<BettingProviders>> getBettingList(
         BuildContext context, ValueNotifier<bool> networkIsLoading) async {
@@ -104,6 +107,7 @@ class Betting extends HookWidget {
               serviceId: res?.data['data'][index]['service_id'],
               service: res?.data['data'][index]['service'],
               logo: res?.data['data'][index]['image'],
+              image: res?.data['data'][index]['image'],
             );
           },
         );
@@ -117,13 +121,14 @@ class Betting extends HookWidget {
 
     final bettingIsLoading = useState(false);
     useEffect(() {
-      if (selectedProvider.value != null) {
+      if (selectedProvider.value.id != null &&
+          networkProviders.value.isNotEmpty) {
         pickedNetwork.value = networkProviders.value.firstWhere(
           (element) {
-            return element.id == selectedProvider.value!;
+            return element.id == selectedProvider.value.id;
           },
         );
-        bettingProviderInputController.text = pickedNetwork.value!.name!;
+        bettingProviderInputController.text = pickedNetwork.value.name!;
       }
 
       return null;
@@ -148,7 +153,6 @@ class Betting extends HookWidget {
           'Authorization': context.read<AppBloc>().state.user?.apiKey
         }),
       );
-      print(res);
       if (context.mounted && res == null) {
         Navigator.of(context, rootNavigator: true).pop();
         alertHelper(context, 'error', 'No Internet Connection');
@@ -156,11 +160,15 @@ class Betting extends HookWidget {
 
       if (context.mounted) {
         if (res?.statusCode == HttpStatus.ok) {
-          // Navigator.of(context, rootNavigator: true).pop();
-          appModalWithoutRoot(context,
-              title: 'Airtime Purchase Successful',
-              child:
-                  successModalWidget(context, message: res?.data['message']));
+          await putLastTransactionId(res?.data['data']['trx_id']);
+          if (context.mounted) {
+            HapticFeedback.heavyImpact();
+            appModalWithoutRoot(context,
+                title: 'Betting Fund Successful',
+                child:
+                    successModalWidget(context, message: res?.data['message']));
+          }
+
           // alertHelper(context, 'success', res?.data['message']);
         } else {
           // Navigator.of(context, rootNavigator: true).pop();
@@ -365,7 +373,7 @@ class Betting extends HookWidget {
                                         context, bettingIsLoading);
                             if (context.mounted) {
                               showProviderPicker(
-                                  context, networkProvider, pickedNetwork);
+                                  context, networkProvider, selectedProvider);
                             }
                           },
                           child: TextFormField(

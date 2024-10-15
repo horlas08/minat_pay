@@ -8,6 +8,7 @@ class RegistrationService {
   final String lastname;
   final String password;
   final String email;
+  final String code;
   final String username;
   final String phone;
 
@@ -16,6 +17,7 @@ class RegistrationService {
       required this.lastname,
       required this.password,
       required this.email,
+      required this.code,
       required this.username,
       required this.phone});
 
@@ -26,6 +28,7 @@ class RegistrationService {
       'email': email,
       'password': password,
       'username': username,
+      'code': code,
       'phonenumber': phone,
       'password_confirmation': password,
     });

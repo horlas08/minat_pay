@@ -56,140 +56,166 @@ class Receipt extends HookWidget {
             ? const Center(child: CircularProgressIndicator())
             : Column(
                 children: [
-                  WidgetsToImage(
-                    controller: shareController,
-                    child: Expanded(
-                      flex: 14,
-                      child: Column(
-                        children: [
-                          const SizedBox(
-                            height: 35,
-                          ),
-                          ClipRRect(
-                            clipBehavior: Clip.hardEdge,
-                            borderRadius: BorderRadius.circular(20),
-                            child: Image.asset(
-                              'assets/images/minatpay_icon.png',
-                              width: 50,
+                  Expanded(
+                    flex: 14,
+                    child: WidgetsToImage(
+                      controller: shareController,
+                      child: Container(
+                        color: Colors.white,
+                        child: Column(
+                          children: [
+                            const SizedBox(
+                              height: 35,
                             ),
-                          ),
-                          const Column(
-                            children: [
-                              SizedBox(
-                                height: 25,
+                            ClipRRect(
+                              clipBehavior: Clip.hardEdge,
+                              borderRadius: BorderRadius.circular(20),
+                              child: Image.asset(
+                                'assets/images/minatpay_icon.png',
+                                width: 50,
                               ),
-                              SizedBox(
-                                height: 20,
-                              )
-                            ],
-                          ),
-                          const SizedBox(
-                            height: 20,
-                          ),
-                          Container(
-                            padding: const EdgeInsets.only(
-                              top: 3,
                             ),
-                            margin: const EdgeInsets.all(10),
-                            constraints: const BoxConstraints(
-                              minHeight: 100,
+                            SizedBox(
+                              height: 70,
                             ),
-                            width: double.infinity,
-                            decoration: BoxDecoration(
-                              boxShadow: [
-                                BoxShadow(
-                                  color: Colors.black.withOpacity(0.4),
-                                  blurRadius: 5,
-                                  offset: const Offset(0, 15),
-                                  spreadRadius: 15,
-                                  blurStyle: BlurStyle.outer,
-                                )
-                              ],
-                              color: AppColor.primaryColor.withOpacity(0.05),
-                              // borderRadius: BorderRadius.circular(10),
-                            ),
-                            child: Column(
-                              children: [
-                                const SizedBox(
-                                  height: 10,
-                                ),
-                                Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    Image.asset(
-                                      'assets/images/MinatPay-LOGO.png',
-                                      height: 20,
-                                    ),
-                                    const Text(
-                                      "Receipt From Minat Pay ",
-                                      style: TextStyle(
-                                        fontWeight: FontWeight.normal,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                                const SizedBox(
-                                  height: 20,
-                                ),
-                                Center(
-                                  child: Text('${DateFormat.yMMMEd().format(
-                                    DateTime.parse(
-                                      transaction.value.datetime!,
-                                    ),
-                                  )} ${DateFormat('kk:mm:a').format(DateTime.parse(
-                                    transaction.value.datetime!,
-                                  ))}'),
-                                ),
-                                const SizedBox(
-                                  height: 30,
-                                ),
-                                TransactionRow(
-                                  left: 'Amount',
-                                  right: transaction.value.amount,
-                                ),
-                                const SizedBox(
-                                  height: 10,
-                                ),
-                                TransactionRow(
-                                  left: 'Transaction Id',
-                                  right: transaction.value.trxid,
-                                ),
-                                const SizedBox(
-                                  height: 10,
-                                ),
-                                TransactionRow(
-                                  left: 'Status',
-                                  right: Row(
-                                    mainAxisAlignment: MainAxisAlignment.center,
+                            Container(
+                              padding: const EdgeInsets.only(
+                                top: 3,
+                              ),
+                              margin: const EdgeInsets.all(10),
+                              constraints: const BoxConstraints(
+                                minHeight: 100,
+                              ),
+                              width: double.infinity,
+                              decoration: BoxDecoration(
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.black.withOpacity(0.4),
+                                    blurRadius: 5,
+                                    offset: const Offset(0, 15),
+                                    spreadRadius: 15,
+                                    blurStyle: BlurStyle.outer,
+                                  )
+                                ],
+                                color: Colors.white,
+                                // borderRadius: BorderRadius.circular(10),
+                              ),
+                              child: Column(
+                                children: [
+                                  const SizedBox(
+                                    height: 10,
+                                  ),
+                                  Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
                                     children: [
-                                      Icon(
-                                        Icons.check_circle,
-                                        color: AppColor.success,
-                                        size: 20,
+                                      Image.asset(
+                                        'assets/images/MinatPay-LOGO.png',
+                                        height: 20,
                                       ),
-                                      Text(
-                                        "Successful",
+                                      const Text(
+                                        "Receipt From Minat Pay ",
                                         style: TextStyle(
-                                          fontSize: 20,
-                                          color: AppColor.success,
                                           fontWeight: FontWeight.normal,
                                         ),
                                       ),
                                     ],
                                   ),
-                                ),
-                                const SizedBox(
-                                  height: 10,
-                                ),
-                                TransactionRow(
-                                  left: 'Description',
-                                  right: transaction.value.message,
-                                ),
-                              ],
+                                  const SizedBox(
+                                    height: 20,
+                                  ),
+                                  Center(
+                                    child: Text('${DateFormat.yMMMEd().format(
+                                      DateTime.parse(
+                                        transaction.value.datetime!,
+                                      ),
+                                    )} ${DateFormat('kk:mm:a').format(DateTime.parse(
+                                      transaction.value.datetime!,
+                                    ))}'),
+                                  ),
+                                  const SizedBox(
+                                    height: 30,
+                                  ),
+                                  TransactionRow(
+                                    left: 'Amount',
+                                    right: transaction.value.amount,
+                                  ),
+                                  const SizedBox(
+                                    height: 10,
+                                  ),
+                                  TransactionRow(
+                                    left: 'Transaction Id',
+                                    right: transaction.value.trxid,
+                                  ),
+                                  const SizedBox(
+                                    height: 10,
+                                  ),
+                                  TransactionRow(
+                                    left: 'Status',
+                                    right: const Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      children: [
+                                        Icon(
+                                          Icons.check_circle,
+                                          color: AppColor.success,
+                                          size: 20,
+                                        ),
+                                        Text(
+                                          "Successful",
+                                          style: TextStyle(
+                                            fontSize: 20,
+                                            color: AppColor.success,
+                                            fontWeight: FontWeight.normal,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                  const SizedBox(
+                                    height: 10,
+                                  ),
+                                  if (transaction.value.data != null &&
+                                      transaction.value.data!.isNotEmpty)
+                                    ...List.generate(
+                                      transaction.value.data!.length,
+                                      (index) {
+                                        return TransactionRow(
+                                          left: 'Status',
+                                          right: const Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.center,
+                                            children: [
+                                              Icon(
+                                                Icons.check_circle,
+                                                color: AppColor.success,
+                                                size: 20,
+                                              ),
+                                              Text(
+                                                "Successful",
+                                                style: TextStyle(
+                                                  fontSize: 20,
+                                                  color: AppColor.success,
+                                                  fontWeight: FontWeight.normal,
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        );
+                                      },
+                                    ),
+                                  const SizedBox(
+                                    height: 10,
+                                  ),
+                                  TransactionRow(
+                                    left: 'Description',
+                                    right: transaction.value.message,
+                                  ),
+                                ],
+                              ),
                             ),
-                          ),
-                        ],
+                          ],
+                        ),
                       ),
                     ),
                   ),

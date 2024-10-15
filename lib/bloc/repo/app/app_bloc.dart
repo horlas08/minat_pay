@@ -22,9 +22,8 @@ class AppBloc extends Bloc<AppEvent, AppState> {
 
   void _addUser(AddUserEvent event, Emitter<AppState> emit) async {
     final user = User.fromMap(event.userData);
-    emit(state.copyWith(user: user));
-
-    print(state.user);
+    final newUser = state.copyWith(user: user);
+    return emit(newUser);
   }
 
   void _addAccount(AddAccountEvent event, Emitter<AppState> emit) async {
@@ -38,11 +37,7 @@ class AppBloc extends Bloc<AppEvent, AppState> {
 
   void _updateUser(UpdateUserEvent event, Emitter<AppState> emit) async {
     final user = User.fromMap(event.userData);
-    emit(state.copyWith(user: user));
-
-    print(state.user);
-
-    // emit(state.update(user: user, account: state.accounts));
-    print(state.user.toString());
+    final newUser = state.copyWith(user: user);
+    return emit(newUser);
   }
 }

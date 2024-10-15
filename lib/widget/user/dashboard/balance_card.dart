@@ -4,6 +4,9 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:go_router/go_router.dart';
 import 'package:minat_pay/config/font.constant.dart';
+import 'package:minat_pay/cubic/app_config_cubit.dart';
+import 'package:minat_pay/model/app.dart';
+import 'package:shake_gesture/shake_gesture.dart';
 import 'package:touchable_opacity/touchable_opacity.dart';
 
 import '../../../bloc/repo/app/app_bloc.dart';
@@ -86,13 +89,38 @@ class BalanceCard extends HookWidget {
                     height: 5,
                   ),
                   if (index == 0)
-                    Text(
-                      "${currency(context)} ${hideBalance.value ? state.user?.balance : "****"}",
-                      style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                            color: Colors.white,
-                            fontWeight: FontWeight.w900,
-                            fontFamily: AppFont.mulish,
-                          ),
+                    BlocBuilder<AppConfigCubit, App>(
+                      builder: (context, buildState) {
+                        if (buildState.enableShakeToHideBalance) {
+                          return ShakeGesture(
+                            onShake: () {
+                              hideBalance.value = !hideBalance.value;
+                            },
+                            child: Text(
+                              "${currency(context)} ${hideBalance.value ? state.user?.balance : "****"}",
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .titleLarge
+                                  ?.copyWith(
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.w900,
+                                    fontFamily: AppFont.mulish,
+                                  ),
+                            ),
+                          );
+                        } else
+                          return Text(
+                            "${currency(context)} ${hideBalance.value ? state.user?.balance : "****"}",
+                            style: Theme.of(context)
+                                .textTheme
+                                .titleLarge
+                                ?.copyWith(
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.w900,
+                                  fontFamily: AppFont.mulish,
+                                ),
+                          );
+                      },
                     )
                   else
                     Text(
@@ -109,6 +137,7 @@ class BalanceCard extends HookWidget {
                   if (index == 0)
                     GestureDetector(
                       onTap: () => context.push('/bills/fund'),
+                      // onTap: () => HapticFeedback.lightImpact(),
                       child: Container(
                         decoration: BoxDecoration(
                           color: Colors.black,

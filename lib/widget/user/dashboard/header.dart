@@ -6,17 +6,16 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:minat_pay/bloc/repo/app/app_bloc.dart';
 
+import '../../../bloc/repo/app/app_state.dart';
+import '../../../helper/helper.dart';
+
 class UserHeader extends HookWidget {
   const UserHeader({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final user = context.read<AppBloc>().state.user;
-    useEffect(
-      () {
-        print(user);
-      },
-    );
+    // final user = context.read<AppBloc>().state.user;
+
     final date = DateTime.timestamp();
 
     return Row(
@@ -24,10 +23,14 @@ class UserHeader extends HookWidget {
         SizedBox(
           height: 60,
           width: 60,
-          child: CircleAvatar(
-            backgroundImage: CachedNetworkImageProvider(
-              user!.photo!,
-            ),
+          child: BlocBuilder<AppBloc, AppState>(
+            builder: (context, state) {
+              return CircleAvatar(
+                backgroundImage: CachedNetworkImageProvider(
+                  state.user!.photo!,
+                ),
+              );
+            },
           ),
         ),
         const SizedBox(
@@ -37,10 +40,14 @@ class UserHeader extends HookWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             const Text("Good Morning"),
-            Text(
-              '${user.firstName}',
-              // "${user?.firstName}",
-              style: const TextStyle(fontWeight: FontWeight.bold),
+            BlocBuilder<AppBloc, AppState>(
+              builder: (context, state) {
+                return Text(
+                  '${state.user?.firstName!}',
+                  // "${user?.firstName}",
+                  style: const TextStyle(fontWeight: FontWeight.bold),
+                );
+              },
             ),
             const Text(
               "Which Bill Would You Like To Pay?",
@@ -58,6 +65,7 @@ class UserHeader extends HookWidget {
           icon: SvgPicture.asset(
             'assets/svg/support.svg',
             height: 25,
+            color: isLight(context) ? Colors.black : Colors.white,
           ),
         )
       ],

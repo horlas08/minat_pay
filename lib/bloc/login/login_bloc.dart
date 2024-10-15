@@ -37,7 +37,6 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
         return emit(state.failed("Check Internet Connection"));
       }
       if (res.statusCode == HttpStatus.ok) {
-        print(res.data);
         final SharedPreferences prefs = await SharedPreferences.getInstance();
         prefs.setString("token", res.data['data']['user_data']['token']);
         prefs.setBool(
@@ -55,6 +54,7 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
           accounts,
         ));
       } else {
+        print("filed here");
         return emit(
           state.failed(res.data['message']),
         );

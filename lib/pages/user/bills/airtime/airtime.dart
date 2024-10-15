@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_native_contact_picker/flutter_native_contact_picker.dart'
@@ -48,7 +49,7 @@ Future<List<AirtimeProviders>?> getAirtimeList(
     context.loaderOverlay.hide();
     return alertHelper(context, 'error', "Check Your Internet Connection");
   }
-  print(res);
+
   if (res?.statusCode == HttpStatus.ok) {
     list = List.generate(
       res?.data['data'].length,
@@ -125,8 +126,8 @@ class Airtime extends HookWidget {
       borderSide: BorderSide(
           style: BorderStyle.solid, color: AppColor.primaryColor, width: 2),
     );
-    final contact_picker.FlutterContactPicker _contactPicker =
-        contact_picker.FlutterContactPicker();
+    final contact_picker.FlutterNativeContactPicker _contactPicker =
+        contact_picker.FlutterNativeContactPicker();
 
     useEffect(() {
       print(networkProviders.value);
@@ -426,7 +427,7 @@ class Airtime extends HookWidget {
                         gridDelegate:
                             const SliverGridDelegateWithFixedCrossAxisCount(
                                 crossAxisCount: 3),
-                        itemCount: networks.length,
+                        itemCount: airtimePrice.length,
                         itemBuilder: (context, index) {
                           return TouchableOpacity(
                             onTapUp: (_) {
@@ -443,9 +444,6 @@ class Airtime extends HookWidget {
                             child: Container(
                               decoration: BoxDecoration(
                                 borderRadius: BorderRadius.circular(20),
-                                color: selectedPlan.value == index
-                                    ? AppColor.primaryColor
-                                    : Colors.black.withOpacity(0.04),
                                 border: Border.all(
                                     color: AppColor.primaryColor,
                                     width: 2,
@@ -466,9 +464,7 @@ class Airtime extends HookWidget {
                                           fontWeight: FontWeight.bold,
                                           fontFamily: AppFont.mulish,
                                           fontSize: 15,
-                                          color: selectedPlan.value == index
-                                              ? Colors.white
-                                              : AppColor.secondaryColor,
+                                          color: AppColor.secondaryColor,
                                         ),
                                       ),
                                       const SizedBox(
@@ -479,9 +475,7 @@ class Airtime extends HookWidget {
                                         style: TextStyle(
                                             fontWeight: FontWeight.bold,
                                             fontSize: 20,
-                                            color: selectedPlan.value == index
-                                                ? Colors.white
-                                                : AppColor.primaryColor),
+                                            color: AppColor.primaryColor),
                                       ),
                                     ],
                                   ),
@@ -494,9 +488,7 @@ class Airtime extends HookWidget {
                                           fontWeight: FontWeight.bold,
                                           fontFamily: AppFont.mulish,
                                           fontSize: 10,
-                                          color: selectedPlan.value == index
-                                              ? Colors.white
-                                              : AppColor.secondaryColor,
+                                          color: AppColor.secondaryColor,
                                         ),
                                       ),
                                       const SizedBox(
@@ -504,13 +496,11 @@ class Airtime extends HookWidget {
                                       ),
                                       Text(
                                         "${currency(context)}${airtimePrice[index]['price']}",
-                                        style: TextStyle(
+                                        style: const TextStyle(
                                           fontFamily: AppFont.mulish,
                                           fontWeight: FontWeight.bold,
                                           fontSize: 10,
-                                          color: selectedPlan.value == index
-                                              ? Colors.white
-                                              : AppColor.primaryColor,
+                                          color: AppColor.primaryColor,
                                         ),
                                       ),
                                     ],
@@ -673,6 +663,7 @@ class Airtime extends HookWidget {
         print(res?.data['trx_id']);
         await putLastTransactionId(res?.data['trx_id']);
         if (context.mounted) {
+          HapticFeedback.heavyImpact();
           appModalWithoutRoot(context,
               title: 'Airtime Purchase Successful',
               child:

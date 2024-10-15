@@ -19,6 +19,16 @@ class AppState {
       accounts: accounts ?? this.accounts,
     );
   }
+
+  AppState duplicateWith({
+    User? user,
+    List<Account>? accounts,
+  }) {
+    return AppState(
+      user: user ?? this.user,
+      accounts: accounts ?? this.accounts,
+    );
+  }
 }
 
 // final class AppInitState extends AppState {

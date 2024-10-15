@@ -4,11 +4,14 @@ import 'package:minat_pay/model/app.dart';
 class AppConfigCubit extends HydratedCubit<App> {
   AppConfigCubit()
       : super(App(
-            authState: false,
-            pinState: false,
-            themeMode: 'light',
-            enableFingerPrint: true,
-            enableNotification: true));
+          authState: false,
+          pinState: false,
+          themeMode: 'light',
+          enableFingerPrint: true,
+          enableNotification: true,
+          enableShakeToHideBalance: true,
+          autoTheme: false,
+        ));
 
   @override
   void onChange(Change<App> change) {
@@ -21,6 +24,18 @@ class AppConfigCubit extends HydratedCubit<App> {
     // SharedPreferences preferences = await SharedPreferences.getInstance();
     // preferences.setString('theme', mode);
     emit(state.copyWith(themeMode: mode));
+  }
+
+  changeAutoThemeMode(bool mode) async {
+    // SharedPreferences preferences = await SharedPreferences.getInstance();
+    // preferences.setString('theme', mode);
+    emit(state.copyWith(autoTheme: mode));
+  }
+
+  toggleThemeMode() {
+    emit(state.copyWith(
+        themeMode: state.themeMode == 'light' ? 'dark' : 'light'));
+    print(state.themeMode);
   }
 
   comfirmPinState(bool status) async {
@@ -37,15 +52,9 @@ class AppConfigCubit extends HydratedCubit<App> {
     emit(state.copyWith(enableNotification: mode));
   }
 
-  // getThemeMode() async {
-  //   SharedPreferences preferences = await SharedPreferences.getInstance();
-  //   final mode = preferences.getString('theme');
-  //   if (mode != null) {
-  //     emit(state.copyWith(themeMode: mode));
-  //   }
-  //
-  //   return mode ?? state.themeMode;
-  // }
+  enableShakeToHideBalance(bool mode) async {
+    emit(state.copyWith(enableShakeToHideBalance: mode));
+  }
 
   @override
   App? fromJson(Map<String, dynamic> json) => App.fromJson(json);

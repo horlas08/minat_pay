@@ -52,9 +52,9 @@ class TransactionItem extends StatelessWidget {
                   Random.secure().nextInt(255),
                   1),
             ),
-            child: const Text(
-              'B',
-              style: TextStyle(fontSize: 25),
+            child: Text(
+              data['type'].toString().split('')[0],
+              style: const TextStyle(fontSize: 25),
             ),
           ),
           const SizedBox(

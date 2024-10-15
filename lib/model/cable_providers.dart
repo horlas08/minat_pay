@@ -7,6 +7,8 @@ class CableProviders extends Providers {
   String? name;
   String? product_id;
   @override
+  String? image;
+  @override
   String? logo;
   String? service;
   String? ncwallet;
@@ -15,9 +17,10 @@ class CableProviders extends Providers {
   String? status;
 
   CableProviders(
-      {this.id = '',
+      {this.id,
       this.name = '',
       this.logo = '',
+      this.image = '',
       this.product_id,
       this.service,
       this.ncwallet,
@@ -32,6 +35,7 @@ class CableProviders extends Providers {
     name = json['name'];
     product_id = json['product_id'];
     service = json['service'];
+    image = json['image'];
     logo = json['image'];
     ncwallet = json['ncwallet'];
     easyaccess = json['easyaccess'];
@@ -46,6 +50,7 @@ class CableProviders extends Providers {
     data['product_id'] = product_id;
     data['service'] = service;
     data['logo'] = logo;
+    data['image'] = image;
     data['ncwallet'] = ncwallet;
     data['easyaccess'] = easyaccess;
     data['api'] = api;

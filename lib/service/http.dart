@@ -16,7 +16,6 @@ void configureDio() {
   dio.interceptors.add(
     InterceptorsWrapper(
       onRequest: (RequestOptions options, RequestInterceptorHandler handler) {
-        print("_______");
         print(AppBloc().state.user?.toString());
         // Do something before request is sent.
         // If you want to resolve the request with custom data,

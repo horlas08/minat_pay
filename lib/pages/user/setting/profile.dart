@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:io';
 
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -10,6 +11,7 @@ import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:loader_overlay/loader_overlay.dart';
 import 'package:minat_pay/bloc/repo/app/app_bloc.dart';
+import 'package:minat_pay/bloc/repo/app/app_event.dart';
 import 'package:minat_pay/bloc/repo/app/app_state.dart';
 import 'package:minat_pay/config/color.constant.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -120,32 +122,32 @@ Future<void> updateProfileRequest(
   context.loaderOverlay.show();
   final SharedPreferences prefs = await SharedPreferences.getInstance();
   final formData = {
-    fieldName: fieldValue,
+    fieldName.toLowerCase(): fieldValue,
     'token': prefs.getString('token'),
   };
-  final res = await curlPostRequest(
+  print(formData);
+  final resp = await curlPostRequest(
     path: profileUpdate,
     data: formData,
-    options: Options(
-        // headers: {
-        //   Headers.contentTypeHeader: Headers.multipartFormDataContentType,
-        // },
-        // contentType: Headers.multipartFormDataContentType,
-        ),
   );
-  if (res?.statusCode == HttpStatus.ok && context.mounted) {
+  print(resp);
+  if (resp?.statusCode == HttpStatus.ok && context.mounted) {
     final res = await refreshUSerDetail();
     if (res == null && context.mounted) {
       context.pop();
-      context.loaderOverlay.show();
+      context.loaderOverlay.hide();
       return await alertHelper(
           context, "error", "Unable to Update Check Internet Connection");
     }
+    print(res);
     if (res?.statusCode == HttpStatus.ok && context.mounted) {
+      context
+          .read<AppBloc>()
+          .add(UpdateUserEvent(userData: res?.data['data']['user_data']));
       context.pop();
-      context.loaderOverlay.show();
-      return await alertHelper(
-          context, "error", "Unable to Update Check Internet Connection");
+      context.loaderOverlay.hide();
+
+      return await alertHelper(context, "success", resp?.data['message']);
     }
   }
 }
@@ -164,8 +166,62 @@ class Profile extends HookWidget {
 
     final updateFieldController = TextEditingController();
 
-    Future _pickImage() async {
-      final XFile? image = await picker.pickImage(source: ImageSource.gallery);
+    Future _pickImage({required ImageSource source}) async {
+      final XFile? image = await picker.pickImage(
+        source: source,
+        imageQuality: 100,
+        maxHeight: 500,
+        maxWidth: 500,
+      );
+      if (image != null) {
+        File file = File(image.path);
+        String fileName = file.path.split('/').last;
+        final SharedPreferences prefs = await SharedPreferences.getInstance();
+        var formData = FormData.fromMap({
+          'token': prefs.getString('token'),
+          'photo': await MultipartFile.fromFile(
+            file.path,
+            filename: fileName,
+          ),
+        });
+        if (context.mounted) {
+          context.loaderOverlay.show();
+          final resp = await curlPostRequest(
+              path: profileUpdate,
+              data: formData,
+              options: Options(
+                contentType: Headers.multipartFormDataContentType,
+                headers: {
+                  Headers.contentTypeHeader:
+                      Headers.multipartFormDataContentType
+                },
+              ),
+              queryParams: {'token': prefs.getString("token")});
+          print(resp);
+          if (resp?.statusCode == HttpStatus.ok && context.mounted) {
+            final res = await refreshUSerDetail();
+            print(res);
+            if (res == null && context.mounted) {
+              context.pop();
+              context.loaderOverlay.hide();
+              return await alertHelper(context, "error",
+                  "Unable to Update Check Internet Connection");
+            }
+            print(res);
+            if (res?.statusCode == HttpStatus.ok && context.mounted) {
+              context.read<AppBloc>().add(
+                  UpdateUserEvent(userData: res?.data['data']['user_data']));
+              context.pop();
+              context.loaderOverlay.hide();
+
+              return await alertHelper(
+                  context, "success", resp?.data['message']);
+            } else {
+              if (context.mounted) context.loaderOverlay.hide();
+            }
+          }
+        }
+      }
     }
 
     return Scaffold(
@@ -203,12 +259,8 @@ class Profile extends HookWidget {
                                       IconButton(
                                         onPressed: () async {
                                           try {
-                                            await picker.pickImage(
-                                              source: ImageSource.gallery,
-                                              imageQuality: 100,
-                                              maxHeight: 500,
-                                              maxWidth: 500,
-                                            );
+                                            _pickImage(
+                                                source: ImageSource.gallery);
                                           } catch (e) {
                                             alertHelper(
                                                 context, 'error', e.toString());
@@ -227,11 +279,8 @@ class Profile extends HookWidget {
                                     children: [
                                       IconButton(
                                         onPressed: () async {
-                                          await picker.pickImage(
+                                          _pickImage(
                                             source: ImageSource.camera,
-                                            imageQuality: 100,
-                                            maxHeight: 500,
-                                            maxWidth: 500,
                                           );
                                         },
                                         icon: const Icon(
@@ -265,10 +314,11 @@ class Profile extends HookWidget {
                         child: Stack(
                           alignment: Alignment.bottomCenter,
                           children: [
-                            const Positioned(
+                            Positioned(
                               child: CircleAvatar(
-                                backgroundImage:
-                                    AssetImage("assets/images/avatar.jpg"),
+                                backgroundImage: CachedNetworkImageProvider(
+                                  state.user!.photo!,
+                                ),
                                 radius: 50,
                                 backgroundColor: AppColor.success,
                               ),
@@ -318,9 +368,10 @@ class Profile extends HookWidget {
                         ),
                         IconButton(
                           onPressed: () {
-                            updateFieldController.text = state.user!.firstName!;
+                            updateFieldController.text =
+                                state.user!.firstName!.trim();
                             fieldName.value = 'firstName';
-                            fieldValue.value = state.user!.firstName!;
+                            fieldValue.value = state.user!.firstName!.trim();
                             showEditProfileModal(context, updateFieldController,
                                 fieldName.value!, fieldValue.value!);
                           },
@@ -354,9 +405,10 @@ class Profile extends HookWidget {
                         ),
                         IconButton(
                           onPressed: () {
-                            updateFieldController.text = state.user!.lastName!;
+                            updateFieldController.text =
+                                state.user!.lastName!.trim();
                             fieldName.value = 'lastName';
-                            fieldValue.value = state.user!.lastName!;
+                            fieldValue.value = state.user!.lastName!.trim();
                             showEditProfileModal(context, updateFieldController,
                                 fieldName.value!, fieldValue.value!);
                           },
@@ -412,9 +464,9 @@ class Profile extends HookWidget {
                         IconButton(
                           onPressed: () {
                             updateFieldController.text =
-                                state.user!.phoneNumber!;
+                                state.user!.phoneNumber!.trim();
                             fieldName.value = 'phoneNumber';
-                            fieldValue.value = state.user!.phoneNumber!;
+                            fieldValue.value = state.user!.phoneNumber!.trim();
                             showEditProfileModal(context, updateFieldController,
                                 fieldName.value!, fieldValue.value!);
                           },

@@ -25,47 +25,13 @@ ThemeData lightTheme = ThemeData(
     fillColor: AppColor.greyLightColor.withOpacity(0.1),
     filled: true,
     errorMaxLines: 2,
-    // enabledBorder: OutlineInputBorder(
-    //   borderSide: const BorderSide(
-    //     color: AppColor.greyColor,
-    //     width: 3,
-    //   ),
-    //   borderRadius: BorderRadius.circular(8),
-    // ),
-
-    // focusedErrorBorder: OutlineInputBorder(
-    //   borderSide: const BorderSide(
-    //     color: AppColor.danger,
-    //     width: 3,
-    //   ),
-    //   borderRadius: BorderRadius.circular(8),
-    // ),
-    // errorBorder: OutlineInputBorder(
-    //   borderSide: const BorderSide(
-    //     color: AppColor.danger,
-    //     width: 3,
-    //   ),
-    //   borderRadius: BorderRadius.circular(8),
-    // ),
     errorStyle: const TextStyle(
-        color: AppColor.danger,
-        fontSize: 12,
-        fontFamily: AppFont.mulish,
-        fontWeight: FontWeight.bold),
-    // border: OutlineInputBorder(
-    //   borderSide: const BorderSide(
-    //     color: AppColor.greyColor,
-    //     width: 3,
-    //   ),
-    //   borderRadius: BorderRadius.circular(8),
-    // ),
-    // focusedBorder: OutlineInputBorder(
-    //   borderSide: const BorderSide(
-    //     color: AppColor.primaryColor,
-    //     width: 3,
-    //   ),
-    //   borderRadius: BorderRadius.circular(8),
-    // ),
+      color: AppColor.danger,
+      fontSize: 12,
+      fontFamily: AppFont.mulish,
+      fontWeight: FontWeight.bold,
+    ),
+
     border: InputBorder.none,
     enabledBorder: InputBorder.none,
     errorBorder: InputBorder.none,
@@ -78,6 +44,14 @@ ThemeData lightTheme = ThemeData(
       fontWeight: FontWeight.bold,
       fontSize: 20,
     ),
+  ),
+  iconTheme: const IconThemeData(
+    color: Colors.black,
+  ),
+  appBarTheme: const AppBarTheme(
+    color: Colors.white,
+    titleTextStyle: TextStyle(color: Colors.black),
+    iconTheme: IconThemeData(color: Colors.black),
   ),
   elevatedButtonTheme: ElevatedButtonThemeData(
     style: ButtonStyle(
@@ -95,7 +69,8 @@ ThemeData lightTheme = ThemeData(
 );
 
 ThemeData darkTheme = lightTheme.copyWith(
-  scaffoldBackgroundColor: Colors.black.withOpacity(0.4),
+  scaffoldBackgroundColor: AppColor.darkBg,
+  // scaffoldBackgroundColor: Colors.black,
   textTheme: const TextTheme(
     titleLarge: TextStyle(fontSize: 40),
     titleMedium: TextStyle(
@@ -116,79 +91,16 @@ ThemeData darkTheme = lightTheme.copyWith(
       color: Colors.white,
     ),
   ),
-);
-
-ThemeData pinkTheme = lightTheme.copyWith(
-  // primaryColor: const Color(0xFFF49FB6),
-  textTheme: const TextTheme(
-    titleLarge: TextStyle(fontSize: 40),
-    titleMedium: TextStyle(
-      fontSize: 25,
-      color: Colors.white,
-    ),
-    bodyLarge: TextStyle(
-        fontSize: 22,
-        color: Colors.white,
-        fontWeight: FontWeight.w900,
-        fontFamily: AppFont.mulish),
-    titleSmall: TextStyle(
-      fontSize: 15,
-      color: Colors.white,
-    ),
-    labelSmall: TextStyle(
-// color: AppColor.greyColor,
-      color: Colors.white,
-    ),
+  bottomSheetTheme: const BottomSheetThemeData(
+    backgroundColor: AppColor.darkBg,
   ),
-  scaffoldBackgroundColor: const Color(0xFFFAF8F0),
-);
-
-ThemeData halloweenTheme = lightTheme.copyWith(
-  // primaryColor: const Color(0xFF55705A),
-  scaffoldBackgroundColor: const Color(0xFFE48873),
-  textTheme: const TextTheme(
-    titleLarge: TextStyle(fontSize: 40),
-    titleMedium: TextStyle(
-      fontSize: 25,
-      color: Colors.white,
-    ),
-    bodyLarge: TextStyle(
-        fontSize: 22,
-        color: Colors.white,
-        fontWeight: FontWeight.w900,
-        fontFamily: AppFont.mulish),
-    titleSmall: TextStyle(
-      fontSize: 15,
-      color: Colors.white,
-    ),
-    labelSmall: TextStyle(
-// color: AppColor.greyColor,
-      color: Colors.white,
-    ),
+  dialogBackgroundColor: AppColor.darkBg,
+  appBarTheme: const AppBarTheme(
+    color: AppColor.darkBg,
+    titleTextStyle: TextStyle(color: Colors.white),
+    iconTheme: IconThemeData(color: Colors.white),
   ),
-);
-
-ThemeData darkBlueTheme = lightTheme.copyWith(
-  // primaryColor: const Color(0xFF1E1E2C),
-  textTheme: const TextTheme(
-    titleLarge: TextStyle(fontSize: 40),
-    titleMedium: TextStyle(
-      fontSize: 25,
-      color: Colors.white,
-    ),
-    bodyLarge: TextStyle(
-        fontSize: 22,
-        color: Colors.white,
-        fontWeight: FontWeight.w900,
-        fontFamily: AppFont.mulish),
-    titleSmall: TextStyle(
-      fontSize: 15,
-      color: Colors.white,
-    ),
-    labelSmall: TextStyle(
-// color: AppColor.greyColor,
-      color: Colors.white,
-    ),
+  iconTheme: const IconThemeData(
+    color: Colors.white,
   ),
-  scaffoldBackgroundColor: const Color(0xFF2D2D44),
 );

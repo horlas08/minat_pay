@@ -31,20 +31,18 @@ final List<Map<String, dynamic>> allBills = [
     "arrow": Icons.arrow_forward_ios_rounded,
     "route": "/bills/betting"
   },
-
   {
     "icon": Icons.phone_iphone,
     "name": "Add Funds",
     "arrow": Icons.arrow_forward_ios_rounded,
     "route": "/bills/fund"
   },
-
-  // {
-  //   "icon": Icons.phone_iphone,
-  //   "name": "Transfer",
-  //   "arrow": Icons.arrow_forward_ios_rounded,
-  //   "route": "/bills/transfer"
-  // },
+  {
+    "icon": Icons.bookmark_border,
+    "name": "Exam Pin",
+    "arrow": Icons.arrow_forward_ios_rounded,
+    "route": "/bills/epin"
+  },
 ];
 final List<Map<String, dynamic>> providers = [
   {
@@ -71,27 +69,31 @@ final List<Map<String, dynamic>> providers = [
 final List<Map<String, dynamic>> airtimePrice = [
   {
     'id': 0,
-    'price': '50',
-  },
-  {
-    'id': 1,
     'price': '100',
   },
   {
-    'id': 2,
+    'id': 1,
     'price': '200',
   },
   {
-    'id': 3,
+    'id': 2,
     'price': '500',
   },
   {
-    'id': 4,
+    'id': 3,
     'price': '1000',
   },
   {
-    'id': 5,
+    'id': 4,
     'price': '2000',
+  },
+  {
+    'id': 5,
+    'price': '5000',
+  },
+  {
+    'id': 5,
+    'price': '5000',
   },
 ];
 final List<Map<String, dynamic>> bettingPrice = [
@@ -117,6 +119,32 @@ final List<Map<String, dynamic>> bettingPrice = [
   },
   {
     'id': 5,
+    'price': '10000',
+  },
+];
+final List<Map<String, dynamic>> eletricityPrice = [
+  {
+    'id': 2,
+    'price': '1000',
+  },
+  {
+    'id': 3,
+    'price': '2000',
+  },
+  {
+    'id': 4,
+    'price': '2500',
+  },
+  {
+    'id': 5,
+    'price': '3000',
+  },
+  {
+    'id': 0,
+    'price': '500',
+  },
+  {
+    'id': 1,
     'price': '10000',
   },
 ];

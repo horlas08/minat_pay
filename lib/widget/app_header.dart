@@ -6,6 +6,7 @@ import '../config/font.constant.dart';
 class AppHeader extends StatelessWidget implements PreferredSizeWidget {
   final String title;
   final bool? showAction;
+
   const AppHeader({super.key, required this.title, this.showAction = true});
 
   @override
@@ -36,6 +37,13 @@ class AppHeader extends StatelessWidget implements PreferredSizeWidget {
               )
             : const SizedBox()
       ],
+      // iconTheme: BlocBuilder<AppConfigCubit, App>(
+      //   builder: (context, state) {
+      //     return IconThemeData(
+      //       color: isLight(context) ? Colors.black : Colors.white,
+      //     );
+      //   },
+      // ),
     );
   }
 

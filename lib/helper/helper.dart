@@ -154,6 +154,34 @@ Future<Response?> curlPostRequest(
   }
 }
 
+Future<Response?> curlPutRequest(
+    {required String path,
+    Object? data,
+    Map<String, dynamic>? queryParams,
+    Options? options}) async {
+  try {
+    Response res = await dio.put(path,
+        data: data, queryParameters: queryParams, options: options);
+    return res;
+  } on DioException catch (error) {
+    return error.response;
+  }
+}
+
+Future<Response?> curlDeleteRequest(
+    {required String path,
+    Object? data,
+    Map<String, dynamic>? queryParams,
+    Options? options}) async {
+  try {
+    Response res = await dio.delete(path,
+        data: data, queryParameters: queryParams, options: options);
+    return res;
+  } on DioException catch (error) {
+    return error.response;
+  }
+}
+
 Future<Response?> curl2PostRequest(
     {required String path,
     Object? data,
@@ -590,4 +618,18 @@ Future<void> handleLogOut(BuildContext context) async {
       return await alertHelper(context, "error", res?.data['message']);
     }
   }
+}
+
+bool isLight(BuildContext context) {
+  if (context.watch<AppConfigCubit>().state.autoTheme) {
+    return WidgetsBinding.instance.platformDispatcher.platformBrightness ==
+        Brightness.light;
+  }
+  // if (WidgetsBinding.instance.platformDispatcher.platformBrightness ==
+  //     Brightness.light) {}
+  // if (Theme.of(context).brightness == Brightness.light) {}
+  if (context.watch<AppConfigCubit>().state.themeMode == 'light') {
+    return true;
+  }
+  return false;
 }

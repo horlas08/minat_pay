@@ -8,6 +8,8 @@ class BettingProviders extends Providers {
   String? serviceId;
   @override
   String? logo;
+  @override
+  String? image;
   String? service;
   String? ncwallet;
   String? easyaccess;
@@ -17,6 +19,7 @@ class BettingProviders extends Providers {
   BettingProviders(
       {this.id = '',
       this.name = '',
+      this.image = '',
       this.logo = '',
       this.serviceId,
       this.service,
@@ -33,6 +36,7 @@ class BettingProviders extends Providers {
     serviceId = json['service_id'];
     service = json['service'];
     logo = json['image'];
+    image = json['image'];
     ncwallet = json['ncwallet'];
     easyaccess = json['easyaccess'];
     api = json['api'];
@@ -46,6 +50,7 @@ class BettingProviders extends Providers {
     data['service_id'] = serviceId;
     data['service'] = service;
     data['logo'] = logo;
+    data['image'] = image;
     data['ncwallet'] = ncwallet;
     data['easyaccess'] = easyaccess;
     data['api'] = api;

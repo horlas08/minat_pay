@@ -4,11 +4,12 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_native_contact_picker/flutter_native_contact_picker.dart'
     as contact_picker;
-import 'package:internet_connection_checker/internet_connection_checker.dart';
+import 'package:go_router/go_router.dart';
 import 'package:loader_overlay/loader_overlay.dart';
 import 'package:minat_pay/config/app.config.dart';
 import 'package:minat_pay/config/color.constant.dart';
@@ -184,6 +185,7 @@ class Data extends HookWidget {
           if (res?.statusCode == HttpStatus.ok) {
             await putLastTransactionId(res?.data['data']['trx_id']);
             if (context.mounted) {
+              HapticFeedback.heavyImpact();
               appModalWithoutRoot(context,
                   title: 'Data Purchase Successful',
                   child: successModalWidget(context,
@@ -415,22 +417,22 @@ class Data extends HookWidget {
       );
     }
 
-    useEffect(() {
-      final connectionChecker = InternetConnectionChecker();
-
-      final subscription = connectionChecker.onStatusChange.listen(
-        (InternetConnectionStatus status) {
-          if (status == InternetConnectionStatus.connected) {
-            print('Connected to the internet');
-          } else {
-            print('Disconnected from the internet');
-          }
-        },
-      );
-
-      // Remember to cancel the subscription when it's no longer needed
-      subscription.cancel();
-    }, []);
+    // useEffect(() {
+    //   final connectionChecker = InternetConnectionChecker();
+    //
+    //   final subscription = connectionChecker.onStatusChange.listen(
+    //     (InternetConnectionStatus status) {
+    //       if (status == InternetConnectionStatus.connected) {
+    //         print('Connected to the internet');
+    //       } else {
+    //         print('Disconnected from the internet');
+    //       }
+    //     },
+    //   );
+    //
+    //   // Remember to cancel the subscription when it's no longer needed
+    //   subscription.cancel();
+    // }, []);
     useEffect(() {
       if (networkProviders.value.isEmpty) {
         getDataFromServer(context, networkIsLoading, networkProviders).then(
@@ -458,8 +460,8 @@ class Data extends HookWidget {
       borderSide: BorderSide(
           style: BorderStyle.solid, color: AppColor.primaryColor, width: 2),
     );
-    final contact_picker.FlutterContactPicker _contactPicker =
-        new contact_picker.FlutterContactPicker();
+    final contact_picker.FlutterNativeContactPicker _contactPicker =
+        new contact_picker.FlutterNativeContactPicker();
     final _dataFormKey = GlobalKey<FormState>();
 
     return BlocConsumer<AppConfigCubit, App>(
@@ -483,7 +485,9 @@ class Data extends HookWidget {
             ),
             actions: [
               TextButton(
-                onPressed: () {},
+                onPressed: () {
+                  context.pushNamed('transactions');
+                },
                 child: const Text('History',
                     style: TextStyle(
                         fontSize: 20,

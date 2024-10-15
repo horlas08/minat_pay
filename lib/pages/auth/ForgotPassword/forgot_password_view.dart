@@ -9,6 +9,8 @@ import '../../../bloc/forgot_password/forgot_password_cubit.dart';
 import '../../../widget/Button.dart';
 
 class ForgotPasswordPage extends StatelessWidget {
+  const ForgotPasswordPage({super.key});
+
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
@@ -135,31 +137,28 @@ class ForgotPasswordPage extends StatelessWidget {
                     const SizedBox(
                       height: 20,
                     ),
-                    Positioned(
-                      child: FadeInUp(
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            const Text("Ohh I Remember"),
-                            const SizedBox(
-                              width: 5,
+                    FadeInUp(
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          const Text("Ohh I Remember"),
+                          const SizedBox(
+                            width: 5,
+                          ),
+                          TouchableOpacity(
+                            onTap: () => context.go('/login'),
+                            child: Text(
+                              "Login",
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .labelSmall
+                                  ?.copyWith(
+                                      color:
+                                          Theme.of(context).colorScheme.primary,
+                                      fontSize: 14),
                             ),
-                            TouchableOpacity(
-                              onTap: () => context.go('/login'),
-                              child: Text(
-                                "Login",
-                                style: Theme.of(context)
-                                    .textTheme
-                                    .labelSmall
-                                    ?.copyWith(
-                                        color: Theme.of(context)
-                                            .colorScheme
-                                            .primary,
-                                        fontSize: 14),
-                              ),
-                            ),
-                          ],
-                        ),
+                          ),
+                        ],
                       ),
                     ),
                   ],

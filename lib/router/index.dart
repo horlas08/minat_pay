@@ -11,6 +11,7 @@ import 'package:minat_pay/pages/user/bills/all_bills.dart';
 import 'package:minat_pay/pages/user/bills/betting/betting.dart';
 import 'package:minat_pay/pages/user/bills/cable/cable.dart';
 import 'package:minat_pay/pages/user/bills/electricity/electricity.dart';
+import 'package:minat_pay/pages/user/bills/epin/epin.dart';
 import 'package:minat_pay/pages/user/bills/funds/add_fund.dart';
 import 'package:minat_pay/pages/user/bills/transfer/transfer.dart';
 import 'package:minat_pay/pages/user/setting/app_settings.dart';
@@ -131,6 +132,13 @@ class AppRouter {
               name: 'betting',
               builder: (context, state) {
                 return const Betting();
+              },
+            ),
+            GoRoute(
+              path: 'epin',
+              name: 'epin',
+              builder: (context, state) {
+                return const Epin();
               },
             ),
             GoRoute(

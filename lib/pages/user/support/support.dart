@@ -11,7 +11,7 @@ class Support extends StatelessWidget {
   Widget build(BuildContext context) {
     final user = context.read<AppBloc>().state.user;
     return Scaffold(
-      appBar: AppHeader(
+      appBar: const AppHeader(
         title: "",
         showAction: false,
       ),

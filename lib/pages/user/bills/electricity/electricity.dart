@@ -6,6 +6,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:form_validator/form_validator.dart';
+import 'package:go_router/go_router.dart';
 import 'package:loader_overlay/loader_overlay.dart';
 import 'package:minat_pay/config/color.constant.dart';
 import 'package:minat_pay/model/app.dart';
@@ -30,20 +31,25 @@ final _formKey = GlobalKey<FormState>();
 Future<void> handleCheckOut(
   BuildContext context, {
   required String amount,
+  required ValueNotifier<ElectricityProviders> selectedProvider,
+  required ValueNotifier<String> electricityType,
   // required String phone,
   // required String networkId,
 }) async {
   context.loaderOverlay.show();
   final res = await curl2PostRequest(
-    path: postBetting,
+    path: postElectricity,
     data: {
       'amount': amount,
+      'meter_number': meterController.text,
       'trx_id': DateTime.now().microsecondsSinceEpoch,
+      'disco': selectedProvider.value.id,
+      'meter_type': electricityType.value.toLowerCase(),
     },
     options: Options(
         headers: {'Authorization': context.read<AppBloc>().state.user?.apiKey}),
   );
-
+  print(res);
   if (context.mounted && res == null) {
     Navigator.of(context, rootNavigator: true).pop();
     alertHelper(context, 'error', 'No Internet Connection');
@@ -51,10 +57,13 @@ Future<void> handleCheckOut(
 
   if (context.mounted) {
     if (res?.statusCode == HttpStatus.ok) {
-      // Navigator.of(context, rootNavigator: true).pop();
-      appModalWithoutRoot(context,
-          title: ' Purchase Successful',
-          child: successModalWidget(context, message: res?.data['message']));
+      await putLastTransactionId(res?.data['data']['trx_id']);
+      if (context.mounted) {
+        HapticFeedback.heavyImpact();
+        appModalWithoutRoot(context,
+            title: ' Purchase Successful',
+            child: successModalWidget(context, message: res?.data['message']));
+      }
     } else {
       // Navigator.of(context, rootNavigator: true).pop();
       alertHelper(context, 'error', res?.data['message'], duration: 6);
@@ -104,6 +113,7 @@ class Electricity extends HookWidget {
     final networkIsLoading = useState(false);
     final ValueNotifier<String?> userIdName = useState(null);
     final focusNode = useFocusNode();
+
     Future<List<ElectricityProviders>> getNetworkList(
         BuildContext context, ValueNotifier<bool> networkIsLoading) async {
       networkIsLoading.value = true;
@@ -151,10 +161,12 @@ class Electricity extends HookWidget {
               'Authorization': context.read<AppBloc>().state.user?.apiKey
             }));
         print(res?.statusCode);
+        print(res);
         if (context.mounted) {
+          print(res);
           context.loaderOverlay.hide();
           if (res?.statusCode != HttpStatus.ok) {
-            userIdName.value = '';
+            userIdName.value = null;
             await alertHelper(context, 'error', res?.data['message']);
           } else {
             userIdName.value = res?.data['data']['customer_name'];
@@ -281,7 +293,7 @@ class Electricity extends HookWidget {
                 const Spacer(),
                 user?.userType == true
                     ? Text(
-                        '${currency(context)}${amountController.value}',
+                        '${currency(context)}0',
                         style: const TextStyle(
                           fontSize: 18,
                           fontFamily: AppFont.mulish,
@@ -413,6 +425,8 @@ class Electricity extends HookWidget {
           handleCheckOut(
             context,
             amount: amountController.text,
+            selectedProvider: selectedProvider,
+            electricityType: electricityType,
           );
         }
       },
@@ -429,7 +443,9 @@ class Electricity extends HookWidget {
             ),
             actions: [
               TextButton(
-                onPressed: () {},
+                onPressed: () {
+                  context.pushNamed('transactions');
+                },
                 child: const Text(
                   'History',
                   style: TextStyle(
@@ -665,10 +681,7 @@ class Electricity extends HookWidget {
                           ],
                           controller: meterController,
                           focusNode: focusNode,
-                          validator: ValidationBuilder()
-                              .required()
-                              .maxLength(11)
-                              .build(),
+                          validator: ValidationBuilder().required().build(),
                           decoration: const InputDecoration(
                             hintText: "Enter Meter Number",
                             hintStyle: TextStyle(
@@ -691,7 +704,8 @@ class Electricity extends HookWidget {
                         ),
                         Builder(
                           builder: (context) {
-                            if (userIdName.value != null) {
+                            if (userIdName.value != null &&
+                                userIdName.value!.isNotEmpty) {
                               return NamePreview(text: userIdName.value!);
                             }
                             return const SizedBox();
@@ -717,14 +731,14 @@ class Electricity extends HookWidget {
                           gridDelegate:
                               const SliverGridDelegateWithFixedCrossAxisCount(
                                   crossAxisCount: 3),
-                          itemCount: bettingPrice.length,
+                          itemCount: eletricityPrice.length,
                           itemBuilder: (context, index) {
                             return TouchableOpacity(
                               onTapDown: (_) => amountSelected.value = index,
                               onTapUp: (_) => amountSelected.value = null,
                               onTap: () {
                                 amountController.text =
-                                    bettingPrice[index]['price'].toString();
+                                    eletricityPrice[index]['price'].toString();
                               },
                               activeOpacity: 0.7,
                               // onTapDown: (_) => selectedPlan.value = null,
@@ -763,7 +777,7 @@ class Electricity extends HookWidget {
                                           width: 4,
                                         ),
                                         Text(
-                                          bettingPrice[index]['price']
+                                          eletricityPrice[index]['price']
                                               .toString(),
                                           style: TextStyle(
                                               fontWeight: FontWeight.bold,

@@ -54,9 +54,19 @@ class Manual extends HookWidget {
       try {
         final response =
             await monnify.value?.initializePayment(transaction: transaction);
-
-        // await alertHelper(context, 'success', response.toString());
-        log(response.toString());
+        if (response != null) {
+          if (context.mounted) {
+            if (response.transactionStatus == 'CANCELLED') {
+              _amountController.text = '';
+              await alertHelper(context, 'error',
+                  "Payment Failed ${response.currencyCode} ${response.amountPaid}");
+            } else {
+              _amountController.text = '';
+              await alertHelper(context, 'success',
+                  "Amount Of ${response.currencyCode} ${response.amountPaid} Was Paid Successful");
+            }
+          }
+        }
       } catch (e) {
         log('$e');
         await alertHelper(context, 'success', e.toString());

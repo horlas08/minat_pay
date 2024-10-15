@@ -9,10 +9,12 @@ import 'package:loader_overlay/loader_overlay.dart';
 import 'package:local_auth/local_auth.dart';
 import 'package:minat_pay/config/color.constant.dart';
 import 'package:minat_pay/cubic/login_verify/login_verify_state.dart';
+import 'package:minat_pay/model/app.dart';
 import 'package:touchable_opacity/touchable_opacity.dart';
 
 import '../../../bloc/repo/app/app_bloc.dart';
 import '../../../bloc/repo/app/app_event.dart';
+import '../../../cubic/app_config_cubit.dart';
 import '../../../cubic/login_verify/login_verify_cubit.dart';
 import '../../../helper/helper.dart';
 
@@ -98,9 +100,7 @@ class LoginVerifyPage extends HookWidget {
             biometricOnly: true,
           ),
         );
-        print("__________");
-        print(authenticated.value);
-        print("__________");
+
         _isAuthenticating.value = false;
         _authorized.value = 'Authenticating';
       } on PlatformException catch (e) {
@@ -124,16 +124,19 @@ class LoginVerifyPage extends HookWidget {
         _isAuthenticating.value = true;
         _authorized.value = 'Authenticating';
         authenticated.value = await auth.authenticate(
-          localizedReason: 'Let OS determine authentication method',
+          localizedReason: 'MinatPay authentication',
           options: const AuthenticationOptions(
-            stickyAuth: true,
-          ),
+              stickyAuth: true,
+              useErrorDialogs: true,
+              sensitiveTransaction: true,
+              biometricOnly: true),
         );
         _isAuthenticating.value = false;
       } on PlatformException catch (e) {
         print(e);
         _isAuthenticating.value = false;
         _authorized.value = 'Error - ${e.message}';
+        print(_authorized.value);
         return;
       }
       if (!mounted.value) {
@@ -313,30 +316,37 @@ class LoginVerifyPage extends HookWidget {
                       height: 30,
                     ),
                     if (_supportState.value == _SupportState.supported)
-                      FadeInUp(
-                        duration: const Duration(milliseconds: 1900),
-                        child: ElevatedButton(
-                          onPressed: () {
-                            FocusManager.instance.primaryFocus?.unfocus();
-                            _authenticate();
-                          },
-                          style: ButtonStyle(
-                            side: const WidgetStatePropertyAll(
-                              BorderSide(
-                                  color: AppColor.primaryColor, width: 2),
-                            ),
-                            backgroundColor:
-                                WidgetStateProperty.all(Colors.white),
-                            minimumSize: WidgetStateProperty.all(
-                              const Size.fromHeight(65),
-                            ),
-                          ),
-                          child: const Icon(
-                            Icons.fingerprint,
-                            size: 40,
-                            color: AppColor.primaryColor,
-                          ),
-                        ),
+                      BlocBuilder<AppConfigCubit, App>(
+                        builder: (context, state) {
+                          print(state);
+                          if (state.enableFingerPrint)
+                            return FadeInUp(
+                              duration: const Duration(milliseconds: 1900),
+                              child: ElevatedButton(
+                                onPressed: () {
+                                  FocusManager.instance.primaryFocus?.unfocus();
+                                  _authenticate();
+                                },
+                                style: ButtonStyle(
+                                  side: const WidgetStatePropertyAll(
+                                    BorderSide(
+                                        color: AppColor.primaryColor, width: 2),
+                                  ),
+                                  backgroundColor:
+                                      WidgetStateProperty.all(Colors.white),
+                                  minimumSize: WidgetStateProperty.all(
+                                    const Size.fromHeight(65),
+                                  ),
+                                ),
+                                child: const Icon(
+                                  Icons.fingerprint,
+                                  size: 40,
+                                  color: AppColor.primaryColor,
+                                ),
+                              ),
+                            );
+                          return SizedBox();
+                        },
                       ),
                     const SizedBox(
                       height: 20,

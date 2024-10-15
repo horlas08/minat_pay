@@ -7,7 +7,6 @@ import 'package:go_router/go_router.dart';
 import 'package:minat_pay/widget/user/dashboard/transaction_item.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:touchable_opacity/touchable_opacity.dart';
-import 'package:widget_visibility_detector/widget_visibility_detector.dart';
 
 import '../../../bloc/repo/app/app_bloc.dart';
 import '../../../config/color.constant.dart';
@@ -66,107 +65,100 @@ class Transaction extends HookWidget {
     //   _refreshController.loadComplete();
     // }
 
-    return WidgetVisibilityDetector(
-      onAppear: () {
-        _refreshController.refreshCompleted();
-        print('tab1 onAppear');
-        print(user);
-      },
-      child: Column(
-        children: [
-          Row(
-            children: [
-              Text(
-                "Transaction",
-                style: Theme.of(context)
-                    .textTheme
-                    .titleSmall
-                    ?.copyWith(fontWeight: FontWeight.w900),
+    return Column(
+      children: [
+        Row(
+          children: [
+            Text(
+              "Transaction",
+              style: Theme.of(context)
+                  .textTheme
+                  .titleSmall
+                  ?.copyWith(fontWeight: FontWeight.w900),
+            ),
+            const Spacer(),
+            TouchableOpacity(
+              activeOpacity: 0.4,
+              child: Text(
+                "View All",
+                style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                      fontWeight: FontWeight.bold,
+                      fontFamily: 'Mulish',
+                      color: AppColor.blueColor,
+                    ),
               ),
-              const Spacer(),
-              TouchableOpacity(
-                activeOpacity: 0.4,
-                child: Text(
-                  "View All",
-                  style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                        fontWeight: FontWeight.bold,
-                        fontFamily: 'Mulish',
-                        color: AppColor.blueColor,
-                      ),
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(
-            height: 30,
-          ),
-          SizedBox(
-            height: 300,
-            child: loading.value
-                ? const Center(
-                    child: CircularProgressIndicator(),
-                  )
-                : transactionList.value.isNotEmpty
-                    ? SmartRefresher(
-                        enablePullUp: false,
+            ),
+          ],
+        ),
+        const SizedBox(
+          height: 30,
+        ),
+        SizedBox(
+          height: 300,
+          child: loading.value
+              ? const Center(
+                  child: CircularProgressIndicator(),
+                )
+              : transactionList.value.isNotEmpty
+                  ? SmartRefresher(
+                      enablePullUp: false,
 
-                        physics: const BouncingScrollPhysics(),
-                        onRefresh: _onRefresh,
-                        controller: _refreshController,
-                        header: const WaterDropHeader(),
-                        child: Column(
-                          children: [
-                            ...List.generate(
-                              transactionList.value.length,
-                              (index) {
-                                return TouchableOpacity(
-                                  onTap: () {
-                                    context.pushNamed('transactionDetails',
-                                        pathParameters: {
-                                          'id': transactionList.value[index]
-                                              ['trxid']
-                                        });
-                                  },
-                                  activeOpacity: 0.98,
-                                  behavior: HitTestBehavior.translucent,
-                                  child: TransactionItem(
-                                    data: transactionList.value[index],
-                                  ),
-                                );
-                              },
-                            ),
-                          ],
-                        ),
-                        // child: ListView.builder(
-                        //     physics: const BouncingScrollPhysics(),
-                        //
-                        //     itemCount: transactionList.value.length,
-                        //     itemBuilder: (context, index) {
-                        //       return TouchableOpacity(
-                        //         onTap: () {
-                        //           context.pushNamed('transactionDetails',
-                        //               pathParameters: {
-                        //                 'id': transactionList.value[index]
-                        //                     ['trxid']
-                        //               });
-                        //         },
-                        //         activeOpacity: 0.98,
-                        //         behavior: HitTestBehavior.translucent,
-                        //         child: TransactionItem(
-                        //           data: transactionList.value[index],
-                        //         ),
-                        //       );
-                        //     }),
-                      )
-                    : const Center(
-                        child: Text(
-                          "No Transaction Found",
-                          style: TextStyle(fontSize: 26),
-                        ),
+                      physics: const BouncingScrollPhysics(),
+                      onRefresh: _onRefresh,
+                      controller: _refreshController,
+                      header: const WaterDropHeader(),
+                      child: Column(
+                        children: [
+                          ...List.generate(
+                            transactionList.value.length,
+                            (index) {
+                              return TouchableOpacity(
+                                onTap: () {
+                                  context.pushNamed('transactionDetails',
+                                      pathParameters: {
+                                        'id': transactionList.value[index]
+                                            ['trxid']
+                                      });
+                                },
+                                activeOpacity: 0.98,
+                                behavior: HitTestBehavior.translucent,
+                                child: TransactionItem(
+                                  data: transactionList.value[index],
+                                ),
+                              );
+                            },
+                          ),
+                        ],
                       ),
-          )
-        ],
-      ),
+                      // child: ListView.builder(
+                      //     physics: const BouncingScrollPhysics(),
+                      //
+                      //     itemCount: transactionList.value.length,
+                      //     itemBuilder: (context, index) {
+                      //       return TouchableOpacity(
+                      //         onTap: () {
+                      //           context.pushNamed('transactionDetails',
+                      //               pathParameters: {
+                      //                 'id': transactionList.value[index]
+                      //                     ['trxid']
+                      //               });
+                      //         },
+                      //         activeOpacity: 0.98,
+                      //         behavior: HitTestBehavior.translucent,
+                      //         child: TransactionItem(
+                      //           data: transactionList.value[index],
+                      //         ),
+                      //       );
+                      //     }),
+                    )
+                  : const Center(
+                      child: Text(
+                        "No Transaction Found",
+                        style: TextStyle(fontSize: 26),
+                      ),
+                    ),
+        )
+      ],
     );
   }
 }

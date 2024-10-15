@@ -49,7 +49,6 @@ class _LoginPageState extends State<LoginPage> {
           context.loaderOverlay.show();
         } else if (state is LoginFailed) {
           context.loaderOverlay.hide();
-
           await alertHelper(context, 'error', state.message);
         } else if (state is LoginSuccess) {
           context.read<AppBloc>().add(AddUserEvent(userData: state.userData));
@@ -59,6 +58,8 @@ class _LoginPageState extends State<LoginPage> {
           context.go('/user');
           context.loaderOverlay.hide();
           await alertHelper(context, 'success', "Login Success");
+        } else {
+          print("i mistake enter here");
         }
       },
       builder: (context, state) {

@@ -1,3 +1,4 @@
+import 'package:animated_theme_switcher/animated_theme_switcher.dart';
 import 'package:flutter/material.dart';
 import 'package:minat_pay/theme/theme_config.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -18,29 +19,35 @@ class ThemeService {
   final allThemes = <String, ThemeData>{
     'dark': darkTheme,
     'light': lightTheme,
-    'pink': pinkTheme,
-    'darkBlue': darkBlueTheme,
-    'halloween': halloweenTheme,
   };
 
   String get previousThemeName {
     String? themeName = prefs.getString('previousThemeName');
     if (themeName == null) {
-      final isPlatformDark =
-          WidgetsBinding.instance.window.platformBrightness == Brightness.dark;
-      themeName = isPlatformDark ? 'light' : 'dark';
+      themeName = 'light';
+      // final isPlatformDark =
+      //     WidgetsBinding.instance.window.platformBrightness == Brightness.dark;
+      // themeName = isPlatformDark ? 'light' : 'dark';
     }
     return themeName;
   }
 
   get initial {
     String? themeName = prefs.getString('theme');
-    if (themeName == null) {
-      final isPlatformDark =
-          WidgetsBinding.instance.window.platformBrightness == Brightness.dark;
-      themeName = isPlatformDark ? 'dark' : 'light';
-    }
+    final themeMode = getThemeMode();
+
+    return ThemeModel(
+      themeMode: themeMode,
+      lightTheme: allThemes['light']!,
+      darkTheme: allThemes['dark']!,
+    );
+
     return allThemes[themeName];
+  }
+
+  ThemeMode getThemeMode() {
+    final index = prefs.getInt('themeMode');
+    return ThemeMode.values[index ?? 0];
   }
 
   save(String newThemeName) {

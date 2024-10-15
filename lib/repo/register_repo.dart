@@ -7,6 +7,7 @@ class RegisterRepo {
   final String password;
   final String email;
   final String username;
+  final String code;
   final String phone;
 
   RegisterRepo(
@@ -14,6 +15,7 @@ class RegisterRepo {
       required this.lastname,
       required this.password,
       required this.email,
+      required this.code,
       required this.username,
       required this.phone});
 
@@ -23,6 +25,7 @@ class RegisterRepo {
             lastname: lastname,
             username: username,
             password: password,
+            code: code,
             email: email,
             phone: phone)
         .request();
