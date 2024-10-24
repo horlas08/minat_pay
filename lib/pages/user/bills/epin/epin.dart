@@ -22,11 +22,6 @@ import '../../../../model/app.dart';
 import '../../../../model/epin_providers.dart';
 import '../../../../widget/Button.dart';
 
-final TextEditingController amountController = TextEditingController();
-
-final TextEditingController quantityController = TextEditingController();
-
-final epinProviderInputController = TextEditingController();
 final _formKey = GlobalKey<FormState>();
 
 class Epin extends HookWidget {
@@ -34,12 +29,18 @@ class Epin extends HookWidget {
 
   @override
   Widget build(BuildContext context) {
-    final focusNode = useFocusNode();
-    final ValueNotifier<int?> amountSelected = useState(null);
-    UnderlineInputBorder borderStyle = const UnderlineInputBorder(
-      borderSide: BorderSide(
-          style: BorderStyle.solid, color: AppColor.primaryColor, width: 2),
-    );
+    final TextEditingController amountController = useTextEditingController();
+
+    final TextEditingController quantityController = useTextEditingController();
+    final epinProviderInputController = useTextEditingController();
+
+    useEffect(() {
+      amountController.text = '';
+      quantityController.text = '';
+      epinProviderInputController.text = '';
+      return null;
+    }, []);
+
     final ValueNotifier<List<EpinProviders>> examProviders = useState([]);
     final user = context.read<AppBloc>().state.user;
     final ValueNotifier<EpinProviders> selectedProvider =
@@ -49,7 +50,7 @@ class Epin extends HookWidget {
     final ValueNotifier<String> amountInTotal = useState('');
     final ValueNotifier<EpinProviders> pickedExamType =
         useState(EpinProviders());
-    Future<void> handleQuantityChange() async {
+    void handleQuantityChange() {
       if (pickedExamType.value.amount != null &&
           quantityController.value.text != '') {
         final amount = user!.userType!
@@ -60,22 +61,8 @@ class Epin extends HookWidget {
             "Total Amount Is ${(double.parse(amount!) * double.parse(quantityController.text)).toString()} NGN";
       } else {
         amountInTotal.value = '';
-        await alertHelper(context, 'error', 'something went wrong');
       }
     }
-
-    useEffect(() {
-      focusNode.addListener(handleQuantityChange);
-      return () => focusNode.removeListener(handleQuantityChange);
-    }, [focusNode]);
-
-    useEffect(() {
-      if (quantityController.text.isNotEmpty) {
-        handleQuantityChange();
-      }
-
-      return null;
-    }, [selectedProvider.value]);
 
     Future<List<EpinProviders>> getEpinList(
         BuildContext context, ValueNotifier<bool> networkIsLoading) async {
@@ -89,8 +76,9 @@ class Epin extends HookWidget {
           },
         ),
       );
-      print(res);
+
       if (res?.statusCode == HttpStatus.ok) {
+        print(res);
         list = List.generate(
           res?.data['data'].length,
           (index) {
@@ -98,9 +86,9 @@ class Epin extends HookWidget {
               id: res?.data['data'][index]['id'],
               name: res?.data['data'][index]['name'],
               amount: res?.data['data'][index]['amount'],
-              amountAgent: res?.data['data'][index]['amountAgent'],
+              amountAgent: res?.data['data'][index]['amount_agent'],
               type: res?.data['data'][index]['type'],
-              amountApi: res?.data['data'][index]['amountApi'],
+              amountApi: res?.data['data'][index]['amount_api'],
               instruction: res?.data['data'][index]['instruction'],
               number: res?.data['data'][index]['number'],
               status: res?.data['data'][index]['status'],
@@ -123,6 +111,7 @@ class Epin extends HookWidget {
             return element.id == selectedProvider.value.id;
           },
         );
+        print(pickedExamType.value);
         epinProviderInputController.text = pickedExamType.value.name!;
       }
 
@@ -153,6 +142,8 @@ class Epin extends HookWidget {
 
       if (context.mounted) {
         if (res?.statusCode == HttpStatus.ok) {
+          amountController.text = '';
+          quantityController.text = '';
           await putLastTransactionId(res?.data['data']['trx_id']);
           if (context.mounted) {
             HapticFeedback.heavyImpact();
@@ -376,6 +367,11 @@ class Epin extends HookWidget {
                             onTapOutside: (v) {
                               FocusManager.instance.primaryFocus?.unfocus();
                             },
+                            onTap: () {
+                              if (quantityController.text.isNotEmpty) {
+                                handleQuantityChange();
+                              }
+                            },
                           ),
                         ),
                         const SizedBox(
@@ -399,7 +395,7 @@ class Epin extends HookWidget {
                             signed: false,
                           ),
                           controller: quantityController,
-                          focusNode: focusNode,
+                          // focusNode: focusNode,
                           onChanged: (value) {
                             handleQuantityChange();
                           },

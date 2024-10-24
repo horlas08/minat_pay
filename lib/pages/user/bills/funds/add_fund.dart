@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:minat_pay/pages/user/bills/funds/method/atm.dart';
 import 'package:minat_pay/pages/user/bills/funds/method/bank.dart';
 import 'package:minat_pay/pages/user/bills/funds/method/coupon.dart';
-import 'package:minat_pay/pages/user/bills/funds/method/manual.dart';
 
 import '../../../../config/font.constant.dart';
 
@@ -58,7 +58,7 @@ class AddFund extends StatelessWidget {
         body: const TabBarView(
           children: [
             Bank(),
-            Manual(),
+            Atm(),
             Coupon(),
           ],
         ),

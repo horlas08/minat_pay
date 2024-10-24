@@ -164,7 +164,7 @@ class Profile extends HookWidget {
     final ValueNotifier<String?> fieldName = useState(null);
     final ValueNotifier<String?> fieldValue = useState(null);
 
-    final updateFieldController = TextEditingController();
+    final updateFieldController = useTextEditingController();
 
     Future _pickImage({required ImageSource source}) async {
       final XFile? image = await picker.pickImage(

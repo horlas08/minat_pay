@@ -21,10 +21,6 @@ import '../../../../helper/helper.dart';
 import '../../../../model/cable_providers.dart';
 import '../../../../widget/Button.dart';
 
-final TextEditingController amountController = TextEditingController();
-
-final TextEditingController idController = TextEditingController();
-
 final _formKey = GlobalKey<FormState>();
 
 UnderlineInputBorder borderStyle = const UnderlineInputBorder(
@@ -39,6 +35,17 @@ class Cable extends HookWidget {
 
   @override
   Widget build(BuildContext context) {
+    final TextEditingController amountController = useTextEditingController();
+
+    final TextEditingController idController = useTextEditingController();
+
+    useEffect(() {
+      amountController.text = '';
+      idController.text = '';
+      cableProviderInputController.text = '';
+      cablePlanInputController.text = '';
+      return null;
+    }, []);
     final focusNode = useFocusNode();
     final ValueNotifier<int?> amountSelected = useState(null);
 
@@ -66,12 +73,16 @@ class Cable extends HookWidget {
             }));
 
         if (context.mounted) {
+          if (res == null) {
+            await alertHelper(context, 'error', "Connection Timeout");
+            return;
+          }
           context.loaderOverlay.hide();
-          if (res?.statusCode != HttpStatus.ok) {
+          if (res.statusCode != HttpStatus.ok) {
             userIdName.value = '';
-            await alertHelper(context, 'error', res?.data['message']);
+            await alertHelper(context, 'error', res.data['message']);
           } else {
-            userIdName.value = res?.data['data']['customer_name'];
+            userIdName.value = res.data['data']['customer_name'];
           }
         }
       }
@@ -175,7 +186,7 @@ class Cable extends HookWidget {
         path: postCable,
         data: {
           'smartcard_number': idController.text,
-          'variation_id': selectedPlan.value?['id'],
+          'variation_id': selectedPlan.value?['val_id'],
           'service_id': pickedNetwork.value.id,
           'trx_id': DateTime.now().microsecondsSinceEpoch,
         },
@@ -191,6 +202,10 @@ class Cable extends HookWidget {
 
       if (context.mounted) {
         if (res?.statusCode == HttpStatus.ok) {
+          amountController.text = '';
+          idController.text = '';
+          cableProviderInputController.text = '';
+          cablePlanInputController.text = '';
           await putLastTransactionId(res?.data['data']['trx_id']);
           if (context.mounted) {
             HapticFeedback.heavyImpact();

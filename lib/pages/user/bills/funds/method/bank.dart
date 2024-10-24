@@ -2,7 +2,7 @@ import 'dart:io';
 import 'dart:math';
 
 import 'package:animated_icon/animated_icon.dart';
-import 'package:dio/src/response.dart';
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -22,32 +22,34 @@ import '../../../../../bloc/repo/app/app_event.dart';
 import '../../../../../bloc/repo/app/app_state.dart';
 import '../../../../../widget/Button.dart';
 
-final _bvnKey = GlobalKey<FormState>();
-final bnvFieldController = TextEditingController();
+final bvnFieldController = TextEditingController();
 
 class Bank extends HookWidget {
   const Bank({super.key});
 
   @override
   Widget build(BuildContext context) {
-    List<Color> balanceColor = [Colors.red, Colors.greenAccent, Colors.purple];
-    final ValueNotifier<int> accountType = useState(1);
-    final accounts = context.read<AppBloc>().state.accounts;
+    final _bvnAccountGenerateKey = GlobalKey<FormState>();
 
-    Future<Response?> generateMonnifyAccount(BuildContext context) async {
+    useEffect(() {
+      bvnFieldController.text = '';
+      return null;
+    }, []);
+    final ValueNotifier<int> accountType = useState<int>(1);
+    Future<Response?> generateMonnifyAccount(
+        BuildContext context, ValueNotifier<int> accountType) async {
       final SharedPreferences prefs = await SharedPreferences.getInstance();
 
       final res = await curlPostRequest(
           path: accountType.value == 1 ? generatemonnify : generatepsb,
           data: {
             'token': prefs.getString('token'),
-            'bvn': bnvFieldController.text,
+            'bvn': bvnFieldController.text,
           });
-
       return res;
     }
 
-    showBvnModal(BuildContext context) {
+    showBvnModal(BuildContext context, ValueNotifier<int> accountType) {
       showGeneralDialog(
         context: context,
         barrierDismissible: true,
@@ -56,7 +58,7 @@ class Bank extends HookWidget {
           return AlertDialog(
             // icon: Icon(Icons.add),
             title: const Text(
-              "Enter Bvn",
+              "Enter Your Correct Bvn Details",
               textAlign: TextAlign.center,
               style: TextStyle(fontSize: 14),
             ),
@@ -68,17 +70,17 @@ class Bank extends HookWidget {
               // height: 100,
               // width: double.infinity,
               constraints: const BoxConstraints(
-                maxHeight: 180,
+                maxHeight: 280,
                 minHeight: 100,
               ),
               child: Form(
-                  key: _bvnKey,
+                  key: _bvnAccountGenerateKey,
                   child: Column(
                     // mainAxisAlignment: MainAxisAlignment.start,
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(
-                        'Bnv',
+                      const Text(
+                        'Your Bvn Here',
                         textAlign: TextAlign.start,
                         style: TextStyle(
                           fontSize: 12,
@@ -87,7 +89,7 @@ class Bank extends HookWidget {
                       ),
                       TextFormField(
                         validator: ValidationBuilder().required().build(),
-                        controller: bnvFieldController,
+                        controller: bvnFieldController,
                         keyboardType: TextInputType.number,
                         autovalidateMode: AutovalidateMode.onUserInteraction,
                         style: const TextStyle(color: AppColor.primaryColor),
@@ -108,17 +110,23 @@ class Bank extends HookWidget {
                           FocusManager.instance.primaryFocus?.unfocus();
                         },
                       ),
-                      SizedBox(
+                      const SizedBox(
                         height: 20,
+                      ),
+                      const Text(
+                          "As Required By The Central Bank Of Nigeria (CBN), Before You Can Fund Your Wallet With A Virtual Account, We Would Need To Verify Your Identity Using Your BVN. This Process Is Automatic And You Would Be Able To Fund Your Wallet Once Verified."),
+                      SizedBox(
+                        height: 10,
                       ),
                       SizedBox(
                         width: double.infinity,
                         child: ElevatedButton(
                           onPressed: () async {
-                            if (_bvnKey.currentState!.validate()) {
+                            if (_bvnAccountGenerateKey.currentState!
+                                .validate()) {
                               context.loaderOverlay.show();
-                              final resp =
-                                  await generateMonnifyAccount(context);
+                              final resp = await generateMonnifyAccount(
+                                  context, accountType);
                               if (resp == null && context.mounted) {
                                 context.pop();
                                 context.loaderOverlay.hide();
@@ -126,6 +134,8 @@ class Bank extends HookWidget {
                                     "Err Internet Connection");
                               }
                               if (resp?.statusCode == HttpStatus.ok) {
+                                bvnFieldController.text = '';
+
                                 final res = await refreshUSerDetail();
                                 if (res == null && context.mounted) {
                                   context.pop();
@@ -136,14 +146,26 @@ class Bank extends HookWidget {
                                 print(res);
                                 if (res?.statusCode == HttpStatus.ok &&
                                     context.mounted) {
-                                  context.read<AppBloc>().add(UpdateUserEvent(
-                                      userData: res?.data['data']
-                                          ['user_data']));
-                                  context.pop();
-                                  context.loaderOverlay.hide();
+                                  try {
+                                    final accounts = (res?.data['data']
+                                            ['accounts'] as List)
+                                        .map((itemWord) =>
+                                            itemWord as Map<String, dynamic>)
+                                        .toList();
+                                    context.read<AppBloc>().add(UpdateUserEvent(
+                                        userData: res?.data['data']
+                                            ['user_data']));
+                                    context.read<AppBloc>().add(
+                                        AddAccountEvent(accounts: accounts));
+                                    context.pop();
+                                    context.loaderOverlay.hide();
 
-                                  return await alertHelper(context, "success",
-                                      resp?.data['message']);
+                                    return await alertHelper(context, "success",
+                                        resp?.data['message']);
+                                  } catch (error) {
+                                    await alertHelper(
+                                        context, "error", error.toString());
+                                  }
                                 }
                               } else {
                                 if (context.mounted) {
@@ -158,8 +180,8 @@ class Bank extends HookWidget {
                               }
                             }
                           },
-                          child: Text(
-                            'Create Bank',
+                          child: const Text(
+                            'Create Virtual Account',
                             style: TextStyle(color: Colors.white),
                           ),
                         ),
@@ -176,7 +198,6 @@ class Bank extends HookWidget {
       scrollDirection: Axis.vertical,
       child: BlocBuilder<AppBloc, AppState>(
         builder: (context, state) {
-          print(state.user?.hasPsb!);
           return Column(
             crossAxisAlignment: CrossAxisAlignment.center,
             mainAxisAlignment: MainAxisAlignment.center,
@@ -252,7 +273,7 @@ class Bank extends HookWidget {
                               if (accountType.value != 1) {
                                 accountType.value = 1;
                               }
-                              showBvnModal(context);
+                              showBvnModal(context, accountType);
                             },
                             child: const Text(
                               "Generate Monnify Acc.",
@@ -273,10 +294,10 @@ class Bank extends HookWidget {
                               if (accountType.value != 2) {
                                 accountType.value = 2;
                               }
-                              showBvnModal(context);
+                              showBvnModal(context, accountType);
                             },
                             child: const Text(
-                              "Generate Psb Acc",
+                              "Generate 9Psb Acct",
                               style: TextStyle(
                                 color: Colors.white,
                               ),
@@ -286,7 +307,7 @@ class Bank extends HookWidget {
                     ],
                   ),
                 ),
-              ...?accounts?.map(
+              ...?state.accounts?.map(
                 (account) {
                   return Container(
                     margin: const EdgeInsets.all(20),
@@ -330,7 +351,7 @@ class Bank extends HookWidget {
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
                               const Text(
-                                "Bank Bank",
+                                "Bank Name",
                                 style: TextStyle(
                                   fontSize: 15,
                                   fontWeight: FontWeight.bold,

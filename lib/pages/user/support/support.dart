@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:minat_pay/bloc/repo/app/app_bloc.dart';
+import 'package:minat_pay/main.dart';
 import 'package:minat_pay/widget/app_header.dart';
 
 class Support extends StatelessWidget {
@@ -22,12 +23,12 @@ class Support extends StatelessWidget {
           children: [
             Text(
               "Hello ${user?.firstName}",
-              style: TextStyle(
+              style: const TextStyle(
                 fontSize: 20,
                 fontWeight: FontWeight.w800,
               ),
             ),
-            Text(
+            const Text(
               "How can we help you today?",
               style: TextStyle(
                 fontSize: 10,
@@ -35,7 +36,7 @@ class Support extends StatelessWidget {
                 fontWeight: FontWeight.w800,
               ),
             ),
-            SizedBox(
+            const SizedBox(
               height: 30,
             ),
             FittedBox(
@@ -45,84 +46,84 @@ class Support extends StatelessWidget {
                 width: 214,
               ),
             ),
-            SizedBox(
+            const SizedBox(
               height: 40,
             ),
-            const Row(
+            Row(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                Icon(Icons.support_agent_rounded),
-                SizedBox(
+                const Icon(Icons.support_agent_rounded),
+                const SizedBox(
                   width: 15,
                 ),
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
+                    const Text(
                       "Call center line",
                       style: TextStyle(fontWeight: FontWeight.bold),
                     ),
                     Text(
-                      "+2348139990000",
-                      style: TextStyle(color: Colors.grey),
+                      appServer.serverResponse.contact!.call!,
+                      style: const TextStyle(color: Colors.grey),
                     ),
                   ],
                 )
               ],
             ),
-            SizedBox(
+            const SizedBox(
               height: 20,
             ),
-            const Row(
+            Row(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                Icon(
+                const Icon(
                   Icons.email_outlined,
                 ),
-                SizedBox(
+                const SizedBox(
                   width: 15,
                 ),
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
+                    const Text(
                       "Email Us",
                       style: TextStyle(fontWeight: FontWeight.bold),
                     ),
                     Text(
-                      "hello@minatpay.com",
-                      style: TextStyle(color: Colors.grey),
+                      appServer.serverResponse.contact!.email!,
+                      style: const TextStyle(color: Colors.grey),
                     ),
                   ],
                 )
               ],
             ),
-            SizedBox(
+            const SizedBox(
               height: 20,
             ),
             Row(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 SvgPicture.asset("assets/svg/WhatsappLogo.svg"),
-                SizedBox(
+                const SizedBox(
                   width: 15,
                 ),
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
+                    const Text(
                       "Whatsapp line",
                       style: TextStyle(fontWeight: FontWeight.bold),
                     ),
                     Text(
-                      "+2348139990000",
-                      style: TextStyle(color: Colors.grey),
+                      appServer.serverResponse.contact!.whatsapp!,
+                      style: const TextStyle(color: Colors.grey),
                     ),
                   ],
                 ),
               ],
             ),
-            SizedBox(
+            const SizedBox(
               height: 20,
             ),
           ],

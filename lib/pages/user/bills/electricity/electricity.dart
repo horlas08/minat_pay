@@ -57,6 +57,9 @@ Future<void> handleCheckOut(
 
   if (context.mounted) {
     if (res?.statusCode == HttpStatus.ok) {
+      providerInputController.text = '';
+      amountController.text = '';
+      meterController.text = '';
       await putLastTransactionId(res?.data['data']['trx_id']);
       if (context.mounted) {
         HapticFeedback.heavyImpact();
@@ -100,6 +103,15 @@ class Electricity extends HookWidget {
 
   @override
   Widget build(BuildContext context) {
+    useEffect(() {
+      providerInputController.text = '';
+      amountController.text = '';
+      meterController.text = '';
+      return () {
+        amountController.dispose();
+        meterController.dispose();
+      };
+    }, []);
     final ValueNotifier<List<ElectricityProviders>> networkProviders =
         useState([]);
     final ValueNotifier<int?> amountSelected = useState(null);
@@ -139,7 +151,7 @@ class Electricity extends HookWidget {
         );
       }
       Future.delayed(const Duration(seconds: 10));
-      print(res);
+
       networkProviders.value = list;
       networkIsLoading.value = false;
       return list;
@@ -389,19 +401,6 @@ class Electricity extends HookWidget {
                   Navigator.of(context, rootNavigator: true).pop(context);
                 }
                 showConfirmPinRequest(context);
-
-                // valid.addListener(
-                //   () {
-                //     if (valid.value == true) {
-                //       handleCheckOut(
-                //         context,
-                //         amount: amountController.text,
-                //         // phone: '0${phoneController.value.nsn}',
-                //         // networkId: selectedNetwork.value.toString(),
-                //       );
-                //     }
-                //   },
-                // );
               },
               child: const Text(
                 "Pay",
@@ -743,6 +742,7 @@ class Electricity extends HookWidget {
                               activeOpacity: 0.7,
                               // onTapDown: (_) => selectedPlan.value = null,
                               child: Container(
+                                height: 100,
                                 decoration: BoxDecoration(
                                   borderRadius: BorderRadius.circular(20),
                                   color: amountSelected.value == index
@@ -758,7 +758,7 @@ class Electricity extends HookWidget {
                                 child: Column(
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   children: [
-                                    Row(
+                                    Column(
                                       mainAxisAlignment:
                                           MainAxisAlignment.center,
                                       children: [
@@ -789,37 +789,6 @@ class Electricity extends HookWidget {
                                         ),
                                       ],
                                     ),
-                                    Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.center,
-                                      children: [
-                                        Text(
-                                          "Pay",
-                                          style: TextStyle(
-                                            fontWeight: FontWeight.bold,
-                                            fontFamily: AppFont.mulish,
-                                            fontSize: 10,
-                                            color: amountSelected.value == index
-                                                ? Colors.white
-                                                : AppColor.secondaryColor,
-                                          ),
-                                        ),
-                                        const SizedBox(
-                                          width: 4,
-                                        ),
-                                        Text(
-                                          "${currency(context)}${bettingPrice[index]['price']}",
-                                          style: TextStyle(
-                                              fontFamily: AppFont.mulish,
-                                              fontWeight: FontWeight.bold,
-                                              fontSize: 10,
-                                              color:
-                                                  amountSelected.value == index
-                                                      ? Colors.white
-                                                      : AppColor.primaryColor),
-                                        ),
-                                      ],
-                                    ),
                                   ],
                                 ),
                               ),
@@ -834,7 +803,7 @@ class Electricity extends HookWidget {
                                 controller: amountController,
                                 decoration: InputDecoration(
                                   filled: false,
-                                  hintText: "50, - 1,000,000",
+                                  hintText: "Enter Amount",
                                   helperText: '',
                                   prefix: Padding(
                                     padding: const EdgeInsets.all(8.0),
@@ -911,3 +880,5 @@ class Electricity extends HookWidget {
     );
   }
 }
+
+//XAA

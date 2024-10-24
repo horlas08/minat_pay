@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:form_validator/form_validator.dart';
 import 'package:loader_overlay/loader_overlay.dart';
 import 'package:minat_pay/config/app.config.dart';
@@ -14,11 +15,15 @@ import '../../../../../widget/Button.dart';
 final _couponKeyForm = GlobalKey<FormState>();
 final _couponController = TextEditingController();
 
-class Coupon extends StatelessWidget {
+class Coupon extends HookWidget {
   const Coupon({super.key});
 
   @override
   Widget build(BuildContext context) {
+    useEffect(() {
+      _couponController.text = '';
+      return null;
+    }, []);
     return Padding(
       padding: const EdgeInsets.all(20.0),
       child: Form(

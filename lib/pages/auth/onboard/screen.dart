@@ -20,6 +20,10 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
   void initState() {
     _controller = PageController();
     SystemChannels.textInput.invokeMethod('TextInput.hide');
+    //
+    // if (context.read<AppConfigCubit>().state.onboardSkip) {
+    //   return GoRouter.of(context).clearAllRouteAndNavigate('/login');
+    // }
     super.initState();
   }
 

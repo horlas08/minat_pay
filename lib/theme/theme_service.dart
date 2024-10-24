@@ -1,5 +1,6 @@
 import 'package:animated_theme_switcher/animated_theme_switcher.dart';
 import 'package:flutter/material.dart';
+import 'package:minat_pay/main.dart';
 import 'package:minat_pay/theme/theme_config.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -17,8 +18,8 @@ class ThemeService {
   }
 
   final allThemes = <String, ThemeData>{
-    'dark': darkTheme,
-    'light': lightTheme,
+    'dark': darkTheme(appServer),
+    'light': lightTheme(appServer),
   };
 
   String get previousThemeName {

@@ -20,20 +20,12 @@ class Manual extends HookWidget {
 
   @override
   Widget build(BuildContext context) {
-    final ValueNotifier<Monnify?> monnify = useState(null);
-    final user = context.read<AppBloc>().state.user;
-    void initializeMonnify() async {
-      monnify.value = await Monnify.initialize(
-        applicationMode: ApplicationMode.LIVE,
-        apiKey: 'MK_PROD_7RQP2YJU3R',
-        contractCode: '102023392663',
-      );
-    }
-
     useEffect(() {
-      initializeMonnify();
+      _amountController.text = '';
       return null;
     }, []);
+    final ValueNotifier<Monnify?> monnify = useState(null);
+    final user = context.read<AppBloc>().state.user;
 
     void onInitializePayment() async {
       final amount = double.parse(_amountController.text);

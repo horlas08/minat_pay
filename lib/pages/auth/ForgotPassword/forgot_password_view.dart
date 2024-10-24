@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:animate_do/animate_do.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:form_validator/form_validator.dart';
 import 'package:go_router/go_router.dart';
 import 'package:loader_overlay/loader_overlay.dart';
@@ -12,24 +13,59 @@ import 'package:touchable_opacity/touchable_opacity.dart';
 import '../../../bloc/forgot_password/forgot_password_cubit.dart';
 import '../../../widget/Button.dart';
 
-final _otpController = TextEditingController(text: "123456");
-final _emailController = TextEditingController(text: "");
-final _passwordController = TextEditingController();
-
-class ForgotPasswordPage extends StatelessWidget {
+class ForgotPasswordPage extends HookWidget {
   const ForgotPasswordPage({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final _otpController = useTextEditingController(text: "");
+    final _emailController = useTextEditingController(text: "");
+    final _passwordController = useTextEditingController();
+
+    useEffect(() {
+      _otpController.text = '';
+      _emailController.text = '';
+      _passwordController.text = '';
+      return null;
+    }, []);
     return BlocProvider(
       create: (BuildContext context) => ForgotPasswordCubit(),
-      child: Builder(builder: (context) => _buildPage(context)),
+      child: Builder(
+          builder: (context) => _buildPage(
+              context, _otpController, _emailController, _passwordController)),
     );
   }
 
-  Widget _buildPage(BuildContext context) {
+  Widget _buildPage(
+    BuildContext context,
+    TextEditingController _otpController,
+    TextEditingController _emailController,
+    TextEditingController _passwordController,
+  ) {
     final cubit = BlocProvider.of<ForgotPasswordCubit>(context);
     final _form = GlobalKey<FormState>();
+    Future<void> handleRequestOtp() async {
+      context.loaderOverlay.show();
+      final response = await curlPostRequest(path: '/sendotp', data: {
+        'emailOrUsername': _emailController.text,
+      });
+      print(response);
+      if (response?.statusCode == HttpStatus.ok) {
+        if (context.mounted) {
+          context.loaderOverlay.hide();
+          await alertHelper(context, 'success', response?.data['message']);
+        }
+      } else {
+        if (context.mounted) {
+          context.loaderOverlay.hide();
+          await alertHelper(context, 'error', response?.data['message']);
+        }
+      }
+      if (context.mounted) {
+        context.loaderOverlay.hide();
+      }
+    }
+
     return Scaffold(
       // backgroundColor: Colors.white,
       body: SingleChildScrollView(
@@ -117,8 +153,14 @@ class ForgotPasswordPage extends StatelessWidget {
                             decoration: InputDecoration(
                               hintText: "Email",
                               suffixIcon: TextButton(
-                                onPressed: () {},
-                                child: Text("Request Otp"),
+                                onPressed: () async {
+                                  if (_emailController.text == '') {
+                                    return await alertHelper(context, 'error',
+                                        "Please Enter Your Email");
+                                  }
+                                  await handleRequestOtp();
+                                },
+                                child: const Text("Request Otp"),
                               ),
                             ),
                             validator:
@@ -164,6 +206,7 @@ class ForgotPasswordPage extends StatelessWidget {
                       duration: const Duration(milliseconds: 1900),
                       child: Button(
                         onpressed: () async {
+                          FocusManager.instance.primaryFocus?.unfocus();
                           if (_form.currentState!.validate()) {
                             context.loaderOverlay.show();
                             final response = await curlPostRequest(
@@ -176,12 +219,18 @@ class ForgotPasswordPage extends StatelessWidget {
                             );
                             if (response == null && context.mounted) {
                               context.loaderOverlay.hide();
-                              return await alertHelper(context, "success",
-                                  response?.data['message']);
+                              _otpController.text = '';
+                              _emailController.text = '';
+                              _passwordController.text = '';
+                              return await alertHelper(
+                                  context, "success", 'Error Try Again Later');
                             }
                             if (response?.statusCode == HttpStatus.ok) {
                               if (context.mounted) {
                                 context.loaderOverlay.hide();
+                                _otpController.text = '';
+                                _emailController.text = '';
+                                _passwordController.text = '';
                                 await alertHelper(context, "success",
                                     response?.data['message']);
                               }

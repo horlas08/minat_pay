@@ -8,7 +8,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:form_validator/form_validator.dart';
 import 'package:go_router/go_router.dart';
-import 'package:hydrated_bloc/hydrated_bloc.dart';
 import 'package:intl/intl.dart';
 import 'package:loader_overlay/loader_overlay.dart';
 import 'package:lottie/lottie.dart';
@@ -24,6 +23,7 @@ import '../config/app.config.dart';
 import '../config/font.constant.dart';
 import '../data/user/pin_verify_service.dart';
 import '../data/user/transaction_service.dart';
+import '../main.dart';
 import '../service/http.dart';
 import '../widget/Button.dart';
 
@@ -216,7 +216,7 @@ String currency(BuildContext context) {
 }
 
 Future appModalWithoutRoot(context,
-    {String? title, Widget? child, bool? isDismissible = true}) {
+    {String? title, Widget? child, bool? isDismissible = true}) async {
   return showModalBottomSheet(
       context: context,
       isDismissible: isDismissible ?? true,
@@ -357,7 +357,7 @@ Future showConfirmPinRequest(BuildContext context, {Function? callback}) {
                 inputHasBorder: false,
                 inputFillColor: Colors.grey,
                 inputElevation: 3,
-                buttonFillColor: AppColor.primaryColor,
+                buttonFillColor: appServer.primaryColor,
                 btnTextColor: Colors.white,
                 spacing: size.height * 0.06,
                 pinInputController: pinInputController,
@@ -597,20 +597,21 @@ Future<Response?> refreshUSerDetail() async {
 }
 
 Future<void> handleLogOut(BuildContext context) async {
-  final SharedPreferences prefs = await SharedPreferences.getInstance();
   context.loaderOverlay.show();
+  final SharedPreferences prefs = await SharedPreferences.getInstance();
   final res = await curlPostRequest(path: "/logout", data: {
     'token': prefs.getString("token"),
   });
   if (context.mounted) {
     if (res?.statusCode == 200) {
-      prefs.clear();
-      HydratedBloc.storage.clear();
+      await prefs.clear();
       if (context.mounted) {
-        while (context.canPop() == true) {
-          context.pop();
-        }
+        context.read<AppConfigCubit>().changeAuthState(false);
         context.go('/login');
+
+        if (!context.read<AppConfigCubit>().state.onboardSkip) {
+          context.read<AppConfigCubit>().changeOnboardStatus(true);
+        }
         context.loaderOverlay.hide();
       }
     } else {

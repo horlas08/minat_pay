@@ -3,9 +3,9 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
+import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:hydrated_bloc/hydrated_bloc.dart';
-// import 'package:internet_connection_checker/internet_connection_checker.dart';
 import 'package:loader_overlay/loader_overlay.dart';
 import 'package:minat_pay/bloc/register/register_bloc.dart';
 import 'package:minat_pay/bloc/repo/app/app_bloc.dart';
@@ -24,11 +24,13 @@ import 'package:shorebird_code_push/shorebird_code_push.dart';
 
 import 'cubic/login_verify/login_verify_cubit.dart';
 import 'firebase_options.dart';
+import 'mobx/app_server.dart';
 
+AppServer appServer = AppServer();
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   HydratedBloc.storage = await HydratedStorage.build(
-    storageDirectory: await getTemporaryDirectory(),
+    storageDirectory: await getApplicationDocumentsDirectory(),
   );
   final patchNumber = await ShorebirdCodePush().currentPatchNumber();
   await ThemeService.instance;
@@ -36,8 +38,9 @@ void main() async {
   await initialize();
 
   configureDio();
+
   await initialization();
-  // SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersive);
+
   await SentryFlutter.init(
     (options) {
       options.dsn =
@@ -100,32 +103,33 @@ class MyApp extends HookWidget {
                 ),
               );
             },
-            //context.watch<AppConfigCubit>().state.themeMode == 'dark'
             overlayColor: pref.getString("theme") == 'light'
                 ? Colors.white.withOpacity(0.4)
                 : Colors.black.withOpacity(0.4),
-
-            child: ThemeProvider(
-              themeModel: ThemeModel(
-                themeMode: context.watch<AppConfigCubit>().state.autoTheme
-                    ? ThemeMode.system
-                    : context.watch<AppConfigCubit>().state.themeMode == 'light'
-                        ? ThemeMode.light
-                        : ThemeMode.dark,
-                lightTheme: lightTheme,
-                darkTheme: darkTheme,
-              ),
-              builder: (context, themeModel) {
-                return MaterialApp.router(
-                  title: 'Minat Pay',
-                  theme: themeModel.lightTheme,
-                  darkTheme: themeModel.darkTheme,
-                  themeMode: themeModel.themeMode,
-                  routerConfig: AppRouter.router,
-                  debugShowCheckedModeBanner: false,
-                );
-              },
-            ),
+            child: Observer(builder: (context) {
+              return ThemeProvider(
+                themeModel: ThemeModel(
+                  themeMode: context.watch<AppConfigCubit>().state.autoTheme
+                      ? ThemeMode.system
+                      : context.watch<AppConfigCubit>().state.themeMode ==
+                              'light'
+                          ? ThemeMode.light
+                          : ThemeMode.dark,
+                  lightTheme: lightTheme(appServer),
+                  darkTheme: darkTheme(appServer),
+                ),
+                builder: (context, themeModel) {
+                  return MaterialApp.router(
+                    title: 'MinatPay',
+                    theme: themeModel.lightTheme,
+                    darkTheme: themeModel.darkTheme,
+                    themeMode: themeModel.themeMode,
+                    routerConfig: AppRouter.router,
+                    debugShowCheckedModeBanner: false,
+                  );
+                },
+              );
+            }),
           );
         },
       ),

@@ -1,4 +1,5 @@
 const String baseUrl = 'https://app882024.minatpay.com';
+const String backendUrl = 'http://minatpay.com.ng/upload/mightyweb.json';
 const String apiUrl = '$baseUrl/api';
 
 const String signUpPath = '/signup';

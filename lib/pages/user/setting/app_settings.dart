@@ -10,6 +10,7 @@ import 'package:loader_overlay/loader_overlay.dart';
 import 'package:minat_pay/config/color.constant.dart';
 import 'package:minat_pay/widget/Button.dart';
 import 'package:minat_pay/widget/app_header.dart';
+import 'package:onesignal_flutter/onesignal_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:show_confirm_modal/show_confirm_modal.dart';
 import 'package:touchable_opacity/touchable_opacity.dart';
@@ -30,7 +31,6 @@ class AppSettings extends HookWidget {
     const double space = 35;
     return ThemeSwitchingArea(
       child: Scaffold(
-        // backgroundColor: AppColor.darkBg,
         appBar: const AppHeader(title: "App Settings"),
         body: SingleChildScrollView(
           child: BlocBuilder<AppConfigCubit, App>(
@@ -64,7 +64,7 @@ class AppSettings extends HookWidget {
                               crossAxisAlignment: CrossAxisAlignment.center,
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
-                                SizedBox(
+                                const SizedBox(
                                   width: 200,
                                   child: Column(
                                     mainAxisAlignment: MainAxisAlignment.center,
@@ -94,10 +94,14 @@ class AppSettings extends HookWidget {
                                   onPressed: () {
                                     showUpgradeModal(context);
                                   },
-                                  child: Text("Upgrade Now"),
+                                  child: const Text("Upgrade Now"),
                                 )
                               ],
                             ),
+                          ),
+                        if (!appState.user!.userType!)
+                          const SizedBox(
+                            height: 20,
                           ),
                         Container(
                           padding: const EdgeInsets.all(
@@ -184,6 +188,14 @@ class AppSettings extends HookWidget {
                                       // activeToggleColor: AppColor.primaryColor,
                                       showOnOff: true,
                                       onToggle: (bool value) {
+                                        if (value) {
+                                          OneSignal.User.pushSubscription
+                                              .optIn();
+                                        } else {
+                                          OneSignal.User.pushSubscription
+                                              .optOut();
+                                        }
+
                                         context
                                             .read<AppConfigCubit>()
                                             .enableNotification(value);
@@ -201,7 +213,7 @@ class AppSettings extends HookWidget {
                                   mainAxisAlignment:
                                       MainAxisAlignment.spaceBetween,
                                   children: [
-                                    Wrap(
+                                    const Wrap(
                                         crossAxisAlignment:
                                             WrapCrossAlignment.center,
                                         children: [
@@ -488,10 +500,10 @@ class AppSettings extends HookWidget {
                                             mainAxisAlignment:
                                                 MainAxisAlignment.spaceEvenly,
                                             children: [
-                                              Icon(
+                                              const Icon(
                                                 Icons.system_security_update,
                                               ),
-                                              Text(
+                                              const Text(
                                                 "System Mode",
                                                 style: TextStyle(
                                                   fontSize: 12,
@@ -502,7 +514,7 @@ class AppSettings extends HookWidget {
                                                   .read<AppConfigCubit>()
                                                   .state
                                                   .autoTheme)
-                                                Icon(
+                                                const Icon(
                                                   Icons.check,
                                                   color: AppColor.success,
                                                 )
@@ -527,7 +539,7 @@ class AppSettings extends HookWidget {
                                 },
                               ),
                             ),
-                            SizedBox(
+                            const SizedBox(
                               width: 10,
                             ),
                             Expanded(
@@ -587,7 +599,7 @@ class AppSettings extends HookWidget {
                                                         ThemeMode.light
                                                     ? "Light Mode"
                                                     : "Dark Mode",
-                                                style: TextStyle(
+                                                style: const TextStyle(
                                                   fontSize: 12,
                                                   fontWeight: FontWeight.bold,
                                                 ),
@@ -596,7 +608,7 @@ class AppSettings extends HookWidget {
                                                   .read<AppConfigCubit>()
                                                   .state
                                                   .autoTheme)
-                                                Icon(
+                                                const Icon(
                                                   Icons.check,
                                                   color: AppColor.success,
                                                 )
@@ -701,7 +713,7 @@ class AppSettings extends HookWidget {
             // height: 100,
             // width: double.infinity,
             constraints: const BoxConstraints(
-              maxHeight: 180,
+              maxHeight: 130,
               minHeight: 100,
             ),
             child: Form(
@@ -710,15 +722,15 @@ class AppSettings extends HookWidget {
               // mainAxisAlignment: MainAxisAlignment.start,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
-                  'leorem',
+                const Text(
+                  'Upgrade To Agent And Enjoy Exclusive Benefits and Discounts on our services. You Will be charged NGN2000 to upgrade to Agent',
                   textAlign: TextAlign.start,
                   style: TextStyle(
                     fontSize: 12,
                     fontStyle: FontStyle.italic,
                   ),
                 ),
-                SizedBox(
+                const SizedBox(
                   height: 20,
                 ),
                 SizedBox(
@@ -727,7 +739,7 @@ class AppSettings extends HookWidget {
                     onPressed: () async {
                       handleUpgrade(context);
                     },
-                    child: Text(
+                    child: const Text(
                       'Pay And Upgrade Now',
                       style: TextStyle(color: Colors.white),
                     ),

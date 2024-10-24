@@ -1,7 +1,8 @@
 import 'dart:io';
 
-import 'package:dio/src/response.dart';
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:form_validator/form_validator.dart';
 import 'package:loader_overlay/loader_overlay.dart';
 import 'package:minat_pay/widget/app_header.dart';
@@ -13,15 +14,30 @@ import '../../../config/font.constant.dart';
 import '../../../helper/helper.dart';
 
 final _formKey = GlobalKey<FormState>();
-final _oldPinController = TextEditingController();
-final _newPinController = TextEditingController();
-final _confirmPinController = TextEditingController();
 
-class ChangePin extends StatelessWidget {
+class ChangePin extends HookWidget {
   const ChangePin({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final _oldPinController = useTextEditingController();
+    final _newPinController = useTextEditingController();
+    final _confirmPinController = useTextEditingController();
+    Future<Response?> changePinRequest(BuildContext context) async {
+      SharedPreferences sharedPreferences =
+          await SharedPreferences.getInstance();
+      final res = await curlPostRequest(
+        path: changePin,
+        data: {
+          "old_pin": _oldPinController.text, //variationId,
+          "pin": _newPinController.text, //variationId,
+          "confirm_pin": _confirmPinController.text, //phone,
+          "token": sharedPreferences.getString('token'), //phone,
+        },
+      );
+      return res;
+    }
+
     return Scaffold(
       resizeToAvoidBottomInset: true,
       appBar: const AppHeader(title: "Change Pin"),
@@ -204,19 +220,5 @@ class ChangePin extends StatelessWidget {
         ),
       ),
     );
-  }
-
-  Future<Response?> changePinRequest(BuildContext context) async {
-    SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
-    final res = await curlPostRequest(
-      path: changePin,
-      data: {
-        "old_pin": _oldPinController.text, //variationId,
-        "pin": _newPinController.text, //variationId,
-        "confirm_pin": _confirmPinController.text, //phone,
-        "token": sharedPreferences.getString('token'), //phone,
-      },
-    );
-    return res;
   }
 }

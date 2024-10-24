@@ -12,6 +12,7 @@ import '../../../bloc/login/login_bloc.dart';
 import '../../../bloc/login/login_event.dart';
 import '../../../bloc/repo/app/app_bloc.dart';
 import '../../../bloc/repo/app/app_event.dart';
+import '../../../cubic/app_config_cubit.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -55,6 +56,10 @@ class _LoginPageState extends State<LoginPage> {
           context
               .read<AppBloc>()
               .add(AddAccountEvent(accounts: state.accounts));
+          if (!context.read<AppConfigCubit>().state.onboardSkip) {
+            context.read<AppConfigCubit>().changeOnboardStatus(true);
+          }
+          context.read<AppConfigCubit>().changeAuthState(true);
           context.go('/user');
           context.loaderOverlay.hide();
           await alertHelper(context, 'success', "Login Success");

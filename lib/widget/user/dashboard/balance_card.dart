@@ -29,7 +29,7 @@ class BalanceCard extends HookWidget {
             'Number': state.user!.balance,
           },
           {
-            'text': 'Total Referral',
+            'text': 'Referral Balance',
             'Number': state.user?.referrals,
           },
         ];

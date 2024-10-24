@@ -3,8 +3,9 @@ class RegisterState {
     return RegisterState();
   }
 
-  RegisterSuccess success(String message, String email) {
-    return RegisterSuccess(message, email);
+  RegisterSuccess success(String message, String email,
+      Map<String, dynamic> user_data, List<Map<String, dynamic>> accounts) {
+    return RegisterSuccess(message, email, user_data, accounts);
   }
 
   RegisterFailed failed(String message) {
@@ -19,8 +20,10 @@ class RegisterState {
 final class RegisterSuccess extends RegisterState {
   String message;
   String email;
+  Map<String, dynamic> userData;
+  List<Map<String, dynamic>> accounts;
 
-  RegisterSuccess(this.message, this.email);
+  RegisterSuccess(this.message, this.email, this.userData, this.accounts);
 }
 
 final class RegisterLoading extends RegisterState {}

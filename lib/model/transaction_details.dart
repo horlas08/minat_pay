@@ -6,8 +6,6 @@ class TransactionDetailsModel {
   String? amount;
   String? message;
   String? datetime;
-  // Map<dynamic, dynamic>? data;
-
   TransactionDetailsModel({
     this.original,
     this.status,

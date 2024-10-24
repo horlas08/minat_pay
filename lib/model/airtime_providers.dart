@@ -7,6 +7,8 @@ class AirtimeProviders extends Providers {
   String? name;
   String? valId;
   String? api;
+  String? user;
+  String? agent;
   String? ncwallet;
   String? easyacess;
   @override
@@ -18,6 +20,8 @@ class AirtimeProviders extends Providers {
       this.name,
       this.valId,
       this.api,
+      this.agent,
+      this.user,
       this.ncwallet,
       this.easyacess,
       this.image,
@@ -29,6 +33,8 @@ class AirtimeProviders extends Providers {
     valId = json['val_id'];
     api = json['api'];
     ncwallet = json['ncwallet'];
+    agent = json['agent'];
+    user = json['user'];
     easyacess = json['easyacess'];
     image = json['image'];
     status = json['status'];
@@ -40,6 +46,8 @@ class AirtimeProviders extends Providers {
     data['name'] = this.name;
     data['val_id'] = this.valId;
     data['api'] = this.api;
+    data['user'] = this.user;
+    data['agent'] = this.agent;
     data['ncwallet'] = this.ncwallet;
     data['easyacess'] = this.easyacess;
     data['image'] = this.image;

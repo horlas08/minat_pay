@@ -8,8 +8,8 @@ Dio dio2 = Dio();
 void configureDio() {
   // Set default configs
   dio.options.baseUrl = apiUrl;
-  dio.options.connectTimeout = const Duration(seconds: 15);
-  dio.options.receiveTimeout = const Duration(seconds: 13);
+  dio.options.connectTimeout = const Duration(seconds: 30);
+  dio.options.receiveTimeout = const Duration(seconds: 30);
   dio.options.contentType = Headers.jsonContentType;
   dio.options.headers = {Headers.acceptHeader: Headers.jsonContentType};
 

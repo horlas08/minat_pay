@@ -28,7 +28,6 @@ import '../../../../widget/app_header.dart';
 
 final PhoneController phoneController = PhoneController(
     initialValue: const PhoneNumber(isoCode: IsoCode.NG, nsn: ''));
-final TextEditingController amountController = TextEditingController();
 final _airtimeFormKey = GlobalKey<FormState>();
 
 Future<List<AirtimeProviders>?> getAirtimeList(
@@ -59,6 +58,8 @@ Future<List<AirtimeProviders>?> getAirtimeList(
           name: res?.data['data'][index]['name'],
           valId: res?.data['data'][index]['service_id'],
           image: res?.data['data'][index]['image'],
+          user: res?.data['data'][index]['user'],
+          agent: res?.data['data'][index]['agent'],
         );
       },
     );
@@ -109,15 +110,20 @@ class Airtime extends HookWidget {
 
   @override
   Widget build(BuildContext context) {
-    final networks = List.generate(6, (i) => i);
+    final TextEditingController amountController = useTextEditingController();
+
+    useEffect(() {
+      amountController.text = '';
+      phoneController.value = PhoneNumber(isoCode: IsoCode.NG, nsn: '');
+      return null;
+    }, []);
     final ValueNotifier<int?> selectedPlan = useState(null);
-    // final ValueNotifier<int> selectedNetwork = useState(1);
     final ValueNotifier<String> selectedNetworkId = useState('0');
     final ValueNotifier<bool> openNetwork = useState(false);
     final ValueNotifier<bool> valid = useState(false);
     final ValueNotifier<bool> networkIsLoading = useState(false);
     final ValueNotifier<List<AirtimeProviders>> networkProviders = useState([]);
-    // final List<Providers> networkProviders = [];
+    final user = context.read<AppBloc>().state.user;
     final ValueNotifier<AirtimeProviders> network =
         useState(AirtimeProviders());
 
@@ -158,23 +164,25 @@ class Airtime extends HookWidget {
                 const Spacer(),
                 Row(
                   children: [
-                    CachedNetworkImage(
-                      imageUrl: network.value.image!,
-                      width: 25,
-                      height: 30,
-                      progressIndicatorBuilder:
-                          (context, url, downloadProgress) =>
-                              CircularProgressIndicator(
-                                  value: downloadProgress.progress),
-                      errorWidget: (context, url, error) => Icon(Icons.error),
-                    ),
-                    Text(
-                      network.value.name!,
-                      style: const TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
+                    if (network.value.image != null)
+                      CachedNetworkImage(
+                        imageUrl: network.value.image!,
+                        width: 25,
+                        height: 30,
+                        progressIndicatorBuilder:
+                            (context, url, downloadProgress) =>
+                                CircularProgressIndicator(
+                                    value: downloadProgress.progress),
+                        errorWidget: (context, url, error) => Icon(Icons.error),
                       ),
-                    ),
+                    if (network.value.image != null)
+                      Text(
+                        network.value.name!,
+                        style: const TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
                   ],
                 ),
               ],
@@ -214,7 +222,7 @@ class Airtime extends HookWidget {
                 ),
                 const Spacer(),
                 Text(
-                  '${currency(context)}20',
+                  '${currency(context)}${user!.userType! ? (double.parse(network.value.agent!) / 100 * double.parse(amountController.text)).toString() : (double.parse(network.value.user!) / 100 * double.parse(amountController.text)).toString()}',
                   style: const TextStyle(
                     fontSize: 18,
                     fontFamily: AppFont.mulish,
@@ -267,6 +275,59 @@ class Airtime extends HookWidget {
           ],
         ),
       );
+    }
+
+    Future<Response?> buyAirtime(
+      BuildContext context, {
+      required String amount,
+      required String phone,
+      required String network_id,
+    }) async {
+      final airtimeRequest = BillService();
+      final Response? res = await airtimeRequest.airtimeRequest(context,
+          amount: amount, phone: phone, network_id: network_id);
+      return res;
+    }
+
+    Future<void> handleCheckOut(BuildContext context,
+        {required String amount,
+        required String phone,
+        required String networkId}) async {
+      context.loaderOverlay.show();
+      final res = await buyAirtime(context,
+          amount: amount, phone: phone, network_id: networkId);
+
+      if (context.mounted && res == null) {
+        context.loaderOverlay.hide();
+        // Navigator.of(context, rootNavigator: false).pop();
+        return alertHelper(context, 'error', 'No Internet Connection');
+      }
+
+      if (context.mounted) {
+        if (res?.statusCode == HttpStatus.ok) {
+          amountController.text = '';
+          phoneController.value =
+              const PhoneNumber(isoCode: IsoCode.NG, nsn: '');
+          await putLastTransactionId(res?.data['trx_id']);
+          if (context.mounted) {
+            HapticFeedback.heavyImpact();
+            appModalWithoutRoot(context,
+                title: 'Airtime Purchase Successful',
+                child:
+                    successModalWidget(context, message: res?.data['message']));
+          }
+          // Navigator.of(context, rootNavigator: true).pop();
+
+          // alertHelper(context, 'success', res?.data['message']);
+        } else {
+          // Navigator.of(context, rootNavigator: true).pop();
+          alertHelper(context, 'error', res?.data['message'], duration: 6);
+        }
+      }
+
+      if (context.mounted) {
+        context.loaderOverlay.hide();
+      }
     }
 
     return BlocConsumer<AppConfigCubit, App>(
@@ -396,7 +457,21 @@ class Airtime extends HookWidget {
                                   ),
                                 ),
                               )
-                            : Icon(Icons.error_outline),
+                            : IconButton(
+                                onPressed: () {
+                                  getAirtimeList(context, networkIsLoading,
+                                          networkProviders)
+                                      .then(
+                                    (value) {
+                                      if (value != null && value.isNotEmpty) {
+                                        network.value =
+                                            networkProviders.value[0];
+                                      }
+                                    },
+                                  );
+                                },
+                                icon: Icon(Icons.refresh_outlined),
+                              )
                       ],
                     ),
                     const SizedBox(
@@ -428,6 +503,7 @@ class Airtime extends HookWidget {
                             const SliverGridDelegateWithFixedCrossAxisCount(
                                 crossAxisCount: 3),
                         itemCount: airtimePrice.length,
+
                         itemBuilder: (context, index) {
                           return TouchableOpacity(
                             onTapUp: (_) {
@@ -455,7 +531,7 @@ class Airtime extends HookWidget {
                               child: Column(
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
-                                  Row(
+                                  Column(
                                     mainAxisAlignment: MainAxisAlignment.center,
                                     children: [
                                       Text(
@@ -479,32 +555,32 @@ class Airtime extends HookWidget {
                                       ),
                                     ],
                                   ),
-                                  Row(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      Text(
-                                        "Pay",
-                                        style: TextStyle(
-                                          fontWeight: FontWeight.bold,
-                                          fontFamily: AppFont.mulish,
-                                          fontSize: 10,
-                                          color: AppColor.secondaryColor,
-                                        ),
-                                      ),
-                                      const SizedBox(
-                                        width: 4,
-                                      ),
-                                      Text(
-                                        "${currency(context)}${airtimePrice[index]['price']}",
-                                        style: const TextStyle(
-                                          fontFamily: AppFont.mulish,
-                                          fontWeight: FontWeight.bold,
-                                          fontSize: 10,
-                                          color: AppColor.primaryColor,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
+                                  // Row(
+                                  //   mainAxisAlignment: MainAxisAlignment.center,
+                                  //   children: [
+                                  //     Text(
+                                  //       "Pay",
+                                  //       style: TextStyle(
+                                  //         fontWeight: FontWeight.bold,
+                                  //         fontFamily: AppFont.mulish,
+                                  //         fontSize: 10,
+                                  //         color: AppColor.secondaryColor,
+                                  //       ),
+                                  //     ),
+                                  //     const SizedBox(
+                                  //       width: 4,
+                                  //     ),
+                                  //     Text(
+                                  //       "${currency(context)}${airtimePrice[index]['price']}",
+                                  //       style: const TextStyle(
+                                  //         fontFamily: AppFont.mulish,
+                                  //         fontWeight: FontWeight.bold,
+                                  //         fontSize: 10,
+                                  //         color: AppColor.primaryColor,
+                                  //       ),
+                                  //     ),
+                                  //   ],
+                                  // ),
                                 ],
                               ),
                             ),
@@ -553,7 +629,7 @@ class Airtime extends HookWidget {
                                 ),
                               ),
                               filled: false,
-                              hintText: "50, - 1,000,000",
+                              hintText: "Enter Amount",
                               helperText: '',
                               focusedBorder: borderStyle,
                               enabledBorder: borderStyle,
@@ -629,57 +705,5 @@ class Airtime extends HookWidget {
         );
       },
     );
-  }
-
-  Future<Response?> buyAirtime(
-    BuildContext context, {
-    required String amount,
-    required String phone,
-    required String network_id,
-  }) async {
-    final airtimeRequest = BillService();
-    final Response? res = await airtimeRequest.airtimeRequest(context,
-        amount: amount, phone: phone, network_id: network_id);
-    return res;
-  }
-
-  Future<void> handleCheckOut(BuildContext context,
-      {required String amount,
-      required String phone,
-      required String networkId}) async {
-    context.loaderOverlay.show();
-    final res = await buyAirtime(context,
-        amount: amount, phone: phone, network_id: networkId);
-
-    if (context.mounted && res == null) {
-      context.loaderOverlay.hide();
-      // Navigator.of(context, rootNavigator: false).pop();
-      return alertHelper(context, 'error', 'No Internet Connection');
-    }
-
-    if (context.mounted) {
-      if (res?.statusCode == HttpStatus.ok) {
-        print(res);
-        print(res?.data['trx_id']);
-        await putLastTransactionId(res?.data['trx_id']);
-        if (context.mounted) {
-          HapticFeedback.heavyImpact();
-          appModalWithoutRoot(context,
-              title: 'Airtime Purchase Successful',
-              child:
-                  successModalWidget(context, message: res?.data['message']));
-        }
-        // Navigator.of(context, rootNavigator: true).pop();
-
-        // alertHelper(context, 'success', res?.data['message']);
-      } else {
-        // Navigator.of(context, rootNavigator: true).pop();
-        alertHelper(context, 'error', res?.data['message'], duration: 6);
-      }
-    }
-
-    if (context.mounted) {
-      context.loaderOverlay.hide();
-    }
   }
 }

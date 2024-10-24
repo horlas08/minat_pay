@@ -16,6 +16,7 @@ import '../../../bloc/repo/app/app_bloc.dart';
 import '../../../bloc/repo/app/app_event.dart';
 import '../../../cubic/app_config_cubit.dart';
 import '../../../cubic/login_verify/login_verify_cubit.dart';
+import '../../../helper/common.dart';
 import '../../../helper/helper.dart';
 
 final _formKey = GlobalKey<FormState>();
@@ -193,197 +194,211 @@ class LoginVerifyPage extends HookWidget {
           await alertHelper(context, 'error', state.message);
         } else if (state is LoginVerifySuccess) {
           context.loaderOverlay.hide();
+          context.read<AppConfigCubit>().changeAuthState(true);
+          if (!context.read<AppConfigCubit>().state.onboardSkip) {
+            context.read<AppConfigCubit>().changeOnboardStatus(true);
+          }
           context.read<AppBloc>().add(AddUserEvent(userData: state.userData));
           context
               .read<AppBloc>()
               .add(AddAccountEvent(accounts: state.accounts));
-          context.go('/user');
+
+          context.push('/user');
         }
       },
-      child: Scaffold(
-        // backgroundColor: Colors.white,
-        body: SingleChildScrollView(
-          child: Column(
-            children: <Widget>[
-              Container(
-                height: 400,
-                decoration: const BoxDecoration(
-                  image: DecorationImage(
-                    image: AssetImage('assets/images/login/background.png'),
-                    fit: BoxFit.fill,
+      child: WillPopScope(
+        onWillPop: () async {
+          return await exitConfirmation(context);
+        },
+        child: Scaffold(
+          // backgroundColor: Colors.white,
+          body: SingleChildScrollView(
+            child: Column(
+              children: <Widget>[
+                Container(
+                  height: 400,
+                  decoration: const BoxDecoration(
+                    image: DecorationImage(
+                      image: AssetImage('assets/images/login/background.png'),
+                      fit: BoxFit.fill,
+                    ),
+                  ),
+                  child: Stack(
+                    children: <Widget>[
+                      Positioned(
+                        left: (MediaQuery.of(context).size.width / 2) - 30,
+                        width: 60,
+                        height: 150,
+                        child: FadeInUp(
+                          duration: const Duration(milliseconds: 1200),
+                          child: Container(
+                            decoration: const BoxDecoration(
+                              image: DecorationImage(
+                                image: AssetImage(
+                                    'assets/images/login/light-2.png'),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                      Positioned(
+                        child: FadeInUp(
+                          duration: const Duration(milliseconds: 1600),
+                          child: Container(
+                            margin: const EdgeInsets.only(top: 50),
+                            child: Center(
+                              child: Text(
+                                "Welcome Back \n ${username}",
+                                textAlign: TextAlign.center,
+                                style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 40,
+                                    fontWeight: FontWeight.bold),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
                 ),
-                child: Stack(
-                  children: <Widget>[
-                    Positioned(
-                      left: (MediaQuery.of(context).size.width / 2) - 30,
-                      width: 60,
-                      height: 150,
-                      child: FadeInUp(
-                        duration: const Duration(milliseconds: 1200),
-                        child: Container(
-                          decoration: const BoxDecoration(
-                            image: DecorationImage(
-                              image:
-                                  AssetImage('assets/images/login/light-2.png'),
-                            ),
+                Padding(
+                  padding: const EdgeInsets.all(30.0),
+                  child: Column(
+                    children: <Widget>[
+                      FadeInUp(
+                        duration: const Duration(milliseconds: 1800),
+                        child: Form(
+                          key: _formKey,
+                          child: Column(
+                            children: <Widget>[
+                              TextFormField(
+                                keyboardType: TextInputType.text,
+                                decoration: const InputDecoration(
+                                  hintText: "Enter Your Password",
+                                ),
+                                onChanged: (v) => {password.value = v},
+                                initialValue: password.value,
+                                onTapOutside: (v) => FocusManager
+                                    .instance.primaryFocus
+                                    ?.unfocus(),
+                                validator: ValidationBuilder()
+                                    .required()
+                                    .maxLength(10)
+                                    .build(),
+                                autovalidateMode:
+                                    AutovalidateMode.onUserInteraction,
+                              ),
+                              const SizedBox(
+                                height: 20,
+                              ),
+                            ],
                           ),
                         ),
                       ),
-                    ),
-                    Positioned(
-                      child: FadeInUp(
-                        duration: const Duration(milliseconds: 1600),
-                        child: Container(
-                          margin: const EdgeInsets.only(top: 50),
-                          child: Center(
-                            child: Text(
-                              "Welcome Back \n ${username}",
-                              textAlign: TextAlign.center,
+                      const SizedBox(
+                        height: 30,
+                      ),
+                      FadeInUp(
+                          duration: const Duration(milliseconds: 1900),
+                          child: ElevatedButton(
+                            onPressed: () async {
+                              FocusManager.instance.primaryFocus?.unfocus();
+
+                              if (_formKey.currentState!.validate()) {
+                                context
+                                    .read<LoginVerifyCubit>()
+                                    .onLoginVerifyRequested(password.value);
+                              }
+                            },
+                            style: ButtonStyle(
+                              minimumSize: WidgetStateProperty.all(
+                                const Size.fromHeight(65),
+                              ),
+                            ),
+                            child: const Text(
+                              "Verify",
                               style: TextStyle(
                                   color: Colors.white,
-                                  fontSize: 40,
                                   fontWeight: FontWeight.bold),
                             ),
-                          ),
-                        ),
+                          )),
+                      const SizedBox(
+                        height: 30,
                       ),
-                    ),
-                  ],
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.all(30.0),
-                child: Column(
-                  children: <Widget>[
-                    FadeInUp(
-                      duration: const Duration(milliseconds: 1800),
-                      child: Form(
-                        key: _formKey,
-                        child: Column(
-                          children: <Widget>[
-                            TextFormField(
-                              keyboardType: TextInputType.text,
-                              decoration: const InputDecoration(
-                                hintText: "Enter Your Password",
-                              ),
-                              onChanged: (v) => {password.value = v},
-                              initialValue: password.value,
-                              onTapOutside: (v) =>
-                                  FocusManager.instance.primaryFocus?.unfocus(),
-                              validator: ValidationBuilder()
-                                  .required()
-                                  .maxLength(10)
-                                  .build(),
-                              autovalidateMode:
-                                  AutovalidateMode.onUserInteraction,
-                            ),
+                      if (_supportState.value == _SupportState.supported)
+                        BlocBuilder<AppConfigCubit, App>(
+                          builder: (context, state) {
+                            print(state);
+                            if (state.enableFingerPrint)
+                              return FadeInUp(
+                                duration: const Duration(milliseconds: 1900),
+                                child: ElevatedButton(
+                                  onPressed: () {
+                                    FocusManager.instance.primaryFocus
+                                        ?.unfocus();
+                                    _authenticate();
+                                  },
+                                  style: ButtonStyle(
+                                    side: const WidgetStatePropertyAll(
+                                      BorderSide(
+                                          color: AppColor.primaryColor,
+                                          width: 2),
+                                    ),
+                                    backgroundColor:
+                                        WidgetStateProperty.all(Colors.white),
+                                    minimumSize: WidgetStateProperty.all(
+                                      const Size.fromHeight(65),
+                                    ),
+                                  ),
+                                  child: const Icon(
+                                    Icons.fingerprint,
+                                    size: 40,
+                                    color: AppColor.primaryColor,
+                                  ),
+                                ),
+                              );
+                            return SizedBox();
+                          },
+                        ),
+                      const SizedBox(
+                        height: 20,
+                      ),
+                      FadeInLeftBig(
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            const Text("Switch Account?"),
                             const SizedBox(
-                              height: 20,
+                              width: 5,
+                            ),
+                            TouchableOpacity(
+                              onTap: () async {
+                                await handleLogOut(context);
+                              },
+                              child: Text(
+                                "Logout",
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .labelSmall
+                                    ?.copyWith(
+                                        color: Theme.of(context)
+                                            .colorScheme
+                                            .primary,
+                                        fontSize: 14),
+                              ),
                             ),
                           ],
                         ),
                       ),
-                    ),
-                    const SizedBox(
-                      height: 30,
-                    ),
-                    FadeInUp(
-                        duration: const Duration(milliseconds: 1900),
-                        child: ElevatedButton(
-                          onPressed: () async {
-                            FocusManager.instance.primaryFocus?.unfocus();
-
-                            if (_formKey.currentState!.validate()) {
-                              context
-                                  .read<LoginVerifyCubit>()
-                                  .onLoginVerifyRequested(password.value);
-                            }
-                          },
-                          style: ButtonStyle(
-                            minimumSize: WidgetStateProperty.all(
-                              const Size.fromHeight(65),
-                            ),
-                          ),
-                          child: const Text(
-                            "Verify",
-                            style: TextStyle(
-                                color: Colors.white,
-                                fontWeight: FontWeight.bold),
-                          ),
-                        )),
-                    const SizedBox(
-                      height: 30,
-                    ),
-                    if (_supportState.value == _SupportState.supported)
-                      BlocBuilder<AppConfigCubit, App>(
-                        builder: (context, state) {
-                          print(state);
-                          if (state.enableFingerPrint)
-                            return FadeInUp(
-                              duration: const Duration(milliseconds: 1900),
-                              child: ElevatedButton(
-                                onPressed: () {
-                                  FocusManager.instance.primaryFocus?.unfocus();
-                                  _authenticate();
-                                },
-                                style: ButtonStyle(
-                                  side: const WidgetStatePropertyAll(
-                                    BorderSide(
-                                        color: AppColor.primaryColor, width: 2),
-                                  ),
-                                  backgroundColor:
-                                      WidgetStateProperty.all(Colors.white),
-                                  minimumSize: WidgetStateProperty.all(
-                                    const Size.fromHeight(65),
-                                  ),
-                                ),
-                                child: const Icon(
-                                  Icons.fingerprint,
-                                  size: 40,
-                                  color: AppColor.primaryColor,
-                                ),
-                              ),
-                            );
-                          return SizedBox();
-                        },
+                      const SizedBox(
+                        height: 70,
                       ),
-                    const SizedBox(
-                      height: 20,
-                    ),
-                    FadeInLeftBig(
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          const Text("Switch Account?"),
-                          const SizedBox(
-                            width: 5,
-                          ),
-                          TouchableOpacity(
-                            onTap: () async {
-                              await handleLogOut(context);
-                            },
-                            child: Text(
-                              "Logout",
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .labelSmall
-                                  ?.copyWith(
-                                      color:
-                                          Theme.of(context).colorScheme.primary,
-                                      fontSize: 14),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    const SizedBox(
-                      height: 70,
-                    ),
-                  ],
-                ),
-              )
-            ],
+                    ],
+                  ),
+                )
+              ],
+            ),
           ),
         ),
       ),

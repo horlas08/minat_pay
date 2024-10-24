@@ -37,20 +37,29 @@ class RegisterBloc extends Bloc<RegisterEvent, RegisterState> {
           .registerResponse();
 
       if (res == null) {
-        emit(state.failed("Unknown Error"));
+        emit(state.failed("Request Timeout Kindly Try And Login Before Retry"));
       }
-      print(res);
+
       if (res?.statusCode == 200) {
-        print(res?.data['user_data']);
-        final SharedPreferences prefs = await SharedPreferences.getInstance();
-        await prefs.setString("token", res?.data['token']);
-        await prefs.setBool(
-            "isVerified", res?.data['user_data']['is_verified']);
-        await prefs.setString("userName", res?.data['user_data']['username']);
-        await prefs.setString("userEmail", res?.data['user_data']['email']);
-        emit(state.success(res?.data['code'], res?.data['user_data']['email']));
+        try {
+          final SharedPreferences prefs = await SharedPreferences.getInstance();
+          await prefs.setString("token", res?.data['token']);
+          await prefs.setBool(
+              "isVerified", res?.data['user_data']['isVerified']);
+          await prefs.setString("userName", res?.data['user_data']['username']);
+          await prefs.setString("userEmail", res?.data['user_data']['email']);
+          final accounts = (res?.data['accounts'] as List)
+              .map((itemWord) => itemWord as Map<String, dynamic>)
+              .toList();
+          emit(
+            state.success(res?.data['message'], res?.data['user_data']['email'],
+                res?.data['user_data'], accounts),
+          );
+        } catch (error) {
+          print(error);
+          emit(state.failed(error.toString()));
+        }
       } else {
-        // emit(state.failed('${res?.data['message']}'));
         if (res?.data.containsKey('missing_parameters') &&
             !res?.data['missing_parameters'].isEmpty) {
           emit(state.failed('${res?.data['missing_parameters']?[0]}'));

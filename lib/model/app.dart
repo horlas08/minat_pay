@@ -1,12 +1,16 @@
+import 'dart:ui';
+
 class App {
-  bool authState = false;
-  bool pinState = false;
+  bool authState;
+  bool onboardSkip;
+  bool pinState;
   bool enableFingerPrint;
   bool enableNotification;
   bool enableShakeToHideBalance;
   String themeMode = 'light';
   bool autoTheme = false;
   App({
+    required this.onboardSkip,
     required this.authState,
     required this.pinState,
     required this.themeMode,
@@ -18,14 +22,17 @@ class App {
 
   App copyWith({
     bool? authState,
+    bool? onboardSkip,
     bool? pinState,
     bool? enableFingerPrint,
     bool? enableNotification,
     bool? enableShakeToHideBalance,
     String? themeMode,
+    Color? primaryColor,
     bool? autoTheme,
   }) {
     return App(
+      onboardSkip: onboardSkip ?? this.onboardSkip,
       authState: authState ?? this.authState,
       pinState: pinState ?? this.pinState,
       enableFingerPrint: enableFingerPrint ?? this.enableFingerPrint,
@@ -44,19 +51,22 @@ class App {
 
   factory App.fromJson(Map<String, dynamic> json) {
     return App(
-      authState: json['authState'],
-      pinState: json['pinState'],
-      enableNotification: json['enableNotification'],
-      enableFingerPrint: json['enableFingerPrint'],
-      enableShakeToHideBalance: json['enableShakeToHideBalance'],
-      themeMode: json['themeMode'],
-      autoTheme: json['autoTheme'],
+      authState: false,
+      onboardSkip: json['onboardSkip'] as bool,
+      pinState: json['pinState'] as bool,
+      enableNotification: json['enableNotification'] as bool,
+      enableFingerPrint: json['enableFingerPrint'] as bool,
+      enableShakeToHideBalance: json['enableShakeToHideBalance'] as bool,
+      themeMode: json['themeMode'] as String,
+      autoTheme: json['autoTheme'] as bool,
     );
   }
 
   Map<String, dynamic> toJson() {
     return {
       'authState': authState,
+      'onboardSkip': onboardSkip,
+      'pinState': pinState,
       'themeMode': themeMode,
       'enableNotification': enableNotification,
       'enableFingerPrint': enableFingerPrint,

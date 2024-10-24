@@ -1,2 +1,36 @@
-const ONESINGLE = 'efcde4b0-bbea-466f-97d4-682ad2474495';
-const mOneSignalID = 'ADD YOUR ONESIGNAL KEY';
+List<String> themeName = [
+  'Theme1',
+  'Theme2',
+  'Theme3',
+  'Theme4',
+  'Theme5',
+  'Theme6',
+  "Theme7",
+  "Theme8",
+  "Theme9",
+  "Theme10",
+  "Theme11",
+  "Theme12",
+  "Theme13",
+  "Theme14",
+  "Theme15",
+];
+
+List<String> colorName = [
+  "#880e4f",
+  "#e667b1",
+  "#4a148c",
+  "#b71c1c",
+  "#1a237e",
+  "#0d47a1",
+  "#01579b",
+  "#094c4f",
+  "#bfc726",
+  "#1b5e20",
+  "#ba8d06",
+  "#6835f2",
+  "#212121",
+  "#263238",
+  "#dd2c00",
+  '#1b5ddb'
+];

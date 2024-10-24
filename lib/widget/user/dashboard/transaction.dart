@@ -95,7 +95,9 @@ class Transaction extends HookWidget {
           height: 30,
         ),
         SizedBox(
-          height: 300,
+          height: transactionList.value.isEmpty
+              ? 50
+              : double.parse((60 * transactionList.value.length).toString()),
           child: loading.value
               ? const Center(
                   child: CircularProgressIndicator(),

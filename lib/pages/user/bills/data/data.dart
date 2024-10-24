@@ -28,28 +28,6 @@ import '../../../../widget/Button.dart';
 final PhoneController phoneController = PhoneController(
     initialValue: const PhoneNumber(isoCode: IsoCode.NG, nsn: ''));
 int test = 0;
-// final List<Map<String, dynamic>> providers = [
-//   {
-//     'id': 0,
-//     'name': 'Mtn',
-//     'logo': 'mtn_logo.jpg',
-//   },
-//   {
-//     'id': 1,
-//     'name': 'Glo',
-//     'logo': 'glo_logo.jpg',
-//   },
-//   {
-//     'id': 2,
-//     'name': 'Airtel',
-//     'logo': 'airtel_logo.png',
-//   },
-//   {
-//     'id': 3,
-//     'name': '9Mobile',
-//     'logo': '9mobile_logo.jpg',
-//   },
-// ];
 
 Future<List<DataProviders>?> getDataFromServer(
     BuildContext context,
@@ -130,6 +108,12 @@ class Data extends HookWidget {
 
   @override
   Widget build(BuildContext context) {
+    useEffect(() {
+      phoneController.value = PhoneNumber(isoCode: IsoCode.NG, nsn: '');
+      return () {
+        phoneController.dispose();
+      };
+    }, []);
     final ValueNotifier<bool> valid = useState(false);
     final user = context.read<AppBloc>().state.user;
     // final ValueNotifier<List?> networks = useState([]);
@@ -183,6 +167,8 @@ class Data extends HookWidget {
         //
         if (context.mounted) {
           if (res?.statusCode == HttpStatus.ok) {
+            phoneController.value = PhoneNumber(isoCode: IsoCode.NG, nsn: '');
+
             await putLastTransactionId(res?.data['data']['trx_id']);
             if (context.mounted) {
               HapticFeedback.heavyImpact();
@@ -417,22 +403,6 @@ class Data extends HookWidget {
       );
     }
 
-    // useEffect(() {
-    //   final connectionChecker = InternetConnectionChecker();
-    //
-    //   final subscription = connectionChecker.onStatusChange.listen(
-    //     (InternetConnectionStatus status) {
-    //       if (status == InternetConnectionStatus.connected) {
-    //         print('Connected to the internet');
-    //       } else {
-    //         print('Disconnected from the internet');
-    //       }
-    //     },
-    //   );
-    //
-    //   // Remember to cancel the subscription when it's no longer needed
-    //   subscription.cancel();
-    // }, []);
     useEffect(() {
       if (networkProviders.value.isEmpty) {
         getDataFromServer(context, networkIsLoading, networkProviders).then(
@@ -624,7 +594,20 @@ class Data extends HookWidget {
                                   ),
                                 ),
                               )
-                            : Icon(Icons.error_outline),
+                            : IconButton(
+                                onPressed: () {
+                                  getDataFromServer(context, networkIsLoading,
+                                          networkProviders)
+                                      .then(
+                                    (value) {
+                                      dataType.value = networkProviders
+                                          .value[0].data_type!.keys.first;
+
+                                      network.value = networkProviders.value[0];
+                                    },
+                                  );
+                                },
+                                icon: Icon(Icons.refresh_outlined)),
                       ],
                     ),
                     const SizedBox(

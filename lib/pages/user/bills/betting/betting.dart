@@ -22,11 +22,6 @@ import '../../../../model/app.dart';
 import '../../../../model/betting_providers.dart';
 import '../../../../widget/Button.dart';
 
-final TextEditingController amountController = TextEditingController();
-
-final TextEditingController idController = TextEditingController();
-
-final bettingProviderInputController = TextEditingController();
 final _formKey = GlobalKey<FormState>();
 
 class Betting extends HookWidget {
@@ -34,6 +29,17 @@ class Betting extends HookWidget {
 
   @override
   Widget build(BuildContext context) {
+    final TextEditingController amountController = useTextEditingController();
+
+    final TextEditingController idController = useTextEditingController();
+
+    final bettingProviderInputController = useTextEditingController();
+
+    useEffect(() {
+      amountController.text = '';
+      idController.text = '';
+      return null;
+    }, []);
     final focusNode = useFocusNode();
     final ValueNotifier<int?> amountSelected = useState(null);
     UnderlineInputBorder borderStyle = const UnderlineInputBorder(
@@ -160,6 +166,8 @@ class Betting extends HookWidget {
 
       if (context.mounted) {
         if (res?.statusCode == HttpStatus.ok) {
+          amountController.text = '';
+          idController.text = '';
           await putLastTransactionId(res?.data['data']['trx_id']);
           if (context.mounted) {
             HapticFeedback.heavyImpact();
@@ -586,7 +594,7 @@ class Betting extends HookWidget {
                                     ValidationBuilder().required().build(),
                                 decoration: InputDecoration(
                                   filled: false,
-                                  hintText: "50, - 1,000,000",
+                                  hintText: "Enter Amount",
                                   helperText: '',
                                   prefix: Padding(
                                     padding: const EdgeInsets.all(8.0),

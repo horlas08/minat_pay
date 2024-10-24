@@ -18,15 +18,13 @@ import 'package:touchable_opacity/touchable_opacity.dart';
 import '../../../bloc/register/register_bloc.dart';
 import '../../../bloc/register/register_event.dart';
 import '../../../bloc/register/register_state.dart';
+import '../../../bloc/repo/app/app_bloc.dart';
+import '../../../bloc/repo/app/app_event.dart';
+import '../../../cubic/app_config_cubit.dart';
 import '../../../widget/Button.dart';
 
 final formKey = GlobalKey<FormState>();
-final passwordFieldController = TextEditingController(text: '');
-final firstnameFieldController = TextEditingController(text: '');
-final lastnameFieldController = TextEditingController(text: '');
-final emailFieldController = TextEditingController(text: '');
-final usernameFieldController = TextEditingController(text: '');
-final verificationFieldController = TextEditingController();
+
 final timeController = CountdownController();
 final phoneFieldController = PhoneController(
   initialValue: const PhoneNumber(isoCode: IsoCode.NG, nsn: ""),
@@ -37,6 +35,12 @@ class RegisterPage extends HookWidget {
 
   @override
   Widget build(BuildContext context) {
+    final firstnameFieldController = useTextEditingController(text: '');
+    final lastnameFieldController = useTextEditingController(text: '');
+    final emailFieldController = useTextEditingController(text: '');
+    final usernameFieldController = useTextEditingController(text: '');
+    final verificationFieldController = useTextEditingController();
+    final passwordFieldController = useTextEditingController(text: '');
     final ValueNotifier<bool> showPass = useState(false);
     final ValueNotifier<bool> showCPass = useState(false);
     final ValueNotifier<bool> phoneValid = useState(false);
@@ -79,11 +83,18 @@ class RegisterPage extends HookWidget {
         print("register suucessfully");
         formKey.currentState?.reset();
         context.loaderOverlay.hide();
-        await alertHelper(context, 'success', "Registration Successfully");
-        context.mounted
-            ? context.pushNamed('email_verification',
-                pathParameters: {'email': state.email})
-            : null;
+        // await alertHelper(context, 'success', "Registration Successfully");
+        if (context.mounted) {
+          context.read<AppConfigCubit>().changeOnboardStatus(true);
+          print(state.userData);
+          context.read<AppBloc>().add(AddUserEvent(userData: state.userData));
+          context
+              .read<AppBloc>()
+              .add(AddAccountEvent(accounts: state.accounts));
+          context.pushNamed('regSuccessful');
+          // context.pushNamed('email_verification',
+          //     pathParameters: {'email': state.email});
+        }
       } else {
         // context.loaderOverlay.hide();
       }
@@ -282,7 +293,7 @@ class RegisterPage extends HookWidget {
                                                             ),
                                                           ),
                                                         )
-                                                      : Text(
+                                                      : const Text(
                                                           "Get Codes",
                                                           style: TextStyle(
                                                             color: Colors.white,
@@ -423,7 +434,7 @@ class RegisterPage extends HookWidget {
                                             .required()
                                             .build(),
                                         autovalidateMode:
-                                            AutovalidateMode.always,
+                                            AutovalidateMode.onUserInteraction,
                                       ),
                                     ),
                                   ],
@@ -516,19 +527,4 @@ class RegisterPage extends HookWidget {
       );
     });
   }
-
-  // @override
-  // void dispose() {
-  //   firstnameFieldController.dispose();
-  //   usernameFieldController.dispose();
-  //   lastnameFieldController.dispose();
-  //   emailFieldController.dispose();
-  //   phoneFieldController.dispose();
-  //   firstnameFieldController.dispose();
-  //   super.dispose();
-  // }
-
-  // Widget _buildPage(BuildContext context) {
-  //   return
-  // }
 }

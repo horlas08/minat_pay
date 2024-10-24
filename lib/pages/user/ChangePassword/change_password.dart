@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:form_validator/form_validator.dart';
 import 'package:loader_overlay/loader_overlay.dart';
 import 'package:minat_pay/widget/app_header.dart';
@@ -13,15 +14,31 @@ import '../../../config/font.constant.dart';
 import '../../../helper/helper.dart';
 
 final _formKey = GlobalKey<FormState>();
-final _oldPasswordController = TextEditingController();
-final _newPasswordController = TextEditingController();
-final _confirmPasswordController = TextEditingController();
 
-class ChangePassword extends StatelessWidget {
+class ChangePassword extends HookWidget {
   const ChangePassword({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final _oldPasswordController = useTextEditingController();
+    final _newPasswordController = useTextEditingController();
+    final _confirmPasswordController = useTextEditingController();
+
+    Future<Response?> _changePasswordRequest(BuildContext context) async {
+      SharedPreferences sharedPreferences =
+          await SharedPreferences.getInstance();
+      final res = await curlPostRequest(
+        path: changePassword,
+        data: {
+          "old_password": _oldPasswordController.text, //variationId,
+          "password": _newPasswordController.text, //variationId,
+          "confirm_password": _confirmPasswordController.text, //phone,
+          "token": sharedPreferences.getString('token'), //phone,
+        },
+      );
+      return res;
+    }
+
     return Scaffold(
       resizeToAvoidBottomInset: true,
       appBar: const AppHeader(title: "Change Password"),
@@ -180,19 +197,5 @@ class ChangePassword extends StatelessWidget {
         ),
       ),
     );
-  }
-
-  Future<Response?> _changePasswordRequest(BuildContext context) async {
-    SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
-    final res = await curlPostRequest(
-      path: changePassword,
-      data: {
-        "old_password": _oldPasswordController.text, //variationId,
-        "password": _newPasswordController.text, //variationId,
-        "confirm_password": _confirmPasswordController.text, //phone,
-        "token": sharedPreferences.getString('token'), //phone,
-      },
-    );
-    return res;
   }
 }

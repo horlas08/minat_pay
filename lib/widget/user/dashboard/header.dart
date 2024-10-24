@@ -9,6 +9,17 @@ import 'package:minat_pay/bloc/repo/app/app_bloc.dart';
 import '../../../bloc/repo/app/app_state.dart';
 import '../../../helper/helper.dart';
 
+String greeting() {
+  var hour = DateTime.now().hour;
+  if (hour < 12) {
+    return 'Morning';
+  }
+  if (hour < 17) {
+    return 'Afternoon';
+  }
+  return 'Evening';
+}
+
 class UserHeader extends HookWidget {
   const UserHeader({super.key});
 
@@ -39,7 +50,7 @@ class UserHeader extends HookWidget {
         Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text("Good Morning"),
+            Text("Good ${greeting()}"),
             BlocBuilder<AppBloc, AppState>(
               builder: (context, state) {
                 return Text(

@@ -36,8 +36,10 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
       if (res == null) {
         return emit(state.failed("Check Internet Connection"));
       }
+
       if (res.statusCode == HttpStatus.ok) {
         final SharedPreferences prefs = await SharedPreferences.getInstance();
+
         prefs.setString("token", res.data['data']['user_data']['token']);
         prefs.setBool(
             "isVerified", res.data['data']['user_data']['isVerified']);
@@ -45,10 +47,11 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
         if (!res.data['data']['user_data']['isVerified']) {
           prefs.setString("userEmail", res.data['data']['user_data']['email']);
         }
-        print((res.data['data']['accounts']));
+
         final accounts = (res.data['data']['accounts'] as List)
             .map((itemWord) => itemWord as Map<String, dynamic>)
             .toList();
+
         return emit(state.success(
           res.data['data']['user_data'],
           accounts,
