@@ -49,7 +49,6 @@ class Betting extends HookWidget {
     final ValueNotifier<List<BettingProviders>> networkProviders = useState([]);
     final ValueNotifier<BettingProviders> selectedProvider =
         useState(BettingProviders());
-    final ValueNotifier<bool> valid = useState(false);
     final ValueNotifier<String> userIdName = useState('');
     final ValueNotifier<BettingProviders> pickedNetwork =
         useState(BettingProviders());
@@ -294,25 +293,8 @@ class Betting extends HookWidget {
             ),
             Button(
               onpressed: () {
-                valid.value = false;
                 Navigator.of(context, rootNavigator: true).pop();
                 showConfirmPinRequest(context);
-
-                // valid.addListener(
-                //   () {
-                //     if (valid.value) {
-                //       handleCheckOut(
-                //         context,
-                //         amount: amountController.text,
-                //       );
-                //     }
-                //   },
-                // );
-                // valid.removeListener(
-                //   () {
-                //     valid.value;
-                //   },
-                // );
               },
               child: const Text(
                 "Pay",

@@ -42,7 +42,7 @@ void configureDio() {
         // If you want to resolve the request with some custom data,
         // you can resolve a `Response` object using `handler.resolve(response)`.
         print(error.response?.data);
-        return handler.next(error);
+        return handler.next(error.response?.data ?? error);
       },
     ),
   );

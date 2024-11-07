@@ -22,8 +22,8 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage> {
-  final passwordFieldController = TextEditingController();
-  final usernameFieldController = TextEditingController();
+  final passwordFieldController = TextEditingController(text: '');
+  final usernameFieldController = TextEditingController(text: '');
   bool showPass = false;
 
   @override

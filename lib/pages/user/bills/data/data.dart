@@ -374,18 +374,6 @@ class Data extends HookWidget {
                 }
 
                 showConfirmPinRequest(context);
-
-                // valid.addListener(
-                //   () {
-                //     if (valid.value == true) {
-                //       // print(test++);
-                //       handleCheckOut(
-                //         context,
-                //
-                //       );
-                //     }
-                //   },
-                // );
               },
               child: const Text(
                 "Pay",

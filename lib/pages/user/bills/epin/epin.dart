@@ -46,7 +46,7 @@ class Epin extends HookWidget {
     final ValueNotifier<EpinProviders> selectedProvider =
         useState(EpinProviders());
     final epinIsLoading = useState(false);
-    final ValueNotifier<bool> valid = useState(false);
+
     final ValueNotifier<String> amountInTotal = useState('');
     final ValueNotifier<EpinProviders> pickedExamType =
         useState(EpinProviders());
@@ -260,7 +260,6 @@ class Epin extends HookWidget {
             ),
             Button(
               onpressed: () {
-                valid.value = false;
                 Navigator.of(context, rootNavigator: true).pop();
                 showConfirmPinRequest(context);
               },

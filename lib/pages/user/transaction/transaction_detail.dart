@@ -251,7 +251,7 @@ class TransactionDetail extends HookWidget {
           Expanded(
             child: Text(
               left,
-              style: const TextStyle(color: Colors.black),
+              // style: const TextStyle(color: Colors.black),
             ),
           ),
           right is String
@@ -261,7 +261,7 @@ class TransactionDetail extends HookWidget {
                     textAlign: TextAlign.right,
                     right,
                     style: const TextStyle(
-                      color: Colors.black,
+                      // color: Colors.black,
                       fontFamily: AppFont.mulish,
                       fontWeight: FontWeight.w600,
                     ),

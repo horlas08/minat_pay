@@ -118,9 +118,7 @@ class Airtime extends HookWidget {
       return null;
     }, []);
     final ValueNotifier<int?> selectedPlan = useState(null);
-    final ValueNotifier<String> selectedNetworkId = useState('0');
-    final ValueNotifier<bool> openNetwork = useState(false);
-    final ValueNotifier<bool> valid = useState(false);
+
     final ValueNotifier<bool> networkIsLoading = useState(false);
     final ValueNotifier<List<AirtimeProviders>> networkProviders = useState([]);
     final user = context.read<AppBloc>().state.user;
@@ -257,7 +255,6 @@ class Airtime extends HookWidget {
             ),
             Button(
               onpressed: () {
-                valid.value = false;
                 Navigator.of(context, rootNavigator: true).pop();
                 showConfirmPinRequest(context);
               },
@@ -536,11 +533,14 @@ class Airtime extends HookWidget {
                                     children: [
                                       Text(
                                         currency(context),
-                                        style: TextStyle(
+                                        style: const TextStyle(
                                           fontWeight: FontWeight.bold,
                                           fontFamily: AppFont.mulish,
                                           fontSize: 15,
-                                          color: AppColor.secondaryColor,
+                                          // color: Theme.of(context).brightness ==
+                                          //         Brightness.light
+                                          //     ? Colors.black
+                                          //     : Colors.white,
                                         ),
                                       ),
                                       const SizedBox(
@@ -555,32 +555,6 @@ class Airtime extends HookWidget {
                                       ),
                                     ],
                                   ),
-                                  // Row(
-                                  //   mainAxisAlignment: MainAxisAlignment.center,
-                                  //   children: [
-                                  //     Text(
-                                  //       "Pay",
-                                  //       style: TextStyle(
-                                  //         fontWeight: FontWeight.bold,
-                                  //         fontFamily: AppFont.mulish,
-                                  //         fontSize: 10,
-                                  //         color: AppColor.secondaryColor,
-                                  //       ),
-                                  //     ),
-                                  //     const SizedBox(
-                                  //       width: 4,
-                                  //     ),
-                                  //     Text(
-                                  //       "${currency(context)}${airtimePrice[index]['price']}",
-                                  //       style: const TextStyle(
-                                  //         fontFamily: AppFont.mulish,
-                                  //         fontWeight: FontWeight.bold,
-                                  //         fontSize: 10,
-                                  //         color: AppColor.primaryColor,
-                                  //       ),
-                                  //     ),
-                                  //   ],
-                                  // ),
                                 ],
                               ),
                             ),

@@ -118,7 +118,7 @@ class Electricity extends HookWidget {
     final ValueNotifier<ElectricityProviders> selectedProvider =
         useState(ElectricityProviders());
     final ValueNotifier<String> electricityType = useState('prepaid');
-    final ValueNotifier<bool> valid = useState(false);
+
     final ValueNotifier<ElectricityProviders> pickedNetwork =
         useState(ElectricityProviders());
     final user = context.read<AppBloc>().state.user;
@@ -396,7 +396,6 @@ class Electricity extends HookWidget {
             ),
             Button(
               onpressed: () {
-                valid.value = false;
                 if (Navigator.canPop(context)) {
                   Navigator.of(context, rootNavigator: true).pop(context);
                 }

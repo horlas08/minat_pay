@@ -197,7 +197,7 @@ class Cable extends HookWidget {
 
       if (context.mounted && res == null) {
         Navigator.of(context, rootNavigator: true).pop();
-        await alertHelper(context, 'error', 'No Internet Connection');
+        return await alertHelper(context, 'error', 'No Internet Connection');
       }
 
       if (context.mounted) {
@@ -338,25 +338,8 @@ class Cable extends HookWidget {
             ),
             Button(
               onpressed: () {
-                valid.value = false;
                 Navigator.of(context, rootNavigator: true).pop();
                 showConfirmPinRequest(context);
-
-                // valid.addListener(
-                //   () {
-                //     if (valid.value) {
-                //       handleCheckOut(
-                //         context,
-                //         amount: amountController.text,
-                //       );
-                //     }
-                //   },
-                // );
-                // valid.removeListener(
-                //   () {
-                //     valid.value;
-                //   },
-                // );
               },
               child: const Text(
                 "Pay",
@@ -383,10 +366,12 @@ class Cable extends HookWidget {
 
     return BlocConsumer<AppConfigCubit, App>(
       listener: (context, state) {
-        handleCheckOut(
-          context,
-          amount: amountController.text,
-        );
+        if (state.pinState == true) {
+          handleCheckOut(
+            context,
+            amount: amountController.text,
+          );
+        }
       },
       builder: (context, state) {
         return Scaffold(

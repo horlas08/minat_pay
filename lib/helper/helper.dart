@@ -321,9 +321,7 @@ Future<Response?> confirmTransactionPinRequest({required String pin}) async {
 Future showConfirmPinRequest(BuildContext context, {Function? callback}) {
   Size size = MediaQuery.of(context).size;
   PinInputController pinInputController = PinInputController(length: 4);
-
-  // final ValueNotifier<bool> valid = useState(false);
-
+  context.read<AppConfigCubit>().comfirmPinState(false);
   return showModalBottomSheet(
       context: context,
       isDismissible: true,
@@ -385,14 +383,16 @@ Future showConfirmPinRequest(BuildContext context, {Function? callback}) {
                           .comfirmPinState(true);
                       // Navigator.of(context, rootNavigator: true).pop();
                     } else {
+                      context.read<AppConfigCubit>().comfirmPinState(false);
                       Future.delayed(
                         Duration.zero,
                         () async {
-                          await alertHelper(
-                              context, 'error', res?.data['message']);
+                          if (context.mounted) {
+                            return await alertHelper(
+                                context, 'error', res?.data['message']);
+                          }
                         },
                       );
-                      context.read<AppConfigCubit>().comfirmPinState(false);
                       return;
                     }
                   }
@@ -597,8 +597,12 @@ Future<Response?> refreshUSerDetail() async {
 }
 
 Future<void> handleLogOut(BuildContext context) async {
-  context.loaderOverlay.show();
+  print(GoRouterState.of(context).fullPath);
   final SharedPreferences prefs = await SharedPreferences.getInstance();
+  if (!context.mounted) return;
+  String? username = prefs.getString("userName");
+
+  context.loaderOverlay.show();
   final res = await curlPostRequest(path: "/logout", data: {
     'token': prefs.getString("token"),
   });
@@ -607,12 +611,15 @@ Future<void> handleLogOut(BuildContext context) async {
       await prefs.clear();
       if (context.mounted) {
         context.read<AppConfigCubit>().changeAuthState(false);
-        context.go('/login');
 
         if (!context.read<AppConfigCubit>().state.onboardSkip) {
+          prefs.setBool('onboardSkip', true);
           context.read<AppConfigCubit>().changeOnboardStatus(true);
         }
+
+        context.go('/login');
         context.loaderOverlay.hide();
+        return;
       }
     } else {
       context.loaderOverlay.hide();

@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
-import 'package:minat_pay/helper/common.dart';
 import 'package:minat_pay/pages/auth/EmailVerification/email_verify_view.dart';
 import 'package:minat_pay/pages/auth/Login/login_view.dart';
 import 'package:minat_pay/pages/auth/Register/register_view.dart';
@@ -39,87 +38,114 @@ final GlobalKey<NavigatorState> _shellNavigatorKey =
 
 class AppRouter {
   static final GoRouter router = GoRouter(
-    initialLocation: '/',
+    initialLocation: "/",
     navigatorKey: _rootNavigatorKey,
+    redirect: (context, state) async {
+      final SharedPreferences prefs = await SharedPreferences.getInstance();
+
+      String? token = prefs.getString("token");
+      if (context.mounted &&
+          context.read<AppConfigCubit>().state.onboardSkip &&
+          token == null) {
+        print("am redirect here");
+
+        return '/login';
+      }
+      String? username = prefs.getString("userName");
+      if (context.mounted) {
+        if (token != null && !context.read<AppConfigCubit>().state.authState) {
+          print(token);
+          return '/login/verify/$username';
+        }
+      }
+      return null;
+    },
     routes: <RouteBase>[
       GoRoute(
-          path: '/',
-          builder: (BuildContext context, GoRouterState state) {
-            return const OnboardingScreen();
-          },
-          routes: <RouteBase>[
-            GoRoute(
-              path: 'reset/password',
-              name: 'reset_password',
-              builder: (BuildContext context, GoRouterState state) {
-                return ForgotPasswordPage();
-              },
-            ),
-            GoRoute(
-              path: 'login',
-              name: 'login',
-              builder: (BuildContext context, GoRouterState state) =>
-                  const LoginPage(),
-            ),
-            GoRoute(
-              path: 'register',
-              name: 'register',
-              builder: (BuildContext context, GoRouterState state) =>
-                  const RegisterPage(),
-              redirect: (context, state) async {
-                final SharedPreferences prefs =
-                    await SharedPreferences.getInstance();
-                String? token = prefs.getString("token");
-                bool? isVerified = prefs.getBool("isVerified");
-                String? userEmail = prefs.getString("userEmail");
-                if (token != null &&
-                    isVerified != null &&
-                    !isVerified &&
-                    userEmail != null) {
-                  return '/email/verify/$userEmail';
-                }
-                return null;
-              },
-            ),
-            GoRoute(
-              path: 'email/verify/:email',
-              name: 'email_verification',
-              builder: (context, state) => EmailVerifyPage(
-                email: state.pathParameters['email']!,
-              ),
-            ),
-            GoRoute(
-              path: 'login/verify/:username',
-              name: 'login_verify',
-              builder: (BuildContext context, GoRouterState state) =>
-                  LoginVerifyPage(username: state.pathParameters['username']!),
-              onExit: (context, state) => exitApp(context),
-            ),
-          ],
-          redirect: (context, state) async {
-            final SharedPreferences prefs =
-                await SharedPreferences.getInstance();
-            String? token = prefs.getString("token");
+        path: '/',
+        builder: (BuildContext context, GoRouterState state) {
+          if (context.read<AppConfigCubit>().state.onboardSkip &&
+              GoRouterState.of(context).uri.path == '/') {
+            return const LoginPage();
+          }
 
-            String? username = prefs.getString("userName");
-            String? email = prefs.getString("userEmail");
-            bool? isVerified = prefs.getBool("isVerified");
-
+          return const OnboardingScreen();
+        },
+        routes: <RouteBase>[
+          GoRoute(
+            path: 'reset/password',
+            name: 'reset_password',
+            builder: (BuildContext context, GoRouterState state) {
+              return const ForgotPasswordPage();
+            },
+          ),
+          GoRoute(
+            path: 'login',
+            name: 'login',
+            builder: (BuildContext context, GoRouterState state) =>
+                const LoginPage(),
+          ),
+          GoRoute(
+            path: 'register',
+            name: 'register',
+            builder: (BuildContext context, GoRouterState state) =>
+                const RegisterPage(),
+            redirect: (context, state) async {
+              final SharedPreferences prefs =
+                  await SharedPreferences.getInstance();
+              String? token = prefs.getString("token");
+              bool? isVerified = prefs.getBool("isVerified");
+              String? userEmail = prefs.getString("userEmail");
+              if (token != null &&
+                  isVerified != null &&
+                  !isVerified &&
+                  userEmail != null) {
+                return '/email/verify/$userEmail';
+              }
+              return null;
+            },
+          ),
+          GoRoute(
+            path: 'email/verify/:email',
+            name: 'email_verification',
+            builder: (context, state) => EmailVerifyPage(
+              email: state.pathParameters['email']!,
+            ),
+          ),
+          GoRoute(
+            path: 'login/verify/:username',
+            name: 'login_verify',
+            builder: (BuildContext context, GoRouterState state) =>
+                LoginVerifyPage(username: state.pathParameters['username']!),
+          ),
+        ],
+        redirect: (context, state) async {
+          final SharedPreferences prefs = await SharedPreferences.getInstance();
+          String? token = prefs.getString("token");
+          print(state.topRoute);
+          print(state.topRoute);
+          String? username = prefs.getString("userName");
+          if (context.mounted) {
             if (token != null &&
-                context.mounted &&
-                isVerified! &&
                 !context.read<AppConfigCubit>().state.authState) {
+              print(token);
               return '/login/verify/$username';
             } else if (token != null &&
-                context.mounted &&
-                isVerified! &&
                 context.read<AppConfigCubit>().state.authState) {
               return '/user';
             }
-
             return null;
-          },
-          onExit: (context, state) => exitConfirmation(context)),
+          }
+          return null;
+
+          // else if (token == null &&
+          //     context.mounted &&
+          //     !context.read<AppConfigCubit>().state.authState) {
+          //   return '/login';
+          // }
+          // return null;
+        },
+      ),
       GoRoute(
           path: '/bills',
           name: 'allBills',
@@ -204,7 +230,7 @@ class AppRouter {
               path: 'receipt',
               name: 'transactionReceipt',
               builder: (BuildContext context, GoRouterState state) {
-                return Receipt();
+                return const Receipt();
               },
             )
           ]),
@@ -219,14 +245,14 @@ class AppRouter {
         path: '/change/pin',
         name: 'changePin',
         builder: (context, state) {
-          return ChangePin();
+          return const ChangePin();
         },
       ),
       GoRoute(
         path: '/change/password',
         name: 'changePassword',
         builder: (context, state) {
-          return ChangePassword();
+          return const ChangePassword();
         },
       ),
       ShellRoute(
@@ -242,7 +268,6 @@ class AppRouter {
             builder: (BuildContext context, GoRouterState state) {
               return const Dashboard();
             },
-            onExit: (context, state) => exitConfirmation(context),
             routes: <RouteBase>[
               // The details screen to display stacked on the inner Navigator.
               // This will cover screen A but not the application shell.
