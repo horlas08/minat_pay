@@ -21,9 +21,7 @@ subprojects {
         if (it.name == "flutter_inappwebview_android") {
             it.android.buildTypes.release.minifyEnabled = false
         }
-        if (it.name == "monnify_payment_sdk") {
-            it.android.buildTypes.release.minifyEnabled = false
-        }
+
     }
     project.evaluationDependsOn(":app")
 }

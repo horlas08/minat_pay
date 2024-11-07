@@ -8,7 +8,6 @@ import 'package:loader_overlay/loader_overlay.dart';
 import 'package:minat_pay/bloc/repo/app/app_bloc.dart';
 import 'package:minat_pay/helper/helper.dart';
 import 'package:minat_pay/widget/Button.dart';
-import 'package:monnify_payment_sdk/monnify_payment_sdk.dart';
 
 import '../../../../../config/color.constant.dart';
 import '../../../../../config/font.constant.dart';
