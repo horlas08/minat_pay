@@ -32,7 +32,7 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
       final res =
           await LoginRepo(username: event.username, password: event.password)
               .loginResponse();
-
+      print(res);
       if (res == null) {
         return emit(state.failed("Check Internet Connection"));
       }
