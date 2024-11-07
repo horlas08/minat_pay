@@ -1,11 +1,8 @@
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:minat_pay/bloc/repo/app/app_bloc.dart';
-import 'package:minat_pay/helper/helper.dart';
 import 'package:minat_pay/widget/Button.dart';
 
 import '../../../../../config/color.constant.dart';
@@ -23,46 +20,8 @@ class Manual extends HookWidget {
       _amountController.text = '';
       return null;
     }, []);
-    final ValueNotifier<Monnify?> monnify = useState(null);
+
     final user = context.read<AppBloc>().state.user;
-
-    void onInitializePayment() async {
-      final amount = double.parse(_amountController.text);
-      final paymentReference = DateTime.now().millisecondsSinceEpoch.toString();
-
-      final transaction = TransactionDetails().copyWith(
-        amount: amount,
-        currencyCode: 'NGN',
-        customerName: '${user?.firstName} ${user?.lastName}',
-        customerEmail: user?.email,
-        paymentReference: paymentReference,
-        // metaData: {"ip": "196.168.45.22", "device": "mobile"},
-        paymentMethods: [PaymentMethod.CARD, PaymentMethod.USSD],
-        /*incomeSplitConfig: [SubAccountDetails("MFY_SUB_319452883968", 10.5, 500, true),
-          SubAccountDetails("MFY_SUB_259811283666", 10.5, 1000, false)]*/
-      );
-
-      try {
-        final response =
-            await monnify.value?.initializePayment(transaction: transaction);
-        if (response != null) {
-          if (context.mounted) {
-            if (response.transactionStatus == 'CANCELLED') {
-              _amountController.text = '';
-              await alertHelper(context, 'error',
-                  "Payment Failed ${response.currencyCode} ${response.amountPaid}");
-            } else {
-              _amountController.text = '';
-              await alertHelper(context, 'success',
-                  "Amount Of ${response.currencyCode} ${response.amountPaid} Was Paid Successful");
-            }
-          }
-        }
-      } catch (e) {
-        log('$e');
-        await alertHelper(context, 'success', e.toString());
-      }
-    }
 
     return SingleChildScrollView(
       child: Padding(
@@ -106,7 +65,7 @@ class Manual extends HookWidget {
               height: 20,
             ),
             Button(
-                onpressed: onInitializePayment,
+                onpressed: () {},
                 child: Row(
                   crossAxisAlignment: CrossAxisAlignment.center,
                   mainAxisAlignment: MainAxisAlignment.center,

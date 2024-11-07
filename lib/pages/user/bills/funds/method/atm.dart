@@ -27,7 +27,7 @@ class Atm extends HookWidget {
 
       return null;
     }, []);
-    final ValueNotifier<Monnify?> monnify = useState(null);
+
     final user = context.read<AppBloc>().state.user;
 
     Future<void> onInitializePaystack() async {
