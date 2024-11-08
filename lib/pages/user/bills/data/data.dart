@@ -110,9 +110,9 @@ class Data extends HookWidget {
   Widget build(BuildContext context) {
     useEffect(() {
       phoneController.value = PhoneNumber(isoCode: IsoCode.NG, nsn: '');
-      return () {
-        phoneController.dispose();
-      };
+      // return () {
+      //   phoneController.dispose();
+      // };
     }, []);
     final ValueNotifier<bool> valid = useState(false);
     final user = context.read<AppBloc>().state.user;
