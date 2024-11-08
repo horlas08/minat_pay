@@ -102,7 +102,7 @@ workflows:
         auth: integration
         # Submit the release to TestFlight, where it can be downloaded by beta
         #   users and later patched by Shorebird.
-        submit_to_testflight: true
+        submit_to_testflight: false
 
 
 
