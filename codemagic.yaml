@@ -24,8 +24,6 @@ scripts:
 
         # Add Shorebird to PATH
         echo PATH="$HOME/.shorebird/bin:$PATH" >> $CM_ENV
-    - &use_profiles
-
     - &fetch_dependencies
       name: Fetch Dependencies
       script: |
@@ -46,7 +44,6 @@ workflows:
       # Use the scripts we defined in the definitions section.
       - *shorebird_install
       - *fetch_dependencies
-      - *use_profiles
       - name: Shorebird Release
         # Run `shorebird release ios` to create a release.
         script: |
