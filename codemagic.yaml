@@ -52,9 +52,6 @@ workflows:
       # Use the scripts we defined in the definitions section.
       - *shorebird_install
       - *fetch_dependencies
-      - *fetch_signing_files
-      - *ios_initialize_keychain
-      - *add_certs_to_keychain
       - *use_profiles
       - name: Shorebird Release
         # Run `shorebird release ios` to create a release.
