@@ -36,6 +36,7 @@ const String postBetting = '/betting';
 const String postElectricity = '/electricity';
 const String postCable = '/cable-app';
 const String generatemonnify = '/generatemonnify';
+const String generatepalmpay = '/generatepalmpay';
 const String generatepsb = '/generatepsb';
 const String getCableVariation = '/get-cable-variation-id';
 const String getCable = '/get-cable';

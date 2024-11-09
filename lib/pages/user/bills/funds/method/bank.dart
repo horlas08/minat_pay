@@ -41,7 +41,11 @@ class Bank extends HookWidget {
       final SharedPreferences prefs = await SharedPreferences.getInstance();
 
       final res = await curlPostRequest(
-          path: accountType.value == 1 ? generatemonnify : generatepsb,
+          path: accountType.value == 1
+              ? generatemonnify
+              : accountType.value == 2
+                  ? generatepsb
+                  : generatepalmpay,
           data: {
             'token': prefs.getString('token'),
             'bvn': bvnFieldController.text,
@@ -261,10 +265,13 @@ class Bank extends HookWidget {
                   ],
                 ),
               ),
-              if (!state.user!.hasMonnify! || !state.user!.hasPsb!)
+              if (!state.user!.hasMonnify! ||
+                  !state.user!.hasPsb! ||
+                  !state.user!.hasPalmPay!)
                 Container(
                   margin: const EdgeInsets.all(20),
                   child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       if (!state.user!.hasMonnify!)
                         Expanded(
@@ -283,10 +290,6 @@ class Bank extends HookWidget {
                             ),
                           ),
                         ),
-                      if (!state.user!.hasMonnify! && !state.user!.hasPsb!)
-                        const SizedBox(
-                          width: 10,
-                        ),
                       if (!state.user!.hasPsb!)
                         Expanded(
                           child: Button(
@@ -298,6 +301,23 @@ class Bank extends HookWidget {
                             },
                             child: const Text(
                               "Generate 9Psb Acct",
+                              style: TextStyle(
+                                color: Colors.white,
+                              ),
+                            ),
+                          ),
+                        ),
+                      if (!state.user!.hasPalmPay!)
+                        Expanded(
+                          child: Button(
+                            onpressed: () {
+                              if (accountType.value != 3) {
+                                accountType.value = 3;
+                              }
+                              showBvnModal(context, accountType);
+                            },
+                            child: const Text(
+                              "Generate Palmpay Acct",
                               style: TextStyle(
                                 color: Colors.white,
                               ),

@@ -14,6 +14,7 @@ class User extends Equatable {
   final bool? hasPin;
   final bool? isVerified;
   final bool? hasMonnify;
+  final bool? hasPalmPay;
   final bool? hasPsb;
   final bool? userType;
   final num? refBal;
@@ -34,6 +35,7 @@ class User extends Equatable {
       this.isVerified,
       this.hasMonnify,
       this.hasPsb,
+      this.hasPalmPay,
       this.refBal,
       this.referrals,
       this.userType});
@@ -58,6 +60,7 @@ class User extends Equatable {
     bool? isVerified,
     bool? hasPsb,
     bool? hasMonnify,
+    bool? hasPalmPay,
     bool? userType,
     num? refBal,
     num? referrals,
@@ -77,6 +80,7 @@ class User extends Equatable {
       isVerified: isVerified ?? this.isVerified,
       hasPsb: hasPsb ?? this.hasPsb,
       hasMonnify: hasMonnify ?? this.hasMonnify,
+      hasPalmPay: hasPalmPay ?? this.hasPalmPay,
       userType: userType ?? this.userType,
       refBal: refBal ?? this.refBal,
       referrals: referrals ?? this.referrals,
@@ -98,6 +102,7 @@ class User extends Equatable {
       'hasPin': hasPin,
       'isVerified': isVerified,
       'hasMonnify': hasMonnify,
+      'hasPalmPay': hasPalmPay,
       'hasPsb': hasPsb,
       'userType': userType,
       'refBal': refBal,
@@ -121,6 +126,7 @@ class User extends Equatable {
       isVerified: map['isVerified'] as bool,
       hasPsb: map['has_psb'] as bool,
       hasMonnify: map['has_monnify'] as bool,
+      hasPalmPay: map['has_palmpay'] as bool,
       userType: map['user_type'] as bool,
       refBal: map['ref_bal'] as num,
       referrals: map['referrals'] as num,
@@ -144,6 +150,7 @@ class User extends Equatable {
         isVerified,
         hasPsb,
         hasMonnify,
+        hasPalmPay,
         userType,
         refBal,
         referrals
