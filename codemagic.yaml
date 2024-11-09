@@ -63,16 +63,12 @@ workflows:
     name: Release iOS
     # This needs to run on a Mac instance.
     instance_type: mac_mini_m1
-    integrations:
-      # "Codemagic" is the name of our App Store Connect API key name.
-      app_store_connect: MinatPay
+
     environment:
       <<: *shared_env
       # Tell Codemagic+ that we're signing our app for App Store distribution
       #   and to use the bundle ID we defined above.
-      ios_signing:
-        distribution_type: app_store
-        bundle_identifier: "$BUNDLE_ID"
+
     scripts:
       # Use the scripts we defined in the definitions section.
       - *shorebird_install
@@ -91,13 +87,7 @@ workflows:
     #   the `shorebird release ios` command.
     artifacts:
       - build/ios/ipa/*.ipa
-    publishing:
-      app_store_connect:
-        # Use referenced App Store Connect API key to authenticate binary upload.
-        auth: integration
-        # Submit the release to TestFlight, where it can be downloaded by beta
-        #   users and later patched by Shorebird.
-        submit_to_testflight: false
+
 
 
 

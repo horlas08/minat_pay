@@ -92,13 +92,7 @@ workflows:
     #   the `shorebird release ios` command.
     artifacts:
       - build/ios/ipa/*.ipa
-    publishing:
-      app_store_connect:
-        # Use referenced App Store Connect API key to authenticate binary upload.
-        auth: integration
-        # Submit the release to TestFlight, where it can be downloaded by beta
-        #   users and later patched by Shorebird.
-        submit_to_testflight: false
+
 
 
 
