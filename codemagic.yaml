@@ -24,27 +24,6 @@ scripts:
 
         # Add Shorebird to PATH
         echo PATH="$HOME/.shorebird/bin:$PATH" >> $CM_ENV
-    - &ios_initialize_keychain
-      # Set up the keychain to be used for code signing. Create the keychain
-      #   at specified path with specified password with given timeout.
-      # Make it default and unlock it for upcoming use.
-      name: Set up keychain to be used for codesigning using Codemagic CLI 'keychain' command
-      script: |
-        keychain initialize
-    - &fetch_signing_files
-      # Fetch provisioning profiles and code signing certificates for
-      #   the Bundle ID with given identifier.
-      name: Fetch signing files
-      script: |
-        app-store-connect fetch-signing-files "$BUNDLE_ID" \
-          --type IOS_APP_STORE --create \
-          --issuer-id "$ISSUER_ID" \
-          --key-id "$KEY_ID" \
-          --private-key="$APP_STORE_CONNECT_PRIVATE_KEY"
-    - &add_certs_to_keychain
-      name: Add certs to keychain
-      script: |
-        keychain add-certificates
     - &use_profiles
       # This generates an export_options.plist file that tells Xcode
       #   how to package our app. We explicitly set
