@@ -25,13 +25,7 @@ scripts:
         # Add Shorebird to PATH
         echo PATH="$HOME/.shorebird/bin:$PATH" >> $CM_ENV
     - &use_profiles
-      # This generates an export_options.plist file that tells Xcode
-      #   how to package our app. We explicitly set
-      #   manageAppVersionAndBuildNumber so that we can control which
-      #   version and build number are used for releasing and patching.
-      name: Set up code signing settings on Xcode project
-      script: |
-        xcode-project use-profiles --custom-export-options={\"manageAppVersionAndBuildNumber\":false}
+
     - &fetch_dependencies
       name: Fetch Dependencies
       script: |
