@@ -18,6 +18,7 @@ class LoginVerifyService {
       'password': password,
       'token': prefs.getString('token'),
     });
+
     return res;
   }
 }

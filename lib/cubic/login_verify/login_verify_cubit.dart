@@ -19,7 +19,10 @@ class LoginVerifyCubit extends Cubit<LoginVerifyState> {
       } else {
         res = await LoginVerifyRepo(password: password).loginVerifyResponse();
       }
+
+      print("______");
       print(res);
+      print("______");
 
       if (res == null) {
         return emit(LoginVerifyFailed("Check Your Connection"));

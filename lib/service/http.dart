@@ -41,8 +41,10 @@ void configureDio() {
         // Do something with response error.
         // If you want to resolve the request with some custom data,
         // you can resolve a `Response` object using `handler.resolve(response)`.
+        print("from dio config");
         print(error.response?.data);
-        return handler.next(error.response?.data ?? error);
+        print("from dio config");
+        return handler.next(error);
       },
     ),
   );
@@ -82,7 +84,7 @@ void configureDio() {
         // Do something with response error.
         // If you want to resolve the request with some custom data,
         // you can resolve a `Response` object using `handler.resolve(response)`.
-        print(error.response?.data);
+
         return handler.next(error);
       },
     ),

@@ -150,6 +150,8 @@ Future<Response?> curlPostRequest(
         data: data, queryParameters: queryParams, options: options);
     return res;
   } on DioException catch (error) {
+    print("error enter");
+    print(error);
     return error.response;
   }
 }
