@@ -7,13 +7,9 @@
 	<key>CFBundleDevelopmentRegion</key>
 	<string>$(DEVELOPMENT_LANGUAGE)</string>
 	<key>CFBundleDisplayName</key>
-<<<<<<< HEAD
-	<string>Minat Pay</string>
-=======
-	<string>Minat Pay</string>
+	<string>MinatPay</string>
 	<key>NSFaceIDUsageDescription</key>
     <string>MinatPay Authentication?</string>
->>>>>>> refs/remotes/origin/main
 	<key>CFBundleExecutable</key>
 	<string>$(EXECUTABLE_NAME)</string>
 	<key>CFBundleIdentifier</key>
