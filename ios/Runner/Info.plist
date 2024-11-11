@@ -9,7 +9,11 @@
 	<key>CFBundleDisplayName</key>
 	<string>MinatPay</string>
 	<key>NSFaceIDUsageDescription</key>
-    <string>MinatPay Authentication?</string>
+	<string>MinatPay Authentication?</string>
+	<key>NSCameraUsageDescription </key>
+	<string>This app requires access to the camera.</string>
+	<key>NSPhotoLibraryUsageDescription </key>
+    <string>This app requires access to the photo library.</string>
 	<key>CFBundleExecutable</key>
 	<string>$(EXECUTABLE_NAME)</string>
 	<key>CFBundleIdentifier</key>
