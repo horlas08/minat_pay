@@ -92,6 +92,7 @@ class Atm extends HookWidget {
           print(response.data);
         }
       } catch (error) {
+        print(error);
         if (context.mounted) {
           await alertHelper(context, 'error', error.toString());
         }
