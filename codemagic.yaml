@@ -11,7 +11,9 @@ workflows:
       - name: Install Flutter and Shorebird CLI
         script: |
           flutter --version
-          curl -sS https://install.shorebird.dev | bash
+          curl --proto '=https' --tlsv1.2 https://raw.githubusercontent.com/shorebirdtech/install/main/install.sh -sSf | bash
+          # Add Shorebird to PATH
+          echo PATH="$HOME/.shorebird/bin:$PATH" >> $CM_ENV
           shorebird --version
       - name: Configure Shorebird
         script: shorebird init --api-key=$SHOREBIRD_API_KEY
