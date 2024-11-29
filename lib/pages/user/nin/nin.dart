@@ -174,7 +174,7 @@ class Nin extends HookWidget {
                       maxLength: 11,
                       style: const TextStyle(color: AppColor.primaryColor),
                       decoration: const InputDecoration(
-                        hintText: "Enter NIN Number",
+                        hintText: "Enter NIN or Phone number",
                         hintStyle: TextStyle(
                           fontSize: 18,
                           color: AppColor.primaryColor,
@@ -189,34 +189,34 @@ class Nin extends HookWidget {
                         FocusManager.instance.primaryFocus?.unfocus();
                       },
                     ),
-                    const SizedBox(
-                      height: 10,
-                    ),
-                    TextFormField(
-                      autovalidateMode: AutovalidateMode.onUserInteraction,
-                      validator: ValidationBuilder().required().build(),
-                      controller: phoeNumberPinController,
-                      style: const TextStyle(color: AppColor.primaryColor),
-                      keyboardType: TextInputType.numberWithOptions(
-                        decimal: true,
-                        signed: false,
-                      ),
-                      decoration: const InputDecoration(
-                        hintText: "Enter Phone No(used for nin)",
-                        hintStyle: TextStyle(
-                          fontSize: 18,
-                          color: AppColor.primaryColor,
-                        ),
-                        border: InputBorder.none,
-                        enabledBorder: InputBorder.none,
-                        errorBorder: InputBorder.none,
-                        focusedErrorBorder: InputBorder.none,
-                        focusedBorder: InputBorder.none,
-                      ),
-                      onTapOutside: (v) {
-                        FocusManager.instance.primaryFocus?.unfocus();
-                      },
-                    ),
+                    // const SizedBox(
+                    //   height: 10,
+                    // ),
+                    // TextFormField(
+                    //   autovalidateMode: AutovalidateMode.onUserInteraction,
+                    //   validator: ValidationBuilder().required().build(),
+                    //   controller: phoeNumberPinController,
+                    //   style: const TextStyle(color: AppColor.primaryColor),
+                    //   keyboardType: TextInputType.numberWithOptions(
+                    //     decimal: true,
+                    //     signed: false,
+                    //   ),
+                    //   decoration: const InputDecoration(
+                    //     hintText: "Enter Phone No(used for nin)",
+                    //     hintStyle: TextStyle(
+                    //       fontSize: 18,
+                    //       color: AppColor.primaryColor,
+                    //     ),
+                    //     border: InputBorder.none,
+                    //     enabledBorder: InputBorder.none,
+                    //     errorBorder: InputBorder.none,
+                    //     focusedErrorBorder: InputBorder.none,
+                    //     focusedBorder: InputBorder.none,
+                    //   ),
+                    //   onTapOutside: (v) {
+                    //     FocusManager.instance.primaryFocus?.unfocus();
+                    //   },
+                    // ),
                     const SizedBox(
                       height: 10,
                     ),
@@ -292,7 +292,7 @@ class Nin extends HookWidget {
                         ),
                       ),
                       child: const Text(
-                        "Completed Payment Now",
+                        "Make Payment",
                         style: TextStyle(
                             color: Colors.white, fontWeight: FontWeight.bold),
                       ),

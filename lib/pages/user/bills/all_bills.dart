@@ -2,8 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:minat_pay/data/mock/dummy_data.dart';
 import 'package:minat_pay/widget/user/bills/all_bill_items.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../../../config/font.constant.dart';
+import '../../../helper/helper.dart';
 
 class AllBills extends StatelessWidget {
   const AllBills({super.key});
@@ -40,6 +42,21 @@ class AllBills extends StatelessWidget {
                   );
                 },
                 itemCount: allBills.length,
+              ),
+              AllBillItems(
+                name: 'Airtime pin',
+                icon: Icons.document_scanner_rounded,
+                onTap: () async {
+                  const url = 'https://minatpay.com/user/buy-airtime-pin';
+                  try {
+                    final Uri _url = Uri.parse(url);
+                    await launchUrl(_url);
+                  } catch (error) {
+                    if (context.mounted) {
+                      await alertHelper(context, 'error', error.toString());
+                    }
+                  }
+                },
               ),
               AllBillItems(
                 name: 'Airtime to cash',

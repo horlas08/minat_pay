@@ -756,7 +756,7 @@ Widget RowList(
           ),
           const Spacer(),
           SizedBox(
-            width: 200,
+            // width: 200,
             child: Row(
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
@@ -765,7 +765,7 @@ Widget RowList(
                   style: TextStyle(
                     fontFamily: AppFont.mulish,
                     color: key == 'status'
-                        ? value == 'successful'
+                        ? value.toLowerCase().contains('success')
                             ? AppColor.success
                             : AppColor.danger
                         : Colors.black,
