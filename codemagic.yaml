@@ -17,7 +17,7 @@ workflows:
           shorebird --version
       - name: Shorebird Release
         script: |
-          shorebird build ios \
+          shorebird release ios \
           --no-codesign
     artifacts:
       - build/ios/ipa/*.ipa # Unsigned iOS IPA file
