@@ -16,7 +16,8 @@ workflows:
           echo $PATH
           shorebird --version
       - name: Build Unsigned iOS IPA with Shorebird
-        script: shorebird build ios --no-codesign
+        script: |
+          shorebird build ios --no-codesign
     artifacts:
       - build/ios/ipa/*.ipa # Unsigned iOS IPA file
       - shorebird/*.patch # Shorebird patch files
