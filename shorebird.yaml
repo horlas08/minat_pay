@@ -2,6 +2,8 @@
 # Learn more at https://docs.shorebird.dev
 # This file does not contain any sensitive information and should be checked into version control.
 
+#eyJyZWZyZXNoX3Rva2VuIjoiMS8vMDMyQ1prOTVFejdvNUNnWUlBUkFBR0FNU053Ri1MOUlySkNTOEhvY05LRWtXUEFJcGhQaTFxR2dyUWYxYXlidFhaZV91VFNwNWdRLTZqM0dPdXA0bzVwZG5UblYwZGVTQWxIZyIsImF1dGhfcHJvdmlkZXIiOiJnb29nbGUifQ==
+
 # Your app_id is the unique identifier assigned to your app.
 # It is used to identify your app when requesting patches from Shorebird's servers.
 # It is not a secret and can be shared publicly.

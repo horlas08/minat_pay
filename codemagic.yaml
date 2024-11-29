@@ -12,13 +12,11 @@ workflows:
         script: |
           flutter --version
           curl --proto '=https' --tlsv1.2 https://raw.githubusercontent.com/shorebirdtech/install/main/install.sh -sSf | bash
-          export PATH="$HOME/.shorebird/bin:$PATH"
+          export PATH="$HOME/.shorebird/bin:$PATH"  >> $CM_ENV
           echo $PATH
           shorebird --version
-      - name: Configure Shorebird
-        script: shorebird init --api-key=$SHOREBIRD_API_KEY
       - name: Build Unsigned iOS IPA with Shorebird
-        script: shorebird build ipa --release --no-codesign
+        script: shorebird build ios --release --no-codesign
     artifacts:
       - build/ios/ipa/*.ipa # Unsigned iOS IPA file
       - shorebird/*.patch # Shorebird patch files
