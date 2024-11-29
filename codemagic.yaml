@@ -14,6 +14,7 @@ workflows:
           curl --proto '=https' --tlsv1.2 https://raw.githubusercontent.com/shorebirdtech/install/main/install.sh -sSf | bash
           export PATH="$HOME/.shorebird/bin:$PATH"  >> $CM_ENV
           echo $PATH
+          shorebird login --api-key=$SHOREBIRD_TOKEN
           shorebird --version
       - name: Shorebird Release
         script: shorebird release ios
