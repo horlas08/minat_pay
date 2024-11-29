@@ -117,12 +117,6 @@ class AppRouter {
               email: state.pathParameters['email']!,
             ),
           ),
-          GoRoute(
-            path: 'login/verify/:username',
-            name: 'login_verify',
-            builder: (BuildContext context, GoRouterState state) =>
-                LoginVerifyPage(username: state.pathParameters['username']!),
-          ),
         ],
         redirect: (context, state) async {
           final SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -149,6 +143,12 @@ class AppRouter {
           // }
           // return null;
         },
+      ),
+      GoRoute(
+        path: '/login/verify/:username',
+        name: 'login_verify',
+        builder: (BuildContext context, GoRouterState state) =>
+            LoginVerifyPage(username: state.pathParameters['username']!),
       ),
       GoRoute(
           path: '/bills',
