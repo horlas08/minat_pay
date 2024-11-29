@@ -290,40 +290,51 @@ class Airtime extends HookWidget {
         {required String amount,
         required String phone,
         required String networkId}) async {
-      context.loaderOverlay.show();
-      final res = await buyAirtime(context,
-          amount: amount, phone: phone, network_id: networkId);
+      try {
+        context.loaderOverlay.show();
+        final res = await buyAirtime(context,
+            amount: amount, phone: phone, network_id: networkId);
 
-      if (context.mounted && res == null) {
-        context.loaderOverlay.hide();
-        // Navigator.of(context, rootNavigator: false).pop();
-        return alertHelper(context, 'error', 'No Internet Connection');
-      }
-
-      if (context.mounted) {
-        if (res?.statusCode == HttpStatus.ok) {
-          amountController.text = '';
-          phoneController.value =
-              const PhoneNumber(isoCode: IsoCode.NG, nsn: '');
-          await putLastTransactionId(res?.data['trx_id']);
-          if (context.mounted) {
-            HapticFeedback.heavyImpact();
-            appModalWithoutRoot(context,
-                title: 'Airtime Purchase Successful',
-                child:
-                    successModalWidget(context, message: res?.data['message']));
-          }
-          // Navigator.of(context, rootNavigator: true).pop();
-
-          // alertHelper(context, 'success', res?.data['message']);
-        } else {
-          // Navigator.of(context, rootNavigator: true).pop();
-          alertHelper(context, 'error', res?.data['message'], duration: 6);
+        if (context.mounted && res == null) {
+          context.loaderOverlay.hide();
+          // Navigator.of(context, rootNavigator: false).pop();
+          return alertHelper(context, 'error', 'No Internet Connection');
         }
-      }
 
-      if (context.mounted) {
-        context.loaderOverlay.hide();
+        if (context.mounted) {
+          if (res?.statusCode == HttpStatus.ok) {
+            amountController.text = '';
+            phoneController.value =
+                const PhoneNumber(isoCode: IsoCode.NG, nsn: '');
+            await putLastTransactionId(res?.data['trx_id']);
+            if (context.mounted) {
+              HapticFeedback.heavyImpact();
+              appModalWithoutRoot(context,
+                  title: 'Airtime Purchase Successful',
+                  child: successModalWidget(context,
+                      message: res?.data['message']));
+            }
+          } else {
+            // Navigator.of(context, rootNavigator: true).pop();
+            alertHelper(context, 'error', res?.data['message'], duration: 6);
+          }
+        }
+
+        if (context.mounted) {
+          context.loaderOverlay.hide();
+        }
+      } on DioException catch (error) {
+        if (context.mounted) {
+          context.loaderOverlay.hide();
+
+          await alertHelper(context, 'error', error.response?.data['message']);
+        }
+      } on Exception catch (error) {
+        if (context.mounted) {
+          context.loaderOverlay.hide();
+
+          await alertHelper(context, 'error', error.toString());
+        }
       }
     }
 

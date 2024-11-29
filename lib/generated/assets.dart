@@ -18,6 +18,7 @@ class Assets {
   static const String imagesMinatPayLOGO white = 'assets/images/MinatPay-LOGO white.png';
   static const String imagesMinatpayIcon = 'assets/images/minatpay_icon.png';
   static const String imagesOnboarding screens text = 'assets/images/Onboarding screens text.txt';
+  static const String imagesReferral = 'assets/images/referral.png';
   static const String imagesSlide2 = 'assets/images/slide2.webp';
   static const String imagesSlide4 = 'assets/images/slide4.png';
   static const String imagesUpgradeBg = 'assets/images/upgradeBg.jpg';

@@ -103,16 +103,24 @@ detectNetwork(
   }
 }
 
+UnderlineInputBorder borderStyle = const UnderlineInputBorder(
+  borderSide: BorderSide(
+      style: BorderStyle.solid, color: AppColor.primaryColor, width: 2),
+);
+final contact_picker.FlutterNativeContactPicker _contactPicker =
+    new contact_picker.FlutterNativeContactPicker();
+final _dataFormKey = GlobalKey<FormState>();
+
 class Data extends HookWidget {
   const Data({super.key});
 
   @override
   Widget build(BuildContext context) {
     useEffect(() {
-      phoneController.value = PhoneNumber(isoCode: IsoCode.NG, nsn: '');
-      // return () {
-      //   phoneController.dispose();
-      // };
+      // phoneController.value = PhoneNumber(isoCode: IsoCode.NG, nsn: '');
+      return () {
+        return phoneController.dispose();
+      };
     }, []);
     final ValueNotifier<bool> valid = useState(false);
     final user = context.read<AppBloc>().state.user;
@@ -190,18 +198,24 @@ class Data extends HookWidget {
         if (context.mounted) {
           context.loaderOverlay.hide();
         }
-      } catch (error) {
-        print(error);
+      }on DioException catch (error) {
+        if (!context.mounted) return;
+        context.loaderOverlay.hide();
+        await alertHelper(
+          context,
+          'error',
+          error.response?.data['message'],
+          duration: 6,
+        );
+      } on Exception catch (error) {
+        if (!context.mounted) return;
+        context.loaderOverlay.hide();
         await alertHelper(
           context,
           'error',
           error.toString(),
           duration: 6,
         );
-
-        if (context.mounted) {
-          context.loaderOverlay.hide();
-        }
       }
     }
 
@@ -399,6 +413,12 @@ class Data extends HookWidget {
 
             network.value = networkProviders.value[0];
           },
+        ).onError(
+          (error, stackTrace) {
+            if (!context.mounted) return;
+
+            context.loaderOverlay.hide();
+          },
         );
       }
 
@@ -413,14 +433,6 @@ class Data extends HookWidget {
       }
       return null;
     }, [network.value]);
-
-    UnderlineInputBorder borderStyle = const UnderlineInputBorder(
-      borderSide: BorderSide(
-          style: BorderStyle.solid, color: AppColor.primaryColor, width: 2),
-    );
-    final contact_picker.FlutterNativeContactPicker _contactPicker =
-        new contact_picker.FlutterNativeContactPicker();
-    final _dataFormKey = GlobalKey<FormState>();
 
     return BlocConsumer<AppConfigCubit, App>(
       listener: (context, state) {

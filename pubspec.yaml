@@ -78,7 +78,7 @@ dependencies:
   animated_theme_switcher:
     git: https://github.com/mllrr96/animated_theme_switcher.git
   equatable: ^2.0.5
-  sentry_flutter: ^8.9.0
+  sentry_flutter: ^8.10.1
   shorebird_code_push: ^1.1.4
   onesignal_flutter: ^5.2.6
   nb_utils:
@@ -94,6 +94,12 @@ dependencies:
 
   flutter_paystack_max: ^1.0.4
   dio_cache_interceptor: ^3.5.0
+  pretty_dio_logger: ^1.4.0
+  dio_smart_retry: ^6.0.0
+  screenshot: ^3.0.0
+  auto_size_text: ^3.0.0
+  url_launcher: ^6.3.1
+  radio_group_v2: ^3.2.1
 
 dev_dependencies:
   flutter_test:

@@ -7,6 +7,8 @@ import 'package:form_validator/form_validator.dart';
 import 'package:go_router/go_router.dart';
 import 'package:loader_overlay/loader_overlay.dart';
 import 'package:local_auth/local_auth.dart';
+import 'package:local_auth_android/local_auth_android.dart';
+import 'package:local_auth_darwin/local_auth_darwin.dart';
 import 'package:minat_pay/config/color.constant.dart';
 import 'package:minat_pay/cubic/login_verify/login_verify_state.dart';
 import 'package:minat_pay/model/app.dart';
@@ -21,10 +23,14 @@ import '../../../helper/helper.dart';
 final _formKey = GlobalKey<FormState>();
 final LocalAuthentication auth = LocalAuthentication();
 
-enum _SupportState {
-  unknown,
-  supported,
-  unsupported,
+Future<bool> canAuth() async {
+  return await auth.canCheckBiometrics && await auth.isDeviceSupported();
+}
+
+Future<List<BiometricType>> availableBiometrics() async {
+  final List<BiometricType> availableBiometrics =
+      await auth.getAvailableBiometrics();
+  return availableBiometrics;
 }
 
 class LoginVerifyPage extends HookWidget {
@@ -35,78 +41,32 @@ class LoginVerifyPage extends HookWidget {
   @override
   Widget build(BuildContext context) {
     final password = useRef('');
-    ValueNotifier<bool> _isAuthenticating = useState(false);
-    ValueNotifier<String> _authorized = useState('Not Authorized');
-    ValueNotifier<bool?> _canCheckBiometrics = useState(null);
+    final biometricAvailable = useState<bool>(false);
+
+    useEffect(() {
+      canAuth().then(
+        (value) {
+          if (value) {
+            availableBiometrics().then(
+              (availableBiometric) {
+                if (availableBiometric.isNotEmpty &&
+                        (availableBiometric.contains(BiometricType.face) ||
+                            availableBiometric
+                                .contains(BiometricType.strong)) ||
+                    (availableBiometric.contains(BiometricType.weak) ||
+                        availableBiometric
+                            .contains(BiometricType.fingerprint))) {
+                  biometricAvailable.value = true;
+                }
+              },
+            );
+          }
+        },
+      );
+
+      return null;
+    });
     ValueNotifier<bool> mounted = useState(false);
-    ValueNotifier<_SupportState> _supportState =
-        useState(_SupportState.unknown);
-    ValueNotifier<bool> authenticated = useState(false);
-    ValueNotifier<List<BiometricType>?> _availableBiometrics = useState(null);
-
-    useEffect(() {
-      auth.isDeviceSupported().then(
-            (bool isSupported) => (_supportState.value = isSupported
-                ? _SupportState.supported
-                : _SupportState.unsupported),
-          );
-      return null;
-    }, []);
-
-    Future<void> _cancelAuthentication() async {
-      await auth.stopAuthentication();
-      _isAuthenticating.value = false;
-    }
-
-    Future<void> _checkBiometrics() async {
-      late bool canCheckBiometrics;
-      try {
-        canCheckBiometrics = await auth.canCheckBiometrics;
-      } on PlatformException catch (e) {
-        canCheckBiometrics = false;
-        print(e);
-      }
-      if (!mounted.value) {
-        return;
-      }
-
-      _canCheckBiometrics.value = canCheckBiometrics;
-    }
-
-    Future<void> _authenticate() async {
-      // bool authenticated = false;
-      try {
-        _isAuthenticating.value = true;
-        _authorized.value = 'Authenticating';
-        authenticated.value = await auth.authenticate(
-          localizedReason: 'MinatPay authentication',
-          options: const AuthenticationOptions(
-              stickyAuth: true,
-              useErrorDialogs: true,
-              sensitiveTransaction: true,
-              biometricOnly: true),
-        );
-        _isAuthenticating.value = false;
-      } on PlatformException catch (e) {
-        print(e);
-        _isAuthenticating.value = false;
-        _authorized.value = 'Error - ${e.message}';
-        print(_authorized.value);
-        return;
-      }
-      if (!mounted.value) {
-        return;
-      }
-      print(authenticated);
-      _authorized.value = authenticated.value ? 'Authorized' : 'Not Authorized';
-    }
-
-    useEffect(() {
-      if (authenticated.value == true) {
-        context.read<LoginVerifyCubit>().onLoginVerifyRequested(null);
-      }
-      return null;
-    }, [authenticated.value, _authorized.value]);
 
     return BlocListener<LoginVerifyCubit, LoginVerifyState>(
       listener: (context, state) async {
@@ -206,7 +166,6 @@ class LoginVerifyPage extends HookWidget {
                                   FocusManager.instance.primaryFocus?.unfocus(),
                               validator: ValidationBuilder()
                                   .required()
-                                  .maxLength(10)
                                   .build(),
                               autovalidateMode:
                                   AutovalidateMode.onUserInteraction,
@@ -248,17 +207,56 @@ class LoginVerifyPage extends HookWidget {
                     const SizedBox(
                       height: 30,
                     ),
-                    if (_supportState.value == _SupportState.supported)
-                      BlocBuilder<AppConfigCubit, App>(
-                        builder: (context, state) {
-                          print(state);
-                          if (state.enableFingerPrint)
+                    BlocBuilder<AppConfigCubit, App>(
+                      builder: (context, state) {
+                        print(state);
+                        if (state.enableFingerPrint) {
+                          if (biometricAvailable.value) {
                             return FadeInUp(
                               duration: const Duration(milliseconds: 1900),
                               child: ElevatedButton(
-                                onPressed: () {
+                                onPressed: () async {
                                   FocusManager.instance.primaryFocus?.unfocus();
-                                  _authenticate();
+                                  try {
+                                    final bool didAuthenticate =
+                                        await auth.authenticate(
+                                      localizedReason:
+                                          'Please authenticate access your account',
+                                      options: const AuthenticationOptions(
+                                        biometricOnly: true,
+                                        useErrorDialogs: true,
+                                        stickyAuth: true,
+                                        sensitiveTransaction: true,
+                                      ),
+                                      authMessages: const <AuthMessages>[
+                                        AndroidAuthMessages(
+                                          signInTitle:
+                                              'Oops! Biometric authentication required!',
+                                          cancelButton: 'No thanks',
+                                        ),
+                                        IOSAuthMessages(
+                                          cancelButton: 'No thanks',
+                                        ),
+                                      ],
+                                    );
+                                    if (context.mounted) {
+                                      if (didAuthenticate) {
+                                        context
+                                            .read<LoginVerifyCubit>()
+                                            .onLoginVerifyRequested(null);
+                                      } else {
+                                        await alertHelper(context, 'error',
+                                            "Biometric verification failed");
+                                      }
+                                    }
+
+                                    // ···
+                                  } on PlatformException catch (error) {
+                                    if (context.mounted) {
+                                      await alertHelper(
+                                          context, 'error', error.toString());
+                                    }
+                                  }
                                 },
                                 style: ButtonStyle(
                                   side: const WidgetStatePropertyAll(
@@ -278,9 +276,11 @@ class LoginVerifyPage extends HookWidget {
                                 ),
                               ),
                             );
-                          return SizedBox();
-                        },
-                      ),
+                          }
+                        }
+                        return SizedBox();
+                      },
+                    ),
                     const SizedBox(
                       height: 20,
                     ),

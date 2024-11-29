@@ -5,6 +5,7 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:minat_pay/bloc/repo/app/app_bloc.dart';
+import 'package:touchable_opacity/touchable_opacity.dart';
 
 import '../../../bloc/repo/app/app_state.dart';
 import '../../../helper/helper.dart';
@@ -36,9 +37,14 @@ class UserHeader extends HookWidget {
           width: 60,
           child: BlocBuilder<AppBloc, AppState>(
             builder: (context, state) {
-              return CircleAvatar(
-                backgroundImage: CachedNetworkImageProvider(
-                  state.user!.photo!,
+              return TouchableOpacity(
+                onTap: () {
+                  context.push('/profile');
+                },
+                child: CircleAvatar(
+                  backgroundImage: CachedNetworkImageProvider(
+                    state.user!.photo!,
+                  ),
                 ),
               );
             },

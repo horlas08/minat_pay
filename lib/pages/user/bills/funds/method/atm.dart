@@ -158,7 +158,7 @@ class Atm extends HookWidget {
                         color: Colors.white,
                       ),
                       Text(
-                        "Pay With Card",
+                        "Fund Account",
                         style: TextStyle(color: Colors.white),
                       ),
                     ],

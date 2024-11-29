@@ -8,12 +8,12 @@ list(APPEND FLUTTER_PLUGIN_LIST
   firebase_core
   local_auth_windows
   nb_utils
+  sentry_flutter
   share_plus
   url_launcher_windows
 )
 
 list(APPEND FLUTTER_FFI_PLUGIN_LIST
-  sentry_flutter
 )
 
 set(PLUGIN_BUNDLED_LIBRARIES)

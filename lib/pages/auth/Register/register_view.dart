@@ -39,6 +39,7 @@ class RegisterPage extends HookWidget {
     final lastnameFieldController = useTextEditingController(text: '');
     final emailFieldController = useTextEditingController(text: '');
     final usernameFieldController = useTextEditingController(text: '');
+    final inviteFieldController = useTextEditingController(text: '');
     final verificationFieldController = useTextEditingController();
     final passwordFieldController = useTextEditingController(text: '');
     final ValueNotifier<bool> showPass = useState(false);
@@ -438,6 +439,21 @@ class RegisterPage extends HookWidget {
                                       ),
                                     ),
                                   ],
+                                ),
+                                const SizedBox(
+                                  height: 15,
+                                ),
+                                TextFormField(
+                                  controller: inviteFieldController,
+                                  decoration: const InputDecoration(
+                                    hintText: "Invite code",
+                                    helperText: '',
+                                  ),
+                                  onTapOutside: (v) => FocusManager
+                                      .instance.primaryFocus
+                                      ?.unfocus(),
+                                  autovalidateMode:
+                                      AutovalidateMode.onUserInteraction,
                                 ),
                               ],
                             ),

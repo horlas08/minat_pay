@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:async/async.dart';
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
@@ -148,48 +149,56 @@ class Dashboard extends HookWidget {
                   }
 
                   if (context.mounted) {
-                    context.loaderOverlay.show();
-                    final SharedPreferences prefs =
-                        await SharedPreferences.getInstance();
-                    final res = await curlPostRequest(
-                      path: setPin,
-                      data: {
-                        'token': prefs.getString('token'),
-                        'pin': pinInputController.text,
-                        'confirm_pin': pinInputConfirmController.text,
-                      },
-                    );
-                    // print(res?.data);
-                    if (context.mounted && res?.statusCode == HttpStatus.ok) {
+                    try {
+                      context.loaderOverlay.show();
+                      final SharedPreferences prefs =
+                          await SharedPreferences.getInstance();
+                      final res = await curlPostRequest(
+                        path: setPin,
+                        data: {
+                          'token': prefs.getString('token'),
+                          'pin': pinInputController.text,
+                          'confirm_pin': pinInputConfirmController.text,
+                        },
+                      );
                       if (context.mounted) {
-                        print(state.user!.hasPin);
-                        final User? user = state.user?.copyWith(hasPin: true);
-                        print(user);
-
-                        context.read<AppBloc>().add(
-                              AddUserEvent(
-                                userData: user!.toMap(),
-                              ),
-                            );
-                        print(state.user!.hasPin);
-
-                        //
-                        if (user != null) {
-                          print(user.toMap());
-                          context.read<AppBloc>().add(
-                                AddUserEvent(
-                                  userData: user.toMap(),
-                                ),
-                              );
-                        }
                         context.loaderOverlay.hide();
-                        if (context.canPop()) {
-                          context.pop();
-                          return await alertHelper(
-                              context, "success", res?.data['message']);
+                        if (res?.statusCode == HttpStatus.ok) {
+                          if (context.mounted) {
+                            print(state.user!.hasPin);
+                            final User? user =
+                                state.user?.copyWith(hasPin: true);
+
+                            context.read<AppBloc>().add(
+                                  AddUserEvent(
+                                    userData: user!.toMap(),
+                                  ),
+                                );
+                            print(state.user!.hasPin);
+
+                            //
+                            if (user != null) {
+                              print(user.toMap());
+                              context.read<AppBloc>().add(
+                                    AddUserEvent(
+                                      userData: user.toMap(),
+                                    ),
+                                  );
+                            }
+
+                            if (context.canPop()) {
+                              context.pop();
+                              return await alertHelper(
+                                  context, "success", res?.data['message']);
+                            }
+                          } else {
+                            if (context.mounted) context.loaderOverlay.hide();
+                          }
                         }
-                      } else {
-                        if (context.mounted) context.loaderOverlay.hide();
+                      }
+                    } catch (error) {
+                      if (context.mounted) {
+                        context.loaderOverlay.hide();
                       }
                     }
                   }
@@ -228,11 +237,6 @@ class Dashboard extends HookWidget {
     }
 
     useEffect(() {
-      OneSignal.Debug.setLogLevel(
-        OSLogLevel.verbose,
-      );
-
-      OneSignal.initialize("1bdf1b9f-7769-4f40-b73e-5d6e25107219");
       final user = context.read<AppBloc>().state.user;
       if (user != null) {
         OneSignal.login(user.id.toString()).then(
@@ -267,10 +271,14 @@ class Dashboard extends HookWidget {
         pageBuilder: (context, animation, secondaryAnimation) {
           return AlertDialog(
             // icon: Icon(Icons.add),
-            title: Text(
+            title: AutoSizeText(
               appServer.serverResponse.appconfiguration!.notificationTitle!,
               textAlign: TextAlign.center,
-              style: TextStyle(fontSize: 14),
+              style: TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+              ),
+              maxLines: 1,
             ),
 
             shape: RoundedRectangleBorder(

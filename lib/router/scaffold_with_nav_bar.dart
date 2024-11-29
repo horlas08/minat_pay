@@ -30,11 +30,11 @@ class ScaffoldWithNavBar extends StatelessWidget {
     final String location = GoRouterState.of(context).uri.path;
     print(location);
 
-    if (location == ('/user/data')) {
+    if (location == ('/data')) {
       return 1;
-    } else if (location == ('/user/airtime')) {
+    } else if (location == ('/airtime')) {
       return 2;
-    } else if (location == ('/user/setting')) {
+    } else if (location == ('/setting')) {
       return 3;
     } else if (location == '/user') {
       return 0;
@@ -51,11 +51,11 @@ class ScaffoldWithNavBar extends StatelessWidget {
       case 0:
         GoRouter.of(context).push('/user');
       case 1:
-        GoRouter.of(context).push('/user/data');
+        GoRouter.of(context).push('/data');
       case 2:
-        GoRouter.of(context).push('/user/airtime');
+        GoRouter.of(context).push('/airtime');
       case 3:
-        GoRouter.of(context).push('/user/setting');
+        GoRouter.of(context).push('/setting');
     }
   }
 }

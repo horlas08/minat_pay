@@ -267,7 +267,7 @@ class _LoginPageState extends State<LoginPage> {
                       FadeInUp(
                         duration: const Duration(milliseconds: 2000),
                         child: TouchableOpacity(
-                            onTap: () => context.goNamed("reset_password"),
+                            onTap: () => context.pushNamed("reset_password"),
                             child: Text(
                               "Forgot Password?",
                               style: TextStyle(

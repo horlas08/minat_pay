@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:go_router/go_router.dart';
+import 'package:intl/intl.dart';
 import 'package:minat_pay/config/font.constant.dart';
 import 'package:minat_pay/cubic/app_config_cubit.dart';
 import 'package:minat_pay/model/app.dart';
@@ -91,13 +92,18 @@ class BalanceCard extends HookWidget {
                   if (index == 0)
                     BlocBuilder<AppConfigCubit, App>(
                       builder: (context, buildState) {
+                        final balance = double.tryParse(state.user!.balance!);
+                        final currencyFormatter =
+                            NumberFormat.currency(locale: "en_NG", symbol: "₦");
+                        String formattedCurrency =
+                            currencyFormatter.format(balance ?? 0.0);
                         if (buildState.enableShakeToHideBalance) {
                           return ShakeGesture(
                             onShake: () {
                               hideBalance.value = !hideBalance.value;
                             },
                             child: Text(
-                              "${currency(context)} ${hideBalance.value ? state.user?.balance : "****"}",
+                              hideBalance.value ? formattedCurrency : "****",
                               style: Theme.of(context)
                                   .textTheme
                                   .titleLarge
@@ -105,6 +111,7 @@ class BalanceCard extends HookWidget {
                                     color: Colors.white,
                                     fontWeight: FontWeight.w900,
                                     fontFamily: AppFont.mulish,
+                                    fontSize: 27,
                                   ),
                             ),
                           );

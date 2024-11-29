@@ -18,6 +18,7 @@ import 'package:minat_pay/service/http.dart';
 import 'package:minat_pay/theme/theme_config.dart';
 import 'package:minat_pay/theme/theme_service.dart';
 import 'package:nb_utils/nb_utils.dart';
+import 'package:onesignal_flutter/onesignal_flutter.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
 import 'package:shorebird_code_push/shorebird_code_push.dart';
@@ -40,7 +41,12 @@ void main() async {
   configureDio();
 
   await initialization();
+  OneSignal.Debug.setLogLevel(
+    OSLogLevel.verbose,
+  );
 
+  OneSignal.initialize("1bdf1b9f-7769-4f40-b73e-5d6e25107219");
+  await OneSignal.Notifications.requestPermission(true);
   await SentryFlutter.init(
     (options) {
       options.dsn =

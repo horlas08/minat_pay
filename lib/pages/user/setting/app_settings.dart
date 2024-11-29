@@ -383,6 +383,64 @@ class AppSettings extends HookWidget {
                                   ],
                                 ),
                               ),
+                              const SizedBox(
+                                height: space,
+                              ),
+                              TouchableOpacity(
+                                onTap: () {
+                                  context.push('/about');
+                                },
+                                child: const Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Wrap(children: [
+                                      Icon(
+                                        Icons.info,
+                                      ),
+                                      SizedBox(
+                                        width: 5,
+                                      ),
+                                      Text(
+                                        "About App",
+                                        style: TextStyle(
+                                          fontSize: 15,
+                                        ),
+                                      ),
+                                    ]),
+                                    Icon(Icons.arrow_forward_ios_rounded)
+                                  ],
+                                ),
+                              ),
+                              const SizedBox(
+                                height: space,
+                              ),
+                              TouchableOpacity(
+                                onTap: () {
+                                  context.push('/referral');
+                                },
+                                child: const Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Wrap(children: [
+                                      Icon(
+                                        Icons.people_outlined,
+                                      ),
+                                      SizedBox(
+                                        width: 5,
+                                      ),
+                                      Text(
+                                        "Refer your friends",
+                                        style: TextStyle(
+                                          fontSize: 15,
+                                        ),
+                                      ),
+                                    ]),
+                                    Icon(Icons.arrow_forward_ios_rounded)
+                                  ],
+                                ),
+                              ),
                             ],
                           ),
                         ),

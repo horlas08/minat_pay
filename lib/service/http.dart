@@ -1,6 +1,9 @@
 import 'package:dio/dio.dart';
+import 'package:dio_smart_retry/dio_smart_retry.dart';
+import 'package:flutter/foundation.dart';
 import 'package:minat_pay/bloc/repo/app/app_bloc.dart';
 import 'package:minat_pay/config/app.config.dart';
+import 'package:pretty_dio_logger/pretty_dio_logger.dart';
 
 final dio = Dio(); // With default `Options`.
 
@@ -12,7 +15,33 @@ void configureDio() {
   dio.options.receiveTimeout = const Duration(seconds: 30);
   dio.options.contentType = Headers.jsonContentType;
   dio.options.headers = {Headers.acceptHeader: Headers.jsonContentType};
-
+  dio.interceptors.add(PrettyDioLogger(
+      requestHeader: true,
+      requestBody: true,
+      responseBody: true,
+      responseHeader: false,
+      error: true,
+      compact: true,
+      maxWidth: 90,
+      enabled: kDebugMode,
+      filter: (options, args) {
+        // don't print requests with uris containing '/posts'
+        if (options.path.contains('/posts')) {
+          return false;
+        }
+        // don't print responses with unit8 list data
+        return !args.isResponse || !args.hasUint8ListData;
+      }));
+  dio.interceptors.add(RetryInterceptor(
+    dio: dio,
+    logPrint: print, // specify log function (optional)// retry count (optional)
+    retryDelays: const [
+      // set delays between retries (optional)
+      // Duration(seconds: 1), // wait 1 sec before first retry
+      // Duration(seconds: 2), // wait 2 sec before second retry
+      // Duration(seconds: 3), // wait 3 sec before third retry
+    ],
+  ));
   dio.interceptors.add(
     InterceptorsWrapper(
       onRequest: (RequestOptions options, RequestInterceptorHandler handler) {
@@ -53,6 +82,34 @@ void configureDio() {
     receiveTimeout: const Duration(seconds: 15),
   );
   dio2 = Dio(options);
+  dio2.interceptors.add(PrettyDioLogger(
+      requestHeader: true,
+      requestBody: true,
+      responseBody: true,
+      responseHeader: false,
+      error: true,
+      compact: true,
+      maxWidth: 90,
+      enabled: kDebugMode,
+      filter: (options, args) {
+        // don't print requests with uris containing '/posts'
+        if (options.path.contains('/posts')) {
+          return false;
+        }
+        // don't print responses with unit8 list data
+        return !args.isResponse || !args.hasUint8ListData;
+      }));
+  dio2.interceptors.add(RetryInterceptor(
+    dio: dio,
+    logPrint: print, // specify log function (optional)
+    retries: 1, // retry count (optional)
+    retryDelays: const [
+      // set delays between retries (optional)
+      // Duration(seconds: 1), // wait 1 sec before first retry
+      // Duration(seconds: 2), // wait 2 sec before second retry
+      // Duration(seconds: 3), // wait 3 sec before third retry
+    ],
+  ));
   dio2.interceptors.add(
     InterceptorsWrapper(
       onRequest: (RequestOptions options, RequestInterceptorHandler handler) {

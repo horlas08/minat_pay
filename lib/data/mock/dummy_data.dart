@@ -5,13 +5,13 @@ final List<Map<String, dynamic>> allBills = [
     "icon": Icons.phone_iphone,
     "name": "Airtime",
     "arrow": Icons.arrow_forward_ios_rounded,
-    "route": "/user/airtime"
+    "route": "/airtime"
   },
   {
     "icon": Icons.wifi,
     "name": "Data",
     "arrow": Icons.arrow_forward_ios_rounded,
-    "route": "/user/data"
+    "route": "/data"
   },
   {
     "icon": Icons.lightbulb,

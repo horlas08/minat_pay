@@ -41,12 +41,12 @@ class QuickAction extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: [
             QuickActionItem(
-              route: '/user/airtime',
+              route: '/airtime',
               icon: 'assets/svg/smartphone.svg',
               title: 'Airtime',
             ),
             QuickActionItem(
-              route: '/user/data',
+              route: '/data',
               icon: 'assets/svg/wifi.svg',
               title: 'Data',
             ),

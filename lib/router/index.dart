@@ -6,6 +6,7 @@ import 'package:minat_pay/pages/auth/Login/login_view.dart';
 import 'package:minat_pay/pages/auth/Register/register_view.dart';
 import 'package:minat_pay/pages/user/ChangePassword/change_password.dart';
 import 'package:minat_pay/pages/user/ChangePin/change_pin.dart';
+import 'package:minat_pay/pages/user/airtime_to_cash/airtime_to_cash.dart';
 import 'package:minat_pay/pages/user/bills/airtime/airtime.dart';
 import 'package:minat_pay/pages/user/bills/all_bills.dart';
 import 'package:minat_pay/pages/user/bills/betting/betting.dart';
@@ -14,6 +15,8 @@ import 'package:minat_pay/pages/user/bills/electricity/electricity.dart';
 import 'package:minat_pay/pages/user/bills/epin/epin.dart';
 import 'package:minat_pay/pages/user/bills/funds/add_fund.dart';
 import 'package:minat_pay/pages/user/bills/transfer/transfer.dart';
+import 'package:minat_pay/pages/user/nin/nin.dart';
+import 'package:minat_pay/pages/user/referral/referral.dart';
 import 'package:minat_pay/pages/user/setting/app_settings.dart';
 import 'package:minat_pay/pages/user/setting/profile.dart';
 import 'package:minat_pay/pages/user/transaction/receipt.dart';
@@ -27,6 +30,7 @@ import '../pages/auth/onboard/screen.dart';
 import '../pages/user/Dashboard/view.dart';
 import '../pages/user/bills/data/data.dart';
 import '../pages/user/registration_successful.dart';
+import '../pages/user/setting/about.dart';
 import '../pages/user/support/support.dart';
 import '../pages/user/transaction/all_transaction.dart';
 import '../pages/user/transaction/transaction_detail.dart';
@@ -40,34 +44,35 @@ class AppRouter {
   static final GoRouter router = GoRouter(
     initialLocation: "/",
     navigatorKey: _rootNavigatorKey,
-    redirect: (context, state) async {
-      final SharedPreferences prefs = await SharedPreferences.getInstance();
 
-      String? token = prefs.getString("token");
-      if (context.mounted &&
-          context.read<AppConfigCubit>().state.onboardSkip &&
-          token == null) {
-        print("am redirect here");
-
-        return '/login';
-      }
-      String? username = prefs.getString("userName");
-      if (context.mounted) {
-        if (token != null && !context.read<AppConfigCubit>().state.authState) {
-          print(token);
-          return '/login/verify/$username';
-        }
-      }
-      return null;
-    },
+    // redirect: (context, state) async {
+    //   final SharedPreferences prefs = await SharedPreferences.getInstance();
+    //
+    //   String? token = prefs.getString("token");
+    //   if (context.mounted &&
+    //       context.read<AppConfigCubit>().state.onboardSkip &&
+    //       token == null) {
+    //     print("am redirect here");
+    //
+    //     return '/login';
+    //   }
+    //   String? username = prefs.getString("userName");
+    //   if (context.mounted) {
+    //     if (token != null && !context.read<AppConfigCubit>().state.authState) {
+    //       print(token);
+    //       return '/login/verify/$username';
+    //     }
+    //   }
+    //   return null;
+    // },
     routes: <RouteBase>[
       GoRoute(
         path: '/',
         builder: (BuildContext context, GoRouterState state) {
-          if (context.read<AppConfigCubit>().state.onboardSkip &&
-              GoRouterState.of(context).uri.path == '/') {
-            return const LoginPage();
-          }
+          // if (context.read<AppConfigCubit>().state.onboardSkip &&
+          //     GoRouterState.of(context).uri.path == '/') {
+          //   return const LoginPage();
+          // }
 
           return const OnboardingScreen();
         },
@@ -122,8 +127,7 @@ class AppRouter {
         redirect: (context, state) async {
           final SharedPreferences prefs = await SharedPreferences.getInstance();
           String? token = prefs.getString("token");
-          print(state.topRoute);
-          print(state.topRoute);
+
           String? username = prefs.getString("userName");
           if (context.mounted) {
             if (token != null &&
@@ -255,10 +259,48 @@ class AppRouter {
           return const ChangePassword();
         },
       ),
+      GoRoute(
+        path: '/referral',
+        name: 'referral',
+        builder: (context, state) {
+          return const Referral();
+        },
+      ),
+      GoRoute(
+        path: '/nin',
+        name: 'nin',
+        builder: (context, state) {
+          return const Nin();
+        },
+      ),
+      GoRoute(
+        path: '/airtime/cash',
+        name: 'airtime2cash',
+        builder: (context, state) {
+          return const AirtimeToCash();
+        },
+      ),
       ShellRoute(
         navigatorKey: _shellNavigatorKey,
         builder: (BuildContext context, GoRouterState state, Widget child) {
           return ScaffoldWithNavBar(child: child);
+        },
+        redirect: (context, state) async {
+          final SharedPreferences prefs = await SharedPreferences.getInstance();
+          String? token = prefs.getString("token");
+          String? username = prefs.getString("userName");
+          String? userEmail = prefs.getString("userEmail");
+          bool? isVerified = prefs.getBool("isVerified");
+          if (token == null) {
+            return '/login';
+          } else if (!isVerified!) {
+            return '/email/verify/$userEmail';
+          } else if (context.mounted &&
+              isVerified &&
+              !context.read<AppConfigCubit>().state.authState) {
+            return null;
+          }
+          return null;
         },
         routes: <RouteBase>[
           /// The first screen to display in the bottom navigation bar.
@@ -268,45 +310,30 @@ class AppRouter {
             builder: (BuildContext context, GoRouterState state) {
               return const Dashboard();
             },
-            routes: <RouteBase>[
-              // The details screen to display stacked on the inner Navigator.
-              // This will cover screen A but not the application shell.
-              GoRoute(
-                path: 'data',
-                builder: (BuildContext context, GoRouterState state) {
-                  return const Data();
-                },
-              ),
-              GoRoute(
-                path: 'airtime',
-                builder: (BuildContext context, GoRouterState state) {
-                  return const Airtime();
-                },
-              ),
-              GoRoute(
-                path: 'setting',
-                builder: (BuildContext context, GoRouterState state) {
-                  return const AppSettings();
-                },
-              ),
-            ],
-            redirect: (context, state) async {
-              final SharedPreferences prefs =
-                  await SharedPreferences.getInstance();
-              String? token = prefs.getString("token");
-              String? username = prefs.getString("userName");
-              String? userEmail = prefs.getString("userEmail");
-              bool? isVerified = prefs.getBool("isVerified");
-              if (token == null) {
-                return '/login';
-              } else if (!isVerified!) {
-                return '/email/verify/$userEmail';
-              } else if (context.mounted &&
-                  isVerified &&
-                  !context.read<AppConfigCubit>().state.authState) {
-                return null;
-              }
-              return null;
+          ),
+          GoRoute(
+            path: '/data',
+            builder: (BuildContext context, GoRouterState state) {
+              return const Data();
+            },
+          ),
+          GoRoute(
+            path: '/airtime',
+            builder: (BuildContext context, GoRouterState state) {
+              return const Airtime();
+            },
+          ),
+          GoRoute(
+            path: '/setting',
+            builder: (BuildContext context, GoRouterState state) {
+              return const AppSettings();
+            },
+          ),
+          GoRoute(
+            path: '/about',
+            name: 'about',
+            builder: (BuildContext context, GoRouterState state) {
+              return const About();
             },
           ),
         ],

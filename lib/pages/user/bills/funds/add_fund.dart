@@ -46,7 +46,7 @@ class AddFund extends StatelessWidget {
               ),
               Tab(
                 icon: Icon(Icons.local_atm),
-                text: "ATM Funding",
+                text: "Other Funding",
               ),
               Tab(
                 icon: Icon(Icons.code_off),

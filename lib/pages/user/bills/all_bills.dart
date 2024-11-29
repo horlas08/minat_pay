@@ -41,6 +41,21 @@ class AllBills extends StatelessWidget {
                 },
                 itemCount: allBills.length,
               ),
+              AllBillItems(
+                name: 'Airtime to cash',
+                icon: Icons.people_outlined,
+                onTap: () async {
+                  context.push('/airtime/cash');
+                  return;
+                },
+              ),
+              AllBillItems(
+                name: 'NIN Service',
+                icon: Icons.credit_card_sharp,
+                onTap: () {
+                  context.push('/nin');
+                },
+              )
             ],
           )),
     );

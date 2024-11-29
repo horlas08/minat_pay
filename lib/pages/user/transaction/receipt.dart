@@ -5,8 +5,10 @@ import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:intl/intl.dart';
-import 'package:path/path.dart' as path;
+import 'package:minat_pay/helper/helper.dart';
+import 'package:minat_pay/pages/user/transaction/receipt_file.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:screenshot/screenshot.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:widgets_to_image/widgets_to_image.dart';
@@ -22,9 +24,9 @@ Future<void> fetchCacheData(ValueNotifier<TransactionDetailsModel> transaction,
     ValueNotifier<bool> loading) async {
   loading.value = true;
   final SharedPreferences prefs = await SharedPreferences.getInstance();
-  print(prefs.getString("lastTransactionData")!);
-  transaction.value = TransactionDetailsModel.fromMap(
-      jsonDecode(prefs.getString("lastTransactionData")!));
+
+  final data = jsonDecode(prefs.getString("lastTransactionData")!);
+  transaction.value = TransactionDetailsModel.fromMap(data);
   loading.value = false;
 }
 
@@ -35,6 +37,7 @@ class Receipt extends HookWidget {
   Widget build(BuildContext context) {
     final ValueNotifier<Uint8List?> bytes = useState(null);
     final ValueNotifier<bool> loading = useState(true);
+    final ScreenshotController screenshotController = ScreenshotController();
 
     final transaction = useState(
       TransactionDetailsModel(
@@ -175,35 +178,6 @@ class Receipt extends HookWidget {
                                   const SizedBox(
                                     height: 10,
                                   ),
-                                  // if (transaction.value.data != null &&
-                                  //     transaction.value.data!.isNotEmpty)
-                                  //   ...List.generate(
-                                  //     transaction.value.data!.length,
-                                  //     (index) {
-                                  //       return TransactionRow(
-                                  //         left: 'Status',
-                                  //         right: const Row(
-                                  //           mainAxisAlignment:
-                                  //               MainAxisAlignment.center,
-                                  //           children: [
-                                  //             Icon(
-                                  //               Icons.check_circle,
-                                  //               color: AppColor.success,
-                                  //               size: 20,
-                                  //             ),
-                                  //             Text(
-                                  //               "Successful",
-                                  //               style: TextStyle(
-                                  //                 fontSize: 20,
-                                  //                 color: AppColor.success,
-                                  //                 fontWeight: FontWeight.normal,
-                                  //               ),
-                                  //             ),
-                                  //           ],
-                                  //         ),
-                                  //       );
-                                  //     },
-                                  //   ),
                                   const SizedBox(
                                     height: 10,
                                   ),
@@ -226,17 +200,50 @@ class Receipt extends HookWidget {
                     width: double.infinity,
                     child: ElevatedButton(
                       onPressed: () async {
-                        final res = await shareController.capture();
-                        bytes.value = res;
+                        final SharedPreferences prefs =
+                            await SharedPreferences.getInstance();
 
-                        final dir = await getTemporaryDirectory();
-                        final dest = path.join(dir.path, "widget.png");
-                        final file = await File(dest)
-                            .writeAsBytes(bytes.value as List<int>);
+                        final Map<String, String>  data =
+                            (jsonDecode(prefs.getString("lastTransactionData")!)
+                                    as Map)
+                                .map(
+                          (key, value) {
+                            return MapEntry(key.toString(), value.toString());
+                          },
+                        );
+                        final image =
+                            await screenshotController.captureFromWidget(
+                                ReceiptFile(
+                                  data: data,
+                                ),
+                                pixelRatio: 6 // Adjust for image clarity
+                                );
+                        if (image != null) {
+                          // Get a temporary directory to save the image
+                          final directory = await getTemporaryDirectory();
+                          final imagePath = '${directory.path}/receipt.png';
 
-                        final result = await Share.shareXFiles(
-                            [XFile('${dest}')],
-                            text: 'Transaction Receipt');
+                          // Save the image
+                          File(imagePath).writeAsBytesSync(image);
+
+                          // Share the image file
+                          final result = await Share.shareXFiles(
+                              [XFile('${imagePath}')],
+                              text: 'Transaction Receipt');
+
+                          if (context.mounted) {
+                            if (result.status == ShareResultStatus.success) {
+                              loading.value = false;
+                              deleteFile(File(imagePath));
+                              await alertHelper(context, 'success',
+                                  'Receipt share successful');
+                            } else {
+                              loading.value = false;
+                              await alertHelper(
+                                  context, 'error', 'Receipt share failed');
+                            }
+                          }
+                        }
                       },
                       child: const Text(
                         "Share Receipt",

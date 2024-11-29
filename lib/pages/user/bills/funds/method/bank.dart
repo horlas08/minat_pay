@@ -23,14 +23,13 @@ import '../../../../../bloc/repo/app/app_state.dart';
 import '../../../../../widget/Button.dart';
 
 final bvnFieldController = TextEditingController();
+final _bvnAccountGenerateKey = GlobalKey<FormState>();
 
 class Bank extends HookWidget {
   const Bank({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final _bvnAccountGenerateKey = GlobalKey<FormState>();
-
     useEffect(() {
       bvnFieldController.text = '';
       return null;
@@ -270,29 +269,34 @@ class Bank extends HookWidget {
                   !state.user!.hasPalmPay!)
                 Container(
                   margin: const EdgeInsets.all(20),
-                  child: Row(
+                  child: Column(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       if (!state.user!.hasMonnify!)
-                        Expanded(
-                          child: Button(
-                            onpressed: () {
-                              if (accountType.value != 1) {
-                                accountType.value = 1;
-                              }
-                              showBvnModal(context, accountType);
-                            },
-                            child: const Text(
-                              "Generate Monnify Acc.",
-                              style: TextStyle(
-                                color: Colors.white,
+                        Column(
+                          children: [
+                            Button(
+                              onpressed: () {
+                                if (accountType.value != 1) {
+                                  accountType.value = 1;
+                                }
+                                showBvnModal(context, accountType);
+                              },
+                              child: const Text(
+                                "Generate Monnify Acc.",
+                                style: TextStyle(
+                                  color: Colors.white,
+                                ),
                               ),
                             ),
-                          ),
+                            const SizedBox(
+                              height: 20,
+                            )
+                          ],
                         ),
                       if (!state.user!.hasPsb!)
-                        Expanded(
-                          child: Button(
+                        Column(children: [
+                          Button(
                             onpressed: () {
                               if (accountType.value != 2) {
                                 accountType.value = 2;
@@ -306,23 +310,31 @@ class Bank extends HookWidget {
                               ),
                             ),
                           ),
-                        ),
+                          const SizedBox(
+                            height: 20,
+                          )
+                        ]),
                       if (!state.user!.hasPalmPay!)
-                        Expanded(
-                          child: Button(
-                            onpressed: () {
-                              if (accountType.value != 3) {
-                                accountType.value = 3;
-                              }
-                              showBvnModal(context, accountType);
-                            },
-                            child: const Text(
-                              "Generate Palmpay Acct",
-                              style: TextStyle(
-                                color: Colors.white,
+                        Column(
+                          children: [
+                            Button(
+                              onpressed: () {
+                                if (accountType.value != 3) {
+                                  accountType.value = 3;
+                                }
+                                showBvnModal(context, accountType);
+                              },
+                              child: const Text(
+                                "Generate Palmpay Acct",
+                                style: TextStyle(
+                                  color: Colors.white,
+                                ),
                               ),
                             ),
-                          ),
+                            SizedBox(
+                              height: 20,
+                            ),
+                          ],
                         ),
                     ],
                   ),
@@ -505,8 +517,10 @@ class Bank extends HookWidget {
                                     ),
                                   ).then(
                                     (value) {
+                                      if (!context.mounted) return;
+
                                       alertHelper(context, 'success',
-                                          'Account Number (${account.accountNumber!}) Copy SuccessFul');
+                                          'Account Number (${account.accountNumber!}) Copy Successfully');
                                     },
                                   );
                                 },

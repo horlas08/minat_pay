@@ -2,14 +2,18 @@ import 'dart:io';
 import 'dart:math';
 
 import 'package:another_flushbar/flushbar.dart';
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:form_validator/form_validator.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import 'package:loader_overlay/loader_overlay.dart';
+import 'package:local_auth_android/local_auth_android.dart';
+import 'package:local_auth_darwin/local_auth_darwin.dart';
 import 'package:lottie/lottie.dart';
 import 'package:minat_pay/config/color.constant.dart';
 import 'package:minat_pay/cubic/app_config_cubit.dart';
@@ -24,6 +28,7 @@ import '../config/font.constant.dart';
 import '../data/user/pin_verify_service.dart';
 import '../data/user/transaction_service.dart';
 import '../main.dart';
+import '../pages/auth/Login/login_verify_view.dart';
 import '../service/http.dart';
 import '../widget/Button.dart';
 
@@ -210,8 +215,56 @@ alertHelper(BuildContext context, String type, String message,
   ).show(context);
 }
 
+void showAppDialog(
+  BuildContext context, {
+  double height = 220,
+  bool useRootNavigator = false,
+  required Widget child,
+  EdgeInsetsGeometry? margin = const EdgeInsets.symmetric(horizontal: 20),
+}) {
+  showGeneralDialog(
+    context: context,
+    barrierDismissible: true,
+    barrierLabel: "true",
+    useRootNavigator: useRootNavigator,
+    barrierColor: Colors.black.withOpacity(0.5),
+    transitionDuration: const Duration(milliseconds: 700),
+    pageBuilder: (_, __, ___) {
+      return Center(
+        child: Container(
+          height: height,
+          margin: margin,
+          child: SizedBox.expand(
+            child: Material(
+              borderRadius: BorderRadius.circular(10),
+              child: child,
+            ),
+          ),
+        ),
+      );
+    },
+    transitionBuilder: (_, anim, __, child) {
+      Tween<double> tween;
+      if (anim.status == AnimationStatus.reverse) {
+        tween = Tween(begin: 0, end: 1);
+      } else {
+        tween = Tween(begin: 0, end: 1);
+      }
+
+      return ScaleTransition(
+        scale: tween.animate(anim),
+        // position: tween.animate(anim),
+        child: FadeTransition(
+          opacity: anim,
+          child: child,
+        ),
+      );
+    },
+  );
+}
+
 String currency(BuildContext context) {
-  Locale locale = Localizations.localeOf(context);
+  // Locale locale = Localizations.localeOf(context);
   var format =
       NumberFormat.simpleCurrency(locale: Platform.localeName, name: 'NGN');
   return format.currencySymbol;
@@ -320,10 +373,48 @@ Future<Response?> confirmTransactionPinRequest({required String pin}) async {
   return res;
 }
 
-Future showConfirmPinRequest(BuildContext context, {Function? callback}) {
+_fingerPrintShow(BuildContext context) async {
+  try {
+    return await auth.authenticate(
+      localizedReason: 'Please authenticate access your account',
+      options: const AuthenticationOptions(
+        biometricOnly: true,
+        useErrorDialogs: true,
+        stickyAuth: true,
+        sensitiveTransaction: true,
+      ),
+      authMessages: const <AuthMessages>[
+        AndroidAuthMessages(
+          signInTitle: 'Oops! Biometric authentication required!',
+          cancelButton: 'No thanks',
+        ),
+        IOSAuthMessages(
+          cancelButton: 'No thanks',
+        ),
+      ],
+    );
+
+    // ···
+  } on PlatformException catch (error) {
+    if (context.mounted) {
+      await alertHelper(context, 'error', error.toString());
+    }
+  }
+}
+
+Future showConfirmPinRequest(BuildContext context, {Function? callback}) async {
   Size size = MediaQuery.of(context).size;
   PinInputController pinInputController = PinInputController(length: 4);
   context.read<AppConfigCubit>().comfirmPinState(false);
+  final showBiometric = await canAuth();
+  final availableBiometric = await availableBiometrics();
+  final deviceSupportBio = showBiometric &&
+          availableBiometric.isNotEmpty &&
+          (availableBiometric.contains(BiometricType.face) ||
+              availableBiometric.contains(BiometricType.strong)) ||
+      (availableBiometric.contains(BiometricType.weak) ||
+          availableBiometric.contains(BiometricType.fingerprint));
+  if (!context.mounted) return;
   return showModalBottomSheet(
       context: context,
       isDismissible: true,
@@ -331,7 +422,7 @@ Future showConfirmPinRequest(BuildContext context, {Function? callback}) {
       isScrollControlled: true,
       useRootNavigator: true,
       showDragHandle: true,
-      builder: (builder) {
+      builder: (context) {
         return Wrap(
           children: [
             const Center(
@@ -360,6 +451,37 @@ Future showConfirmPinRequest(BuildContext context, {Function? callback}) {
                 buttonFillColor: appServer.primaryColor,
                 btnTextColor: Colors.white,
                 spacing: size.height * 0.06,
+                leftExtraInputWidget:
+                    context.read<AppConfigCubit>().state.enableFingerPrint &&
+                            deviceSupportBio
+                        ? Expanded(
+                            child: IconButton(
+                              onPressed: () async {
+                                final didAuth = await _fingerPrintShow(context);
+                                if (context.mounted) {
+                                  if (didAuth) {
+                                    if (Navigator.maybeOf(context) != null) {
+                                      Navigator.of(context, rootNavigator: true)
+                                          .pop(context);
+                                    }
+                                    context
+                                        .read<AppConfigCubit>()
+                                        .comfirmPinState(true);
+                                  } else {
+                                    context
+                                        .read<AppConfigCubit>()
+                                        .comfirmPinState(false);
+                                  }
+                                }
+                              },
+                              icon: const Icon(
+                                Icons.fingerprint,
+                                color: AppColor.primaryColor,
+                                size: 25,
+                              ),
+                            ),
+                          )
+                        : null,
                 pinInputController: pinInputController,
                 onSubmit: () async {
                   context.loaderOverlay.show();
@@ -598,36 +720,124 @@ Future<Response?> refreshUSerDetail() async {
   return res;
 }
 
-Future<void> handleLogOut(BuildContext context) async {
-  print(GoRouterState.of(context).fullPath);
-  final SharedPreferences prefs = await SharedPreferences.getInstance();
-  if (!context.mounted) return;
-  String? username = prefs.getString("userName");
-
-  context.loaderOverlay.show();
-  final res = await curlPostRequest(path: "/logout", data: {
-    'token': prefs.getString("token"),
-  });
-  if (context.mounted) {
-    if (res?.statusCode == 200) {
-      await prefs.clear();
-      if (context.mounted) {
-        context.read<AppConfigCubit>().changeAuthState(false);
-
-        if (!context.read<AppConfigCubit>().state.onboardSkip) {
-          prefs.setBool('onboardSkip', true);
-          context.read<AppConfigCubit>().changeOnboardStatus(true);
-        }
-
-        context.go('/login');
-        context.loaderOverlay.hide();
-        return;
-      }
-    } else {
-      context.loaderOverlay.hide();
-      return await alertHelper(context, "error", res?.data['message']);
-    }
+extension StringExtension on String {
+  String capitalize() {
+    return "${this[0].toUpperCase()}${this.substring(1).toLowerCase()}";
   }
+}
+
+Future<void> deleteFile(File file) async {
+  try {
+    if (await file.exists()) {
+      await file.delete();
+    }
+  } catch (e) {
+    // Error in getting access to the file.
+  }
+}
+
+final formatCurrency = new NumberFormat.simpleCurrency();
+Widget RowList(
+    {required String key,
+    required String value,
+    bool showLine = true,
+    Widget? suffixIcon}) {
+  return Column(
+    children: [
+      Row(
+        children: [
+          Text(
+            key.capitalize(),
+            style: TextStyle(
+              fontFamily: AppFont.aeonik,
+              color: Colors.black.withOpacity(0.6),
+              fontWeight: FontWeight.w100,
+            ),
+          ),
+          const Spacer(),
+          SizedBox(
+            width: 200,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                AutoSizeText(
+                  "${value.toLowerCase().contains('amount') ? "₦" : ""}${value.capitalize()}",
+                  style: TextStyle(
+                    fontFamily: AppFont.mulish,
+                    color: key == 'status'
+                        ? value == 'successful'
+                            ? AppColor.success
+                            : AppColor.danger
+                        : Colors.black,
+                    fontWeight: FontWeight.bold,
+                  ),
+                  overflow: TextOverflow.fade,
+                  textAlign: TextAlign.end,
+                  maxLines: 2,
+                ),
+                if (suffixIcon != null) suffixIcon
+              ],
+            ),
+          ),
+        ],
+      ),
+      if (showLine)
+        const SizedBox(
+          height: 5,
+        ),
+      if (showLine) const Divider(),
+      SizedBox(
+        height: 15,
+      )
+    ],
+  );
+}
+
+Future<void> handleLogOut(BuildContext context) async {
+  final SharedPreferences prefs = await SharedPreferences.getInstance();
+
+  await prefs.clear();
+  if (context.mounted) {
+    context.read<AppConfigCubit>().changeAuthState(false);
+
+    if (!context.read<AppConfigCubit>().state.onboardSkip) {
+      prefs.setBool('onboardSkip', true);
+      context.read<AppConfigCubit>().changeOnboardStatus(true);
+    }
+
+    context.go('/login');
+    return;
+  }
+  return;
+  // print(GoRouterState.of(context).fullPath);
+  // final SharedPreferences prefs = await SharedPreferences.getInstance();
+  // if (!context.mounted) return;
+  // String? username = prefs.getString("userName");
+  //
+  // context.loaderOverlay.show();
+  // final res = await curlPostRequest(path: "/logout", data: {
+  //   'token': prefs.getString("token"),
+  // });
+  // if (context.mounted) {
+  //   if (res?.statusCode == 200) {
+  //     await prefs.clear();
+  //     if (context.mounted) {
+  //       context.read<AppConfigCubit>().changeAuthState(false);
+  //
+  //       if (!context.read<AppConfigCubit>().state.onboardSkip) {
+  //         prefs.setBool('onboardSkip', true);
+  //         context.read<AppConfigCubit>().changeOnboardStatus(true);
+  //       }
+  //
+  //       context.go('/login');
+  //       context.loaderOverlay.hide();
+  //       return;
+  //     }
+  //   } else {
+  //     context.loaderOverlay.hide();
+  //     return await alertHelper(context, "error", res?.data['message']);
+  //   }
+  // }
 }
 
 bool isLight(BuildContext context) {
