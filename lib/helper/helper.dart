@@ -760,20 +760,25 @@ Widget RowList(
             child: Row(
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
-                AutoSizeText(
-                  "${value.toLowerCase().contains('amount') ? "₦" : ""}${value.capitalize()}",
-                  style: TextStyle(
-                    fontFamily: AppFont.mulish,
-                    color: key == 'status'
-                        ? value.toLowerCase().contains('success')
-                            ? AppColor.success
-                            : AppColor.danger
-                        : Colors.black,
-                    fontWeight: FontWeight.bold,
+                SizedBox(
+                  width: 200,
+                  child: AutoSizeText(
+                    "${value.toLowerCase().contains('amount') ? "₦" : ""}${value.capitalize()}",
+                    style: TextStyle(
+                      fontFamily: AppFont.mulish,
+                      color: key == 'status'
+                          ? value.toLowerCase().contains('success')
+                              ? AppColor.success
+                              : AppColor.danger
+                          : Colors.black,
+                      fontWeight: FontWeight.bold,
+                    ),
+                    overflow: TextOverflow.fade,
+                    textAlign: TextAlign.end,
+                    wrapWords: true,
+                    softWrap: true,
+                    maxLines: 2,
                   ),
-                  overflow: TextOverflow.fade,
-                  textAlign: TextAlign.end,
-                  maxLines: 2,
                 ),
                 if (suffixIcon != null) suffixIcon
               ],
