@@ -12,10 +12,9 @@ workflows:
         script: |
           flutter --version
           curl --proto '=https' --tlsv1.2 https://raw.githubusercontent.com/shorebirdtech/install/main/install.sh -sSf | bash
-#           Add Shorebird to PATH
           export PATH="$HOME/.shorebird/bin:$PATH"
           echo $PATH
-#          shorebird --version
+          shorebird --version
       - name: Configure Shorebird
         script: shorebird init --api-key=$SHOREBIRD_API_KEY
       - name: Build Unsigned iOS IPA with Shorebird
