@@ -15,9 +15,10 @@ workflows:
           export PATH="$HOME/.shorebird/bin:$PATH"  >> $CM_ENV
           echo $PATH
           shorebird --version
-      - name: Build Unsigned iOS IPA with Shorebird
+      - name: Shorebird Release
         script: |
-          shorebird build ios --no-codesign
+          shorebird build ios \
+          --no-codesign
     artifacts:
       - build/ios/ipa/*.ipa # Unsigned iOS IPA file
       - shorebird/*.patch # Shorebird patch files
