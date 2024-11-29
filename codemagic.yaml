@@ -16,6 +16,7 @@ workflows:
           echo $PATH
           shorebird --version
           pod repo update
+          pod update Sentry/HybridSDK
           pod install
       - name: Shorebird Release
         script: flutter build ios
