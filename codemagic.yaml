@@ -15,6 +15,7 @@ workflows:
           export PATH="$HOME/.shorebird/bin:$PATH"  >> $CM_ENV
           echo $PATH
           shorebird --version
+          cd ios
           pod init
           pod repo update
           pod update Sentry/HybridSDK
