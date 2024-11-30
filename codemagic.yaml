@@ -25,12 +25,12 @@ workflows:
           shorebird --version
           cd ios
           pod init
-#          pod repo update
-#          pod update Sentry/HybridSDK
           pod install
           cd ..
       - name: Shorebird Release
         script: flutter build ios
     artifacts:
       - build/ios/ipa/*.ipa # Unsigned iOS IPA file
-#      - shorebird/*.patch # Shorebird patch files
+      # - shorebird/*.patch # Shorebird patch files
+      # pod repo update
+      # pod update Sentry/HybridSDK
