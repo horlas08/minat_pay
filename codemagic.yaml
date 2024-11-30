@@ -7,7 +7,13 @@ workflows:
       xcode: latest # Use the latest version of Xcode for iOS builds
       groups:
         - shorebird # Reference the variable group
+
+
     scripts:
+      - name: Install CocoaPods
+        script: |
+          sudo gem install cocoapods
+          pod --version
       - name: Install Flutter and Shorebird CLI
         script: |
           flutter --version
