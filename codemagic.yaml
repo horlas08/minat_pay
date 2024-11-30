@@ -14,6 +14,7 @@ workflows:
         script: |
           sudo gem install cocoapods
           pod --version
+          flutter pub get
       - name: Install Flutter and Shorebird CLI
         script: |
           flutter --version
