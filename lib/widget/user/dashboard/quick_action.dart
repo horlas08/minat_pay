@@ -63,6 +63,34 @@ class QuickAction extends StatelessWidget {
           ],
         ),
         const SizedBox(
+          height: 20,
+        ),
+        const Row(
+          mainAxisAlignment: MainAxisAlignment.spaceAround,
+          children: [
+            QuickActionItem(
+              route: '/bills/cable',
+              icon: 'assets/svg/tv-outline.svg',
+              title: 'Cable',
+            ),
+            QuickActionItem(
+              route: '/bills/epin',
+              icon: 'assets/svg/school.svg',
+              title: 'Education',
+            ),
+            QuickActionItem(
+              route: '/airtime/pin',
+              icon: 'assets/svg/keypad.svg',
+              title: 'Airtime Pin',
+            ),
+            QuickActionItem(
+              route: '/referral',
+              icon: 'assets/svg/people.svg',
+              title: 'Referrals',
+            ),
+          ],
+        ),
+        const SizedBox(
           height: 40,
         ),
       ],

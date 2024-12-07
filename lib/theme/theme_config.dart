@@ -27,7 +27,7 @@ ThemeData lightTheme(AppServer appServer) => ThemeData(
       ),
       inputDecorationTheme: InputDecorationTheme(
         contentPadding:
-            const EdgeInsets.symmetric(vertical: 25, horizontal: 20),
+            const EdgeInsets.symmetric(vertical: 17, horizontal: 20),
         fillColor: AppColor.greyLightColor.withOpacity(0.1),
         filled: true,
         errorMaxLines: 2,
@@ -48,7 +48,7 @@ ThemeData lightTheme(AppServer appServer) => ThemeData(
           color: appServer.primaryColor,
           fontFamily: AppFont.mulish,
           fontWeight: FontWeight.bold,
-          fontSize: 20,
+          fontSize: 15,
         ),
       ),
       iconTheme: const IconThemeData(

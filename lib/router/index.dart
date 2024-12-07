@@ -8,6 +8,7 @@ import 'package:minat_pay/pages/user/ChangePassword/change_password.dart';
 import 'package:minat_pay/pages/user/ChangePin/change_pin.dart';
 import 'package:minat_pay/pages/user/airtime_to_cash/airtime_to_cash.dart';
 import 'package:minat_pay/pages/user/bills/airtime/airtime.dart';
+import 'package:minat_pay/pages/user/bills/airtime_pin/airtime_pin.dart';
 import 'package:minat_pay/pages/user/bills/all_bills.dart';
 import 'package:minat_pay/pages/user/bills/betting/betting.dart';
 import 'package:minat_pay/pages/user/bills/cable/cable.dart';
@@ -278,6 +279,13 @@ class AppRouter {
         name: 'airtime2cash',
         builder: (context, state) {
           return const AirtimeToCash();
+        },
+      ),
+      GoRoute(
+        path: '/airtime/pin',
+        name: 'airtimePin',
+        builder: (context, state) {
+          return const AirtimePin();
         },
       ),
       ShellRoute(

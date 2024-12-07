@@ -47,15 +47,7 @@ class AllBills extends StatelessWidget {
                 name: 'Airtime pin',
                 icon: Icons.document_scanner_rounded,
                 onTap: () async {
-                  const url = 'https://minatpay.com/user/buy-airtime-pin';
-                  try {
-                    final Uri _url = Uri.parse(url);
-                    await launchUrl(_url);
-                  } catch (error) {
-                    if (context.mounted) {
-                      await alertHelper(context, 'error', error.toString());
-                    }
-                  }
+                  context.push('/airtime/pin');
                 },
               ),
               AllBillItems(
@@ -71,6 +63,21 @@ class AllBills extends StatelessWidget {
                 icon: Icons.credit_card_sharp,
                 onTap: () {
                   context.push('/nin');
+                },
+              ),
+              AllBillItems(
+                name: 'Bulk SMS',
+                icon: Icons.messenger_outline,
+                onTap: () async {
+                  const url = 'https://minatpay.com/user/buy-airtime-pin';
+                  try {
+                    final Uri url0 = Uri.parse(url);
+                    await launchUrl(url0);
+                  } catch (error) {
+                    if (context.mounted) {
+                      await alertHelper(context, 'error', error.toString());
+                    }
+                  }
                 },
               )
             ],

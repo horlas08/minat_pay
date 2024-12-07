@@ -136,7 +136,7 @@ class Atm extends HookWidget {
                   focusedBorder: InputBorder.none,
                 ),
                 validator:
-                    ValidationBuilder().required().minNumber(500).build(),
+                    ValidationBuilder().required().minNumber(300).build(),
                 onTapOutside: (v) {
                   FocusManager.instance.primaryFocus?.unfocus();
                 },

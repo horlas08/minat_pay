@@ -39,8 +39,12 @@ class Assets {
   static const String svgBarChartFill = 'assets/svg/bar-chart-fill.svg';
   static const String svgBasketball = 'assets/svg/basketball.svg';
   static const String svgCoin = 'assets/svg/coin.svg';
+  static const String svgKeypad = 'assets/svg/keypad.svg';
   static const String svgLightbulb = 'assets/svg/lightbulb.svg';
   static const String svgLineChartLine = 'assets/svg/line-chart-line.svg';
+  static const String svgPeople = 'assets/svg/people.svg';
+  static const String svgPhonePortrait = 'assets/svg/phone-portrait.svg';
+  static const String svgSchool = 'assets/svg/school.svg';
   static const String svgSettingsFill = 'assets/svg/settings-fill.svg';
   static const String svgSettingsLine = 'assets/svg/settings-line.svg';
   static const String svgSimCard2Line = 'assets/svg/sim-card-2-line.svg';
@@ -48,6 +52,7 @@ class Assets {
   static const String svgSupport = 'assets/svg/support.svg';
   static const String svgSupportImage = 'assets/svg/support_image.svg';
   static const String svgTelegram = 'assets/svg/telegram.svg';
+  static const String svgTvOutline = 'assets/svg/tv-outline.svg';
   static const String svgWallet3Fill = 'assets/svg/wallet-3-fill.svg';
   static const String svgWhatsappLogo = 'assets/svg/WhatsappLogo.svg';
   static const String svgWifi = 'assets/svg/wifi.svg';

@@ -30,7 +30,7 @@ final PhoneController phoneController = PhoneController(
     initialValue: const PhoneNumber(isoCode: IsoCode.NG, nsn: ''));
 final _airtimeFormKey = GlobalKey<FormState>();
 
-Future<List<AirtimeProviders>?> getAirtimeList(
+Future<List<AirtimeProviders>> getAirtimeList(
     BuildContext context,
     ValueNotifier<bool> networkIsLoading,
     ValueNotifier<List<AirtimeProviders>> networkProviders) async {

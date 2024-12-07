@@ -8,11 +8,12 @@ class QuickActionItem extends StatelessWidget {
   final String route;
   final String icon;
   final String title;
-  const QuickActionItem(
-      {super.key,
-      required this.route,
-      required this.icon,
-      required this.title});
+  const QuickActionItem({
+    super.key,
+    required this.route,
+    required this.icon,
+    required this.title,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -36,6 +37,7 @@ class QuickActionItem extends StatelessWidget {
                 child: SvgPicture.asset(
                   icon,
                   height: 7,
+                  color: AppColor.primaryColor,
                   width: 4,
                   fit: BoxFit.cover,
                 ),
