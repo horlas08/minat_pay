@@ -10,6 +10,7 @@ class AirtimePinPlan extends Providers {
   String? type;
   String? val_id;
   String? amount_agent;
+  String? availability;
   @override
   String? image;
   String? status;
@@ -22,6 +23,7 @@ class AirtimePinPlan extends Providers {
     this.type,
     this.network,
     this.image,
+    this.availability,
     this.val_id,
     this.status,
   });
@@ -35,11 +37,9 @@ class AirtimePinPlan extends Providers {
     val_id = json['val_id'];
     type = json['type'];
     image = json['image'];
+    availability = json['availability'];
     status = json['status'];
   }
-  // static List<Country> fromJsonList(List list) {
-  //   return list.map((item) => Country.fromJson(item)).toList();
-  // }
 
   static List<AirtimePinPlan> fromJsonList(List json) => json
       .map(

@@ -23,7 +23,7 @@ import '../../../../model/providers.dart';
 import '../../../../widget/Button.dart';
 import '../airtime/airtime.dart';
 
-final _formKey = GlobalKey<FormState>();
+final _airtimePformKey = GlobalKey<FormState>();
 
 class AirtimePin extends HookWidget {
   const AirtimePin({super.key});
@@ -162,10 +162,16 @@ class AirtimePin extends HookWidget {
       if (context.mounted) {
         if (res?.statusCode == HttpStatus.ok) {
           await putLastTransactionId(res?.data['data']['trx_id']);
+          selectedPlan.value = AirtimePinPlan();
+          selectedNetworkProvider.value = AirtimeProviders();
+          planProviders.value = [];
+          networkProviders.value = [];
+          quantityInputController.text = '';
+          nameInputController.text = '';
           if (context.mounted) {
             HapticFeedback.heavyImpact();
             appModalWithoutRoot(context,
-                title: 'Betting Fund Successful',
+                title: 'Purchase Successful',
                 child:
                     successModalWidget(context, message: res?.data['message']));
           }
@@ -297,7 +303,7 @@ class AirtimePin extends HookWidget {
       },
       builder: (context, state) {
         return Scaffold(
-          appBar: AppHeader(
+          appBar: const AppHeader(
             title: 'Airtime Pin',
           ),
           body: SingleChildScrollView(
@@ -310,7 +316,7 @@ class AirtimePin extends HookWidget {
                   padding: const EdgeInsets.all(10),
                   margin: const EdgeInsets.all(20),
                   child: Form(
-                    key: _formKey,
+                    key: _airtimePformKey,
                     autovalidateMode: AutovalidateMode.onUserInteraction,
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -470,59 +476,104 @@ class AirtimePin extends HookWidget {
                         const SizedBox(
                           height: 10,
                         ),
-                        TextFormField(
-                          keyboardType: const TextInputType.numberWithOptions(
-                            decimal: false,
-                            signed: false,
-                          ),
-                          controller: quantityInputController,
-                          validator: ValidationBuilder().required().build(),
-                          // enabled: networkInputController.text.isNotEmpty,
-                          decoration: InputDecoration(
-                            hintText: networkInputController.text.isEmpty
-                                ? ''
-                                : "Enter ${networkInputController.text} Quantity",
-                            hintStyle: const TextStyle(
-                              fontSize: 18,
-                              color: AppColor.primaryColor,
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const Text(
+                              "Enter Quantity",
+                              textAlign: TextAlign.left,
+                              style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontFamily: AppFont.mulish,
+                                fontSize: 20,
+                              ),
                             ),
-                            disabledBorder: InputBorder.none,
-                            border: InputBorder.none,
-                            enabledBorder: InputBorder.none,
-                            focusedBorder: InputBorder.none,
-                            errorBorder: InputBorder.none,
-                            focusedErrorBorder: InputBorder.none,
-                          ),
-                          onTapOutside: (v) {
-                            FocusManager.instance.primaryFocus?.unfocus();
-                          },
-                        ),
-                        const SizedBox(
-                          height: 20,
-                        ),
-                        TextFormField(
-                          controller: nameInputController,
-                          validator: ValidationBuilder().required().build(),
-                          // enabled: networkInputController.text.isNotEmpty,
-                          decoration: const InputDecoration(
-                            hintText: "Enter Name On Card",
-                            hintStyle: TextStyle(
-                              fontSize: 18,
-                              color: AppColor.primaryColor,
+                            const SizedBox(
+                              height: 20,
                             ),
-                            disabledBorder: InputBorder.none,
-                            border: InputBorder.none,
-                            enabledBorder: InputBorder.none,
-                            focusedBorder: InputBorder.none,
-                            errorBorder: InputBorder.none,
-                            focusedErrorBorder: InputBorder.none,
-                          ),
-                          onTapOutside: (v) {
-                            FocusManager.instance.primaryFocus?.unfocus();
-                          },
+                            TextFormField(
+                              keyboardType:
+                                  const TextInputType.numberWithOptions(
+                                decimal: false,
+                                signed: false,
+                              ),
+                              controller: quantityInputController,
+                              validator: ValidationBuilder().required().build(),
+                              // enabled: networkInputController.text.isNotEmpty,
+                              decoration: InputDecoration(
+                                hintText: networkInputController.text.isEmpty
+                                    ? ''
+                                    : "Enter ${networkInputController.text} Quantity",
+                                hintStyle: const TextStyle(
+                                  fontSize: 18,
+                                  color: AppColor.primaryColor,
+                                ),
+                                disabledBorder: InputBorder.none,
+                                border: InputBorder.none,
+                                enabledBorder: InputBorder.none,
+                                focusedBorder: InputBorder.none,
+                                errorBorder: InputBorder.none,
+                                focusedErrorBorder: InputBorder.none,
+                              ),
+                              onTapOutside: (v) {
+                                FocusManager.instance.primaryFocus?.unfocus();
+                              },
+                            ),
+                            if (selectedPlan.value.id != null)
+                              if (selectedPlan.value.availability != null)
+                                Text(
+                                  "${selectedPlan.value.availability}",
+                                  style: const TextStyle(
+                                    color: Colors.red,
+                                    fontFamily: AppFont.mulish,
+                                    fontWeight: FontWeight.w900,
+                                  ),
+                                ),
+                            const SizedBox(
+                              height: 20,
+                            ),
+                          ],
                         ),
-                        const SizedBox(
-                          height: 20,
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const Text(
+                              "Business Name",
+                              textAlign: TextAlign.left,
+                              style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontFamily: AppFont.mulish,
+                                fontSize: 20,
+                              ),
+                            ),
+                            const SizedBox(
+                              height: 20,
+                            ),
+                            TextFormField(
+                              controller: nameInputController,
+                              validator: ValidationBuilder().required().build(),
+                              // enabled: networkInputController.text.isNotEmpty,
+                              decoration: const InputDecoration(
+                                hintText: "Enter Business Name",
+                                hintStyle: TextStyle(
+                                  fontSize: 18,
+                                  color: AppColor.primaryColor,
+                                ),
+                                disabledBorder: InputBorder.none,
+                                border: InputBorder.none,
+                                enabledBorder: InputBorder.none,
+                                focusedBorder: InputBorder.none,
+                                errorBorder: InputBorder.none,
+                                focusedErrorBorder: InputBorder.none,
+                              ),
+                              onTapOutside: (v) {
+                                FocusManager.instance.primaryFocus?.unfocus();
+                              },
+                            ),
+                            const SizedBox(
+                              height: 20,
+                            ),
+                          ],
                         ),
                         const SizedBox(
                           height: 20,
@@ -531,7 +582,7 @@ class AirtimePin extends HookWidget {
                           onPressed: () {
                             FocusManager.instance.primaryFocus?.unfocus();
 
-                            if (_formKey.currentState!.validate()) {
+                            if (_airtimePformKey.currentState!.validate()) {
                               appModalWithoutRoot(context,
                                   title: "CheckOut Preview", child: checkout());
                             }

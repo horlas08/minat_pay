@@ -89,10 +89,10 @@ final List<Map<String, dynamic>> airtimePrice = [
   },
   {
     'id': 5,
-    'price': '5000',
+    'price': '3000',
   },
   {
-    'id': 5,
+    'id': 6,
     'price': '5000',
   },
 ];
@@ -141,7 +141,7 @@ final List<Map<String, dynamic>> eletricityPrice = [
   },
   {
     'id': 0,
-    'price': '500',
+    'price': '5000',
   },
   {
     'id': 1,

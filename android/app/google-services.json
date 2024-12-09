@@ -2,14 +2,14 @@
   "project_info": {
     "project_number": "658009879471",
     "project_id": "minatpay-67c72",
-    "storage_bucket": "minatpay-67c72.appspot.com"
+    "storage_bucket": "minatpay-67c72.firebasestorage.app"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:658009879471:android:4e8414ebfe1cc3a883355a",
+        "mobilesdk_app_id": "1:658009879471:android:d219e9dbb099613183355a",
         "android_client_info": {
-          "package_name": "com.minatpay.ng.minat_pay"
+          "package_name": "com.minatpay"
         }
       },
       "oauth_client": [

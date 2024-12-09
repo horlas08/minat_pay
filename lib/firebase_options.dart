@@ -46,33 +46,33 @@ class DefaultFirebaseOptions {
     messagingSenderId: '658009879471',
     projectId: 'minatpay-67c72',
     authDomain: 'minatpay-67c72.firebaseapp.com',
-    storageBucket: 'minatpay-67c72.appspot.com',
+    storageBucket: 'minatpay-67c72.firebasestorage.app',
     measurementId: 'G-S6ECLRQYVT',
   );
 
   static const FirebaseOptions android = FirebaseOptions(
     apiKey: 'AIzaSyBTdrCKy06YrJ0AtGfOzOSrqo2KMVe4Fjg',
-    appId: '1:658009879471:android:4e8414ebfe1cc3a883355a',
+    appId: '1:658009879471:android:d219e9dbb099613183355a',
     messagingSenderId: '658009879471',
     projectId: 'minatpay-67c72',
-    storageBucket: 'minatpay-67c72.appspot.com',
+    storageBucket: 'minatpay-67c72.firebasestorage.app',
   );
 
   static const FirebaseOptions ios = FirebaseOptions(
     apiKey: 'AIzaSyCx8rVgWL0n4nOkqzM3fUV6E6rv0bq2zu4',
-    appId: '1:658009879471:ios:173a483b6c6f1f3383355a',
+    appId: '1:658009879471:ios:2297c01302ab621a83355a',
     messagingSenderId: '658009879471',
     projectId: 'minatpay-67c72',
-    storageBucket: 'minatpay-67c72.appspot.com',
-    iosBundleId: 'com.example.minatPay',
+    storageBucket: 'minatpay-67c72.firebasestorage.app',
+    iosBundleId: 'com.minatpay',
   );
 
   static const FirebaseOptions macos = FirebaseOptions(
     apiKey: 'AIzaSyCx8rVgWL0n4nOkqzM3fUV6E6rv0bq2zu4',
-    appId: '1:658009879471:ios:bc6a1761414ac99483355a',
+    appId: '1:658009879471:ios:3ea3bdfe7b54d68f83355a',
     messagingSenderId: '658009879471',
     projectId: 'minatpay-67c72',
-    storageBucket: 'minatpay-67c72.appspot.com',
+    storageBucket: 'minatpay-67c72.firebasestorage.app',
     iosBundleId: 'com.minatpay.ng.minatPay',
   );
 
@@ -82,7 +82,8 @@ class DefaultFirebaseOptions {
     messagingSenderId: '658009879471',
     projectId: 'minatpay-67c72',
     authDomain: 'minatpay-67c72.firebaseapp.com',
-    storageBucket: 'minatpay-67c72.appspot.com',
+    storageBucket: 'minatpay-67c72.firebasestorage.app',
     measurementId: 'G-C6K0NV8374',
   );
+
 }
