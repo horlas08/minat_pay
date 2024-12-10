@@ -169,11 +169,13 @@ class Betting extends HookWidget {
           idController.text = '';
           await putLastTransactionId(res?.data['data']['trx_id']);
           if (context.mounted) {
-            HapticFeedback.heavyImpact();
-            appModalWithoutRoot(context,
-                title: 'Betting Fund Successful',
-                child:
-                    successModalWidget(context, message: res?.data['message']));
+            await HapticFeedback.heavyImpact();
+            if (context.mounted) {
+              appModalWithoutRoot(context,
+                  title: 'Betting Fund Successful',
+                  child: successModalWidget(context,
+                      message: res?.data['message']));
+            }
           }
 
           // alertHelper(context, 'success', res?.data['message']);

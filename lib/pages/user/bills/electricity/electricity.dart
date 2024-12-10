@@ -62,10 +62,13 @@ Future<void> handleCheckOut(
       meterController.text = '';
       await putLastTransactionId(res?.data['data']['trx_id']);
       if (context.mounted) {
-        HapticFeedback.heavyImpact();
-        appModalWithoutRoot(context,
-            title: ' Purchase Successful',
-            child: successModalWidget(context, message: res?.data['message']));
+        await HapticFeedback.heavyImpact();
+        if (context.mounted) {
+          appModalWithoutRoot(context,
+              title: ' Purchase Successful',
+              child:
+                  successModalWidget(context, message: res?.data['message']));
+        }
       }
     } else {
       // Navigator.of(context, rootNavigator: true).pop();

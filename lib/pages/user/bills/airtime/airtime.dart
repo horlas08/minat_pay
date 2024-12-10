@@ -308,11 +308,13 @@ class Airtime extends HookWidget {
                 const PhoneNumber(isoCode: IsoCode.NG, nsn: '');
             await putLastTransactionId(res?.data['trx_id']);
             if (context.mounted) {
-              HapticFeedback.heavyImpact();
-              appModalWithoutRoot(context,
-                  title: 'Airtime Purchase Successful',
-                  child: successModalWidget(context,
-                      message: res?.data['message']));
+              await HapticFeedback.heavyImpact();
+              if (context.mounted) {
+                appModalWithoutRoot(context,
+                    title: 'Airtime Purchase Successful',
+                    child: successModalWidget(context,
+                        message: res?.data['message']));
+              }
             }
           } else {
             // Navigator.of(context, rootNavigator: true).pop();

@@ -208,11 +208,13 @@ class Cable extends HookWidget {
           cablePlanInputController.text = '';
           await putLastTransactionId(res?.data['data']['trx_id']);
           if (context.mounted) {
-            HapticFeedback.heavyImpact();
-            appModalWithoutRoot(context,
-                title: 'Cable Purchase Successful',
-                child:
-                    successModalWidget(context, message: res?.data['message']));
+            await HapticFeedback.heavyImpact();
+            if (context.mounted) {
+              appModalWithoutRoot(context,
+                  title: 'Cable Purchase Successful',
+                  child: successModalWidget(context,
+                      message: res?.data['message']));
+            }
           }
 
           // alertHelper(context, 'success', res?.data['message']);

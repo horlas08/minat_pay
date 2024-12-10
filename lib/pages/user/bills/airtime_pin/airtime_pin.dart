@@ -73,7 +73,10 @@ class AirtimePin extends HookWidget {
         planInputController.text = '';
         planProviders.value = allGlobalPlanList.value.where(
           (element) {
-            return element.network == selectedNetworkProvider.value.id;
+            print(element.network);
+            return (element.name
+                ?.toLowerCase()
+                .contains(selectedNetworkProvider.value.name!.toLowerCase()))!;
           },
         ).toList();
       }
@@ -92,7 +95,11 @@ class AirtimePin extends HookWidget {
       if (allGlobalPlanList.value.isNotEmpty) {
         list = allGlobalPlanList.value.where(
           (element) {
-            return element.network == selectedNetworkProvider.value.id;
+            print(element.name?.toLowerCase());
+            print(selectedNetworkProvider.value.name?.toLowerCase());
+            return (element.name
+                ?.toLowerCase()
+                .contains(selectedNetworkProvider.value.name!.toLowerCase()))!;
           },
         ).toList();
         print(list);
@@ -112,7 +119,7 @@ class AirtimePin extends HookWidget {
         ),
       );
       // print(res?.statusCode);
-      // print(res?.data);
+      print(res?.data);
       if (res?.statusCode == HttpStatus.ok) {
         try {
           allList = AirtimePinPlan.fromJsonList(res?.data['data']);
@@ -123,7 +130,11 @@ class AirtimePin extends HookWidget {
         allGlobalPlanList.value = allList;
         list = allList.where(
           (element) {
-            return element.network == selectedNetworkProvider.value.id;
+            print(element.name?.toLowerCase());
+            print(selectedNetworkProvider.value.name?.toLowerCase());
+            return (element.name
+                ?.toLowerCase()
+                .contains(selectedNetworkProvider.value.name!.toLowerCase()))!;
           },
         ).toList();
         print("am done hwew");
@@ -154,26 +165,38 @@ class AirtimePin extends HookWidget {
           'Authorization': context.read<AppBloc>().state.user?.apiKey
         }),
       );
+
       if (context.mounted && res == null) {
         Navigator.of(context, rootNavigator: true).pop();
         alertHelper(context, 'error', 'No Internet Connection');
       }
 
       if (context.mounted) {
-        if (res?.statusCode == HttpStatus.ok) {
-          await putLastTransactionId(res?.data['data']['trx_id']);
-          selectedPlan.value = AirtimePinPlan();
-          selectedNetworkProvider.value = AirtimeProviders();
-          planProviders.value = [];
-          networkProviders.value = [];
-          quantityInputController.text = '';
-          nameInputController.text = '';
-          if (context.mounted) {
-            HapticFeedback.heavyImpact();
-            appModalWithoutRoot(context,
-                title: 'Purchase Successful',
-                child:
-                    successModalWidget(context, message: res?.data['message']));
+        context.loaderOverlay.hide();
+        if (res?.statusCode != HttpStatus.ok) {
+          try {
+            await putLastTransactionId(res?.data['trx_id']);
+            selectedPlan.value = AirtimePinPlan();
+            selectedNetworkProvider.value = AirtimeProviders();
+            planProviders.value = [];
+
+            networkProviders.value = [];
+            quantityInputController.text = '';
+            nameInputController.text = '';
+            if (context.mounted) {
+              print('am here');
+              await HapticFeedback.heavyImpact();
+              if (context.mounted) {
+                appModalWithoutRoot(context,
+                    title: 'Purchase Successful',
+                    child: successModalWidget(context,
+                        message: res?.data['message']));
+              }
+            }
+          } on Exception catch (error) {
+            print(error);
+          } catch (error) {
+            print(error);
           }
 
           // alertHelper(context, 'success', res?.data['message']);

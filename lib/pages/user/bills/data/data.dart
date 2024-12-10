@@ -179,11 +179,13 @@ class Data extends HookWidget {
 
             await putLastTransactionId(res?.data['data']['trx_id']);
             if (context.mounted) {
-              HapticFeedback.heavyImpact();
-              appModalWithoutRoot(context,
-                  title: 'Data Purchase Successful',
-                  child: successModalWidget(context,
-                      message: res?.data['message']));
+              await HapticFeedback.heavyImpact();
+              if (context.mounted) {
+                appModalWithoutRoot(context,
+                    title: 'Data Purchase Successful',
+                    child: successModalWidget(context,
+                        message: res?.data['message']));
+              }
             }
           } else {
             context.loaderOverlay.hide();
@@ -198,7 +200,7 @@ class Data extends HookWidget {
         if (context.mounted) {
           context.loaderOverlay.hide();
         }
-      }on DioException catch (error) {
+      } on DioException catch (error) {
         if (!context.mounted) return;
         context.loaderOverlay.hide();
         await alertHelper(
