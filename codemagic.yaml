@@ -10,12 +10,6 @@ workflows:
 
 
     scripts:
-      - name: Install CocoaPods
-        script: |
-          sudo gem install cocoapods
-          pod --version
-          flutter pub get
-          flutter pub upgrade
       - name: Install Flutter and Shorebird CLI
         script: |
           flutter --version
@@ -28,9 +22,11 @@ workflows:
           pod install
           cd ..
       - name: Shorebird Release
-        script: shorebird release ios --no-codesign
+        script: |
+          shorebird release --help
+          shorebird release ios --no-codesign=off
     artifacts:
-      - build/ios/ipa/*.ipa # Unsigned iOS IPA file
+      - build/ios/ipa/*.xcarchive # Unsigned iOS IPA file
       # - shorebird/*.patch # Shorebird patch files
       # pod repo update
       # pod update Sentry/HybridSDK
