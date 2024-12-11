@@ -17,8 +17,8 @@ workflows:
           export PATH="$HOME/.shorebird/bin:$PATH"  >> $CM_ENV
           echo $PATH
           shorebird --version
+          flutter pub get
           cd ios
-          pod init
           pod install
           cd ..
       - name: Shorebird Release
