@@ -173,7 +173,7 @@ class AirtimePin extends HookWidget {
 
       if (context.mounted) {
         context.loaderOverlay.hide();
-        if (res?.statusCode != HttpStatus.ok) {
+        if (res?.statusCode == HttpStatus.ok) {
           try {
             await putLastTransactionId(res?.data['trx_id']);
             selectedPlan.value = AirtimePinPlan();
@@ -184,7 +184,6 @@ class AirtimePin extends HookWidget {
             quantityInputController.text = '';
             nameInputController.text = '';
             if (context.mounted) {
-              print('am here');
               await HapticFeedback.heavyImpact();
               if (context.mounted) {
                 appModalWithoutRoot(context,
@@ -602,7 +601,7 @@ class AirtimePin extends HookWidget {
                           height: 20,
                         ),
                         ElevatedButton(
-                          onPressed: () {
+                          onPressed: () async {
                             FocusManager.instance.primaryFocus?.unfocus();
 
                             if (_airtimePformKey.currentState!.validate()) {
