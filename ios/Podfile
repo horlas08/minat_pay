@@ -47,7 +47,7 @@ post_install do |installer|
     target.build_configurations.each do |config|
       config.build_settings['OTHER_LDFLAGS'] ||= ['$(inherited)']
       config.build_settings['OTHER_SWIFT_FLAGS'] ||= ['$(inherited)']
-      end
+
     end
   end
 end
