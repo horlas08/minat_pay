@@ -216,8 +216,10 @@ class Dashboard extends HookWidget {
     final retry = useState('');
     RefreshController _refreshController =
         RefreshController(initialRefresh: false);
-    void _onRefresh(BuildContext context) async {
-      _refreshController.requestLoading();
+    void _onRefresh(BuildContext context, {bool showLoading = true}) async {
+      if (showLoading) {
+        _refreshController.requestLoading();
+      }
 
       final res = await LoginVerifyWithOutPasswordService().request();
       if (res?.statusCode == HttpStatus.ok) {
@@ -230,9 +232,13 @@ class Dashboard extends HookWidget {
           context.read<AppBloc>().add(UpdateUserEvent(userData: userData));
           context.read<AppBloc>().add(AddAccountEvent(accounts: accounts));
         }
-        _refreshController.refreshCompleted();
+        if (showLoading) {
+          _refreshController.refreshCompleted();
+        }
       } else {
-        _refreshController.refreshFailed();
+        if (showLoading) {
+          _refreshController.refreshFailed();
+        }
       }
     }
 
@@ -304,154 +310,159 @@ class Dashboard extends HookWidget {
       );
     }
 
-    return Scaffold(
-      extendBody: true,
-      body: FutureBuilder(
-        key: _refreshKey,
-        builder: (context, snapshot) {
-          if (snapshot.hasData) {
-            // OneSignal.initialize(
-            //     appServer.serverResponse.onesignalConfiguration!.appId!);
-            return SmartRefresher(
-              controller: _refreshController,
-              header: const WaterDropHeader(),
-              onRefresh: () => _onRefresh(context),
-              child: SingleChildScrollView(
-                scrollDirection: Axis.vertical,
-                child: SafeArea(
-                  child: Padding(
-                    padding: const EdgeInsets.all(20),
-                    child: BlocBuilder<AppBloc, AppState>(
-                      builder: (context, state) {
-                        return Column(
-                          children: [
-                            const UserHeader(),
-                            const SizedBox(
-                              height: 30,
-                            ),
-                            if (appServer.serverResponse.appconfiguration!
-                                    .notificationEnable! ==
-                                'true')
-                              TouchableOpacity(
-                                onTap: () {
-                                  showNotificationModal(
-                                    context,
-                                  );
-                                },
-                                child: Container(
-                                  margin: const EdgeInsets.symmetric(
-                                      vertical: 10, horizontal: 15),
-                                  padding: const EdgeInsets.all(8),
-                                  decoration: BoxDecoration(
-                                    color: AppColor.primaryColor,
-                                    borderRadius: BorderRadius.circular(30),
-                                  ),
-                                  child: Row(
-                                    children: [
-                                      Icon(
-                                        Icons.circle_notifications_outlined,
-                                        color: Colors.white,
-                                      ),
-                                      Expanded(
-                                        flex: 2,
-                                        child: TextScroll(
-                                          appServer
-                                              .serverResponse
-                                              .appconfiguration!
-                                              .notificationMessage!,
-                                          velocity: Velocity(
-                                              pixelsPerSecond: Offset(50, 0)),
-                                          style: TextStyle(
-                                            color: Colors.white,
-                                            fontWeight: FontWeight.w600,
-                                            fontSize: 14,
-                                          ),
+    return WidgetVisibilityDetector(
+      onAppear: () {
+        _onRefresh(context, showLoading: false);
+      },
+      child: Scaffold(
+        extendBody: true,
+        body: FutureBuilder(
+          key: _refreshKey,
+          builder: (context, snapshot) {
+            if (snapshot.hasData) {
+              // OneSignal.initialize(
+              //     appServer.serverResponse.onesignalConfiguration!.appId!);
+              return SmartRefresher(
+                controller: _refreshController,
+                header: const WaterDropHeader(),
+                onRefresh: () => _onRefresh(context),
+                child: SingleChildScrollView(
+                  scrollDirection: Axis.vertical,
+                  child: SafeArea(
+                    child: Padding(
+                      padding: const EdgeInsets.all(20),
+                      child: BlocBuilder<AppBloc, AppState>(
+                        builder: (context, state) {
+                          return Column(
+                            children: [
+                              const UserHeader(),
+                              const SizedBox(
+                                height: 30,
+                              ),
+                              if (appServer.serverResponse.appconfiguration!
+                                      .notificationEnable! ==
+                                  'true')
+                                TouchableOpacity(
+                                  onTap: () {
+                                    showNotificationModal(
+                                      context,
+                                    );
+                                  },
+                                  child: Container(
+                                    margin: const EdgeInsets.symmetric(
+                                        vertical: 10, horizontal: 15),
+                                    padding: const EdgeInsets.all(8),
+                                    decoration: BoxDecoration(
+                                      color: AppColor.primaryColor,
+                                      borderRadius: BorderRadius.circular(30),
+                                    ),
+                                    child: Row(
+                                      children: [
+                                        Icon(
+                                          Icons.circle_notifications_outlined,
+                                          color: Colors.white,
                                         ),
-                                      )
-                                    ],
+                                        Expanded(
+                                          flex: 2,
+                                          child: TextScroll(
+                                            appServer
+                                                .serverResponse
+                                                .appconfiguration!
+                                                .notificationMessage!,
+                                            velocity: Velocity(
+                                                pixelsPerSecond: Offset(50, 0)),
+                                            style: TextStyle(
+                                              color: Colors.white,
+                                              fontWeight: FontWeight.w600,
+                                              fontSize: 14,
+                                            ),
+                                          ),
+                                        )
+                                      ],
+                                    ),
                                   ),
                                 ),
+                              const BalanceCard(),
+                              const SizedBox(
+                                height: 30,
                               ),
-                            const BalanceCard(),
-                            const SizedBox(
-                              height: 30,
-                            ),
-                            BlocListener<AppBloc, AppState>(
-                              listener: (context, state) {
-                                if (state.user!.hasPin == false) {
-                                  final newUser =
-                                      state.user!.copyWith(hasPin: true);
-                                  print(newUser);
-                                }
-                              },
-                              child: BlocBuilder<AppBloc, AppState>(
-                                builder: (context, state) {
-                                  return WidgetVisibilityDetector(
-                                    onAppear: () {
-                                      print(state.user!.hasPin);
-                                      final newUser =
-                                          state.user!.copyWith(hasPin: true);
-
-                                      Future.delayed(
-                                        Duration.zero,
-                                        () {
-                                          if (context.mounted &&
-                                              state.user!.hasPin! == false) {
-                                            showPinModal(context, state);
-                                          }
-                                        },
-                                      );
-                                    },
-                                    onDisappear: () {
-                                      print("do");
-                                    },
-                                    child: const QuickAction(),
-                                  );
+                              BlocListener<AppBloc, AppState>(
+                                listener: (context, state) {
+                                  if (state.user!.hasPin == false) {
+                                    final newUser =
+                                        state.user!.copyWith(hasPin: true);
+                                    print(newUser);
+                                  }
                                 },
+                                child: BlocBuilder<AppBloc, AppState>(
+                                  builder: (context, state) {
+                                    return WidgetVisibilityDetector(
+                                      onAppear: () {
+                                        print(state.user!.hasPin);
+                                        final newUser =
+                                            state.user!.copyWith(hasPin: true);
+
+                                        Future.delayed(
+                                          Duration.zero,
+                                          () {
+                                            if (context.mounted &&
+                                                state.user!.hasPin! == false) {
+                                              showPinModal(context, state);
+                                            }
+                                          },
+                                        );
+                                      },
+                                      onDisappear: () {
+                                        print("do");
+                                      },
+                                      child: const QuickAction(),
+                                    );
+                                  },
+                                ),
                               ),
-                            ),
-                            const Transaction(),
-                          ],
-                        );
-                      },
+                              const Transaction(),
+                            ],
+                          );
+                        },
+                      ),
                     ),
                   ),
                 ),
-              ),
-            );
-          } else if (snapshot.hasError) {
-            return Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                Text(
-                  "Error From Server",
-                  style: TextStyle(fontSize: 25),
-                ),
-                IconButton(
-                  onPressed: () {
-                    retry.value =
-                        DateTime.now().microsecondsSinceEpoch.toString();
-                    return;
-                    // GoRouter.of(context).refresh();
-                  },
-                  icon: const Row(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Text('Retry Again Later'),
-                      Icon(Icons.refresh_outlined),
-                    ],
+              );
+            } else if (snapshot.hasError) {
+              return Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Text(
+                    "Error From Server",
+                    style: TextStyle(fontSize: 25),
                   ),
-                ),
-              ],
+                  IconButton(
+                    onPressed: () {
+                      retry.value =
+                          DateTime.now().microsecondsSinceEpoch.toString();
+                      return;
+                      // GoRouter.of(context).refresh();
+                    },
+                    icon: const Row(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text('Retry Again Later'),
+                        Icon(Icons.refresh_outlined),
+                      ],
+                    ),
+                  ),
+                ],
+              );
+            }
+            return const Center(
+              child: CircularProgressIndicator(),
             );
-          }
-          return const Center(
-            child: CircularProgressIndicator(),
-          );
-        },
-        future: mainMemoizer.runOnce(() => fetchData()),
+          },
+          future: mainMemoizer.runOnce(() => fetchData()),
+        ),
       ),
     );
   }

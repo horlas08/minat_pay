@@ -15,6 +15,7 @@ import 'package:minat_pay/pages/user/bills/cable/cable.dart';
 import 'package:minat_pay/pages/user/bills/electricity/electricity.dart';
 import 'package:minat_pay/pages/user/bills/epin/epin.dart';
 import 'package:minat_pay/pages/user/bills/funds/add_fund.dart';
+import 'package:minat_pay/pages/user/bills/funds/method/payment_webview.dart';
 import 'package:minat_pay/pages/user/bills/transfer/transfer.dart';
 import 'package:minat_pay/pages/user/nin/nin.dart';
 import 'package:minat_pay/pages/user/referral/referral.dart';
@@ -272,6 +273,17 @@ class AppRouter {
         name: 'nin',
         builder: (context, state) {
           return const Nin();
+        },
+      ),
+      GoRoute(
+        path: '/payment/webview',
+        name: 'paystack',
+        builder: (context, state) {
+          print(state.extra);
+          return PaymentWebView(
+            url: (state.extra as Map<String, String>)['url']!,
+            reference: (state.extra as Map<String, String>)['reference']!,
+          );
         },
       ),
       GoRoute(

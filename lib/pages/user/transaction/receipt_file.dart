@@ -74,9 +74,9 @@ class ReceiptFile extends StatelessWidget {
                   const SizedBox(
                     height: 5,
                   ),
-                  const Text(
-                    "Oct 14, 2024, 5:23 AM",
-                    style: TextStyle(
+                  Text(
+                    "${data['datetime']!}",
+                    style: const TextStyle(
                       fontSize: 15,
                       color: AppColor.greyColor,
                       fontWeight: FontWeight.normal,

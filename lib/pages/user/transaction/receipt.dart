@@ -78,7 +78,7 @@ class Receipt extends HookWidget {
                                 width: 50,
                               ),
                             ),
-                            SizedBox(
+                            const SizedBox(
                               height: 70,
                             ),
                             Container(
@@ -203,7 +203,7 @@ class Receipt extends HookWidget {
                         final SharedPreferences prefs =
                             await SharedPreferences.getInstance();
 
-                        final Map<String, String>  data =
+                        final Map<String, String> data =
                             (jsonDecode(prefs.getString("lastTransactionData")!)
                                     as Map)
                                 .map(

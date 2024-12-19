@@ -103,7 +103,7 @@ class BalanceCard extends HookWidget {
                               hideBalance.value = !hideBalance.value;
                             },
                             child: Text(
-                              hideBalance.value ? formattedCurrency : "****",
+                              hideBalance.value ? "****" : formattedCurrency,
                               style: Theme.of(context)
                                   .textTheme
                                   .titleLarge
