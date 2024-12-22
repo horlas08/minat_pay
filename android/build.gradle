@@ -21,7 +21,6 @@ subprojects {
         if (it.name == "flutter_inappwebview_android") {
             it.android.buildTypes.release.minifyEnabled = false
         }
-
     }
     project.evaluationDependsOn(":app")
 }

@@ -101,6 +101,7 @@ dependencies:
   url_launcher: ^6.3.1
   radio_group_v2: ^3.2.1
   webview_flutter: ^4.10.0
+  in_app_review: ^2.0.10
 
 dev_dependencies:
   flutter_test:

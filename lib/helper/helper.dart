@@ -10,6 +10,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:form_validator/form_validator.dart';
 import 'package:go_router/go_router.dart';
+import 'package:in_app_review/in_app_review.dart';
 import 'package:intl/intl.dart';
 import 'package:loader_overlay/loader_overlay.dart';
 import 'package:local_auth_android/local_auth_android.dart';
@@ -308,6 +309,19 @@ String getEmailMask(String text) {
 }
 
 Widget successModalWidget(BuildContext context, {required String message}) {
+  final InAppReview inAppReview = InAppReview.instance;
+
+  Future.delayed(
+    const Duration(seconds: 0),
+    () async {
+      if (await inAppReview.isAvailable()) {
+        await inAppReview.requestReview();
+      } else {
+        print("not available");
+      }
+    },
+  );
+
   return Container(
     padding: const EdgeInsets.symmetric(
       horizontal: 20,
@@ -792,7 +806,7 @@ Widget RowList(
         ),
       if (showLine) const Divider(),
       SizedBox(
-        height: 15,
+        height: 10,
       )
     ],
   );

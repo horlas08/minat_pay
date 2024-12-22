@@ -11,122 +11,115 @@ class ReceiptFile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      height: 1000,
-      width: 500,
-      child: Center(
+    return Center(
+      child: Container(
+        height: 2500,
+        width: 500,
+        padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 20),
+        decoration: const BoxDecoration(
+          color: AppColor.primaryColor,
+        ),
         child: Container(
-          height: 1000,
+          height: 2400,
           width: 500,
-          padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 20),
-          decoration: const BoxDecoration(
-            color: AppColor.primaryColor,
-          ),
-          child: IntrinsicHeight(
-            child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
-              decoration: BoxDecoration(
-                  color: Colors.white, borderRadius: BorderRadius.circular(20)),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  const SizedBox(
-                    height: 20,
-                  ),
-                  const Text(
-                    "Transaction Receipt",
-                    style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontFamily: AppFont.mulish,
-                        color: AppColor.greyColor,
-                        fontSize: 20),
-                  ),
-                  const SizedBox(
-                    height: 20,
-                  ),
-                  Center(
-                    child: Image.asset(
-                      "assets/images/MinatPay-LOGO.png",
-                      width: 150,
-                    ),
-                  ),
-                  const SizedBox(
-                    height: 20,
-                  ),
-                  Text(
-                    " ${data['amount']!}",
-                    style: TextStyle(
-                        fontSize: 25,
-                        color: AppColor.primaryColor,
-                        fontWeight: FontWeight.bold,
-                        fontFamily: AppFont.mulish),
-                  ),
-                  const SizedBox(
-                    height: 10,
-                  ),
-                  Text(
-                    data['status']!.toUpperCase(),
-                    style: const TextStyle(
-                      fontSize: 15,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  const SizedBox(
-                    height: 5,
-                  ),
-                  Text(
-                    "${data['datetime']!}",
-                    style: const TextStyle(
-                      fontSize: 15,
-                      color: AppColor.greyColor,
-                      fontWeight: FontWeight.normal,
-                    ),
-                  ),
-                  const SizedBox(
-                    height: 25,
-                  ),
-                  Column(
-                    children: [
-                      ...List.generate(
-                        data.length,
-                        (index) {
-                          return RowList(
-                            key: data.keys.toList()[index],
-                            value: data.values.toList()[index],
-                            showLine: data.values.length != index + 1,
-                          );
-                        },
-                      ),
-                    ],
-                  ),
-                  const SizedBox(
-                    height: 25,
-                  ),
-                  const Text("Support"),
-                  const SizedBox(
-                    height: 10,
-                  ),
-                  const Text(
-                    "Thank you for using MinatPay",
-                    style: TextStyle(color: AppColor.primaryColor),
-                  ),
-                  const SizedBox(
-                    height: 15,
-                  ),
-                  const Divider(),
-                  const SizedBox(
-                    height: 10,
-                  ),
-                  const AutoSizeText(
-                    "This receipt serves as evidence of the transaction.If you have any complaints, Please WhasApp us on 09138796779 or Email us at minatpay@gmail.com",
-                    style: TextStyle(
-                      color: AppColor.greyColor,
-                    ),
-                    maxLines: 2,
-                  ),
-                ],
+          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+          decoration: BoxDecoration(
+              color: Colors.white, borderRadius: BorderRadius.circular(20)),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            mainAxisSize: MainAxisSize.max,
+            children: [
+              const SizedBox(
+                height: 7,
               ),
-            ),
+              const Text(
+                "Transaction Receipt",
+                style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontFamily: AppFont.mulish,
+                    color: AppColor.greyColor,
+                    fontSize: 20),
+              ),
+              const SizedBox(
+                height: 10,
+              ),
+              Center(
+                child: Image.asset(
+                  "assets/images/MinatPay-LOGO.png",
+                  width: 150,
+                ),
+              ),
+              const SizedBox(
+                height: 10,
+              ),
+              Text(
+                " ${data['amount']!}",
+                style: TextStyle(
+                    fontSize: 25,
+                    color: AppColor.primaryColor,
+                    fontWeight: FontWeight.bold,
+                    fontFamily: AppFont.mulish),
+              ),
+              const SizedBox(
+                height: 10,
+              ),
+              Text(
+                data['status']!.toUpperCase(),
+                style: const TextStyle(
+                  fontSize: 15,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              const SizedBox(
+                height: 5,
+              ),
+              Text(
+                "${data['datetime']!}",
+                style: const TextStyle(
+                  fontSize: 15,
+                  color: AppColor.greyColor,
+                  fontWeight: FontWeight.normal,
+                ),
+              ),
+              const SizedBox(
+                height: 10,
+              ),
+              ...List.generate(
+                data.length,
+                (index) {
+                  return RowList(
+                    key: data.keys.toList()[index],
+                    value: data.values.toList()[index],
+                    showLine: data.values.length != index + 1,
+                  );
+                },
+              ),
+              const SizedBox(
+                height: 15,
+              ),
+              const Text("Support"),
+              const SizedBox(
+                height: 4,
+              ),
+              const Text(
+                "Thank you for using MinatPay",
+                style: TextStyle(color: AppColor.primaryColor),
+              ),
+              const SizedBox(
+                height: 15,
+              ),
+              const Divider(),
+              const SizedBox(
+                height: 10,
+              ),
+              const AutoSizeText(
+                "This receipt serves as evidence of the transaction.If you have any complaints, Please WhasApp us on 09138796779 or Email us at minatpay@gmail.com",
+                style: TextStyle(
+                  color: AppColor.greyColor,
+                ),
+                maxLines: 2,
+              ),
+            ],
           ),
         ),
       ),

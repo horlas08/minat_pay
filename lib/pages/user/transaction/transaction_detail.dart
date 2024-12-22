@@ -39,18 +39,24 @@ class TransactionDetail extends HookWidget {
         'trxid': id,
         'token': prefs.getString('token'),
       });
-      print(id);
-      // return;
+
       if (res == null && context.mounted) {
         return alertHelper(context, 'error', "Check Your Internet Connection");
       }
       print(res?.data['transaction_details']);
-      transactionDetail.value =
-          TransactionDetailsModel.fromMap(res?.data['transaction_details']);
-      print(jsonEncode(transactionDetail.value));
-      await prefs.setString(
-          "lastTransactionData", jsonEncode(transactionDetail.value));
-      loading.value = false;
+      try {
+        transactionDetail.value =
+            TransactionDetailsModel.fromMap(res?.data['transaction_details']);
+        print("_______");
+        print(jsonEncode(transactionDetail.value));
+        print("_______");
+        await prefs.setString(
+            "lastTransactionData", jsonEncode(transactionDetail.value));
+        loading.value = false;
+      } catch (error) {
+        print(error);
+      }
+
       return null;
 
       // return res;

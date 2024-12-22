@@ -28,7 +28,7 @@ import '../../../../widget/app_header.dart';
 
 final PhoneController phoneController = PhoneController(
     initialValue: const PhoneNumber(isoCode: IsoCode.NG, nsn: ''));
-final _airtimeFormKey = GlobalKey<FormState>();
+final _airtimeFormKeys = GlobalKey<FormState>();
 
 Future<List<AirtimeProviders>> getAirtimeList(
     BuildContext context,
@@ -359,7 +359,7 @@ class Airtime extends HookWidget {
             child: Padding(
               padding: const EdgeInsets.all(20),
               child: Form(
-                key: _airtimeFormKey,
+                key: _airtimeFormKeys,
                 child: Column(
                   children: [
                     Row(
@@ -657,7 +657,7 @@ class Airtime extends HookWidget {
                                 WidgetStatePropertyAll(AppColor.primaryColor),
                           ),
                           onPressed: () {
-                            if (_airtimeFormKey.currentState!.validate()) {
+                            if (_airtimeFormKeys.currentState!.validate()) {
                               // showConfirmPinRequest(context);
                               appModalWithoutRoot(context,
                                   isDismissible: true, child: checkout()

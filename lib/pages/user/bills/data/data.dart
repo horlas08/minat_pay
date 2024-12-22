@@ -25,7 +25,7 @@ import '../../../../data/user/bill_service.dart';
 import '../../../../model/data_providers.dart';
 import '../../../../widget/Button.dart';
 
-final PhoneController phoneController = PhoneController(
+final PhoneController _phoneController = PhoneController(
     initialValue: const PhoneNumber(isoCode: IsoCode.NG, nsn: ''));
 int test = 0;
 
@@ -118,9 +118,9 @@ class Data extends HookWidget {
   Widget build(BuildContext context) {
     useEffect(() {
       // phoneController.value = PhoneNumber(isoCode: IsoCode.NG, nsn: '');
-      return () {
-        return phoneController.dispose();
-      };
+      // return () {
+      //   return phoneController.dispose();
+      // };
     }, []);
     final ValueNotifier<bool> valid = useState(false);
     final user = context.read<AppBloc>().state.user;
@@ -162,7 +162,7 @@ class Data extends HookWidget {
         final res = await buyData(
           context,
           variationId: selectedPlan.value?['id'],
-          phone: '0${phoneController.value.nsn}',
+          phone: '0${_phoneController.value.nsn}',
           dataType: dataType.value,
           networkId: network.value.id!,
         );
@@ -175,7 +175,7 @@ class Data extends HookWidget {
         //
         if (context.mounted) {
           if (res?.statusCode == HttpStatus.ok) {
-            phoneController.value = PhoneNumber(isoCode: IsoCode.NG, nsn: '');
+            _phoneController.value = PhoneNumber(isoCode: IsoCode.NG, nsn: '');
 
             await putLastTransactionId(res?.data['data']['trx_id']);
             if (context.mounted) {
@@ -372,7 +372,7 @@ class Data extends HookWidget {
                 ),
                 const Spacer(),
                 Text(
-                  '${phoneController.value.countryCode} ${phoneController.value.nsn}',
+                  '${_phoneController.value.countryCode} ${_phoneController.value.nsn}',
                   style: const TextStyle(
                     fontSize: 18,
                     fontWeight: FontWeight.bold,
@@ -488,15 +488,15 @@ class Data extends HookWidget {
 
                                 // print(PhoneNumber.parse(contact!.phoneNumbers!.last,
                                 //     callerCountry: IsoCode.NG));
-                                phoneController.value = PhoneNumber(
+                                _phoneController.value = PhoneNumber(
                                     isoCode: IsoCode.NG,
                                     nsn: contact!.phoneNumbers!.last);
-                                if (phoneController.value.isValid() &&
-                                    phoneController.value.isValidLength() &&
+                                if (_phoneController.value.isValid() &&
+                                    _phoneController.value.isValidLength() &&
                                     context.mounted) {
                                   detectNetwork(
                                     context,
-                                    '0${phoneController.value.nsn}',
+                                    '0${_phoneController.value.nsn}',
                                     networkProviders.value,
                                     network,
                                   );
@@ -534,7 +534,7 @@ class Data extends HookWidget {
 
                             enableSuggestions: true,
 
-                            controller: phoneController,
+                            controller: _phoneController,
                             // initialValue: phone.value,
                             // or use the
                             // PhoneNumber.parse(phone.value), // or use the
@@ -545,10 +545,10 @@ class Data extends HookWidget {
                             ]),
 
                             onChanged: (phoneNumber) {
-                              print(phoneController.value.nsn.length);
-                              if (phoneController.value.isValid() &&
-                                  phoneController.value.isValidLength() &&
-                                  phoneController.value.nsn.length >= 10) {
+                              print(_phoneController.value.nsn.length);
+                              if (_phoneController.value.isValid() &&
+                                  _phoneController.value.isValidLength() &&
+                                  _phoneController.value.nsn.length >= 10) {
                                 detectNetwork(context, '0${phoneNumber.nsn}',
                                     networkProviders.value, network);
                               }

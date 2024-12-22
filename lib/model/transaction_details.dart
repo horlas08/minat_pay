@@ -6,6 +6,8 @@ class TransactionDetailsModel {
   String? amount;
   String? message;
   String? datetime;
+  num? prev;
+  num? curr;
   TransactionDetailsModel({
     this.original,
     this.status,
@@ -14,6 +16,8 @@ class TransactionDetailsModel {
     this.amount,
     this.message,
     this.datetime,
+    this.prev,
+    this.curr,
     // this.data,
   });
 
@@ -26,6 +30,8 @@ class TransactionDetailsModel {
     amount = json['amount'];
     message = json['message'];
     datetime = json['datetime'];
+    prev = json['prev'];
+    curr = json['curr'];
     // data = json['data'] ?? {};
   }
 
@@ -40,6 +46,8 @@ class TransactionDetailsModel {
     data['amount'] = amount;
     data['message'] = message;
     data['datetime'] = datetime;
+    data['curr'] = curr;
+    data['prev'] = prev;
 
     return data;
   }
@@ -53,6 +61,8 @@ class TransactionDetailsModel {
       'amount': amount,
       'message': message,
       'datetime': datetime,
+      'prev': prev,
+      'curr': curr,
     };
   }
 
@@ -66,6 +76,8 @@ class TransactionDetailsModel {
       amount: map['amount'] as String,
       message: map['message'] as String,
       datetime: map['datetime'] as String,
+      prev: map['prev'] as num,
+      curr: map['curr'] as num,
       // data: map['data'] ?? {} as Map<String, dynamic>,
     );
   }
