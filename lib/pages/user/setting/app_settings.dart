@@ -504,7 +504,7 @@ class AppSettings extends HookWidget {
                         //     ],
                         //   ),
                         // ),
-                        AppCacheWidget(),
+                        const AppCacheWidget(),
                         const SizedBox(
                           height: space,
                         ),

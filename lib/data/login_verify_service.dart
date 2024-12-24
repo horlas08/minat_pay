@@ -13,11 +13,15 @@ class LoginVerifyService {
 
   Future<Response?> request() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
-
-    Response? res = await curlPostRequest(path: loginVerify, data: {
-      'password': password,
-      'token': prefs.getString('token'),
-    });
+    final appData = await getPackageData();
+    Response? res = await curlPostRequest(
+      path: loginVerify,
+      data: {
+        'password': password,
+        'token': prefs.getString('token'),
+        'app_version': appData.version
+      },
+    );
 
     return res;
   }
