@@ -10,9 +10,9 @@
 	<string>MinatPay</string>
 	<key>NSFaceIDUsageDescription</key>
 	<string>MinatPay Authentication?</string>
-	<key>NSCameraUsageDescription </key>
+	<key>NSCameraUsageDescription</key>
 	<string>This app requires access to the camera.</string>
-	<key>NSPhotoLibraryUsageDescription </key>
+	<key>NSPhotoLibraryUsageDescription</key>
     <string>This app requires access to the photo library.</string>
     <key>LSApplicationQueriesSchemes</key>
     <array>
