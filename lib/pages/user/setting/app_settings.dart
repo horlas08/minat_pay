@@ -13,6 +13,7 @@ import 'package:minat_pay/widget/app_header.dart';
 import 'package:onesignal_flutter/onesignal_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:show_confirm_modal/show_confirm_modal.dart';
+import 'package:simple_app_cache_manager/simple_app_cache_manager.dart';
 import 'package:touchable_opacity/touchable_opacity.dart';
 
 import '../../../bloc/repo/app/app_bloc.dart';
@@ -22,6 +23,7 @@ import '../../../config/app.config.dart';
 import '../../../cubic/app_config_cubit.dart';
 import '../../../helper/helper.dart';
 import '../../../model/app.dart';
+import 'cache_widget.dart';
 
 class AppSettings extends HookWidget {
   const AppSettings({super.key});
@@ -29,6 +31,13 @@ class AppSettings extends HookWidget {
   @override
   Widget build(BuildContext context) {
     const double space = 35;
+    final cacheManager = useMemoized(() => SimpleAppCacheManager());
+    final cacheSizeNotifier = useState<String>('');
+    void updateCacheSize() async {
+      final cacheSize = await cacheManager.getTotalCacheSize();
+      cacheSizeNotifier.value = cacheSize;
+    }
+
     return ThemeSwitchingArea(
       child: Scaffold(
         appBar: const AppHeader(title: "App Settings"),
@@ -447,60 +456,108 @@ class AppSettings extends HookWidget {
                         const SizedBox(
                           height: space,
                         ),
-                        Row(
-                          children: [
-                            Expanded(
-                              child: Container(
-                                padding: const EdgeInsets.all(
-                                  12,
+                        // Container(
+                        //   padding: const EdgeInsets.all(
+                        //     12,
+                        //   ),
+                        //   decoration: BoxDecoration(
+                        //     color: AppColor.primaryColor.withOpacity(0.2),
+                        //     borderRadius: BorderRadius.circular(15),
+                        //   ),
+                        //   child: Row(
+                        //     children: [
+                        //       const Text(
+                        //         "Clear Cache",
+                        //         textAlign: TextAlign.center,
+                        //         style: TextStyle(
+                        //           fontSize: 20,
+                        //           fontWeight: FontWeight.bold,
+                        //         ),
+                        //       ),
+                        //       Spacer(),
+                        //       ValueListenableBuilder(
+                        //         valueListenable: cacheSizeNotifier,
+                        //         builder: (context, cacheSize, child) =>
+                        //             Text(cacheSize),
+                        //       ),
+                        //       Spacer(),
+                        //       TouchableOpacity(
+                        //         onTap: () {
+                        //           cacheManager.clearCache();
+                        //           updateCacheSize();
+                        //         },
+                        //         child: Container(
+                        //           padding: const EdgeInsets.all(
+                        //             10,
+                        //           ),
+                        //           decoration: BoxDecoration(
+                        //             color: Colors.red,
+                        //             borderRadius: BorderRadius.circular(10),
+                        //           ),
+                        //           child: const Icon(
+                        //             Icons.delete,
+                        //             size: 30,
+                        //             color: Colors.white,
+                        //           ),
+                        //         ),
+                        //       ),
+                        //     ],
+                        //   ),
+                        // ),
+                        AppCacheWidget(),
+                        const SizedBox(
+                          height: space,
+                        ),
+                        Container(
+                          padding: const EdgeInsets.all(
+                            12,
+                          ),
+                          decoration: BoxDecoration(
+                            color: AppColor.primaryColor.withOpacity(0.2),
+                            borderRadius: BorderRadius.circular(15),
+                          ),
+                          child: Row(
+                            children: [
+                              const Text(
+                                "Delete Account",
+                                textAlign: TextAlign.center,
+                                style: TextStyle(
+                                  fontSize: 20,
+                                  fontWeight: FontWeight.bold,
                                 ),
-                                decoration: BoxDecoration(
-                                  color: AppColor.primaryColor.withOpacity(0.2),
-                                  borderRadius: BorderRadius.circular(15),
-                                ),
-                                child: const Text(
-                                  "Delete Account",
-                                  textAlign: TextAlign.center,
-                                  style: TextStyle(
-                                    fontSize: 15,
-                                    fontWeight: FontWeight.bold,
+                              ),
+                              Spacer(),
+                              InkWell(
+                                enableFeedback: true,
+                                onTap: () {
+                                  showConfirm(
+                                    context: context,
+                                    onCancel: () {},
+                                    onConfirm: () {
+                                      handleDeleteAccount(context);
+                                    },
+                                    title: "Delete My Account",
+                                    content:
+                                        "Are you Sure You Want To Delete Your Account",
+                                  );
+                                },
+                                child: Container(
+                                  padding: const EdgeInsets.all(
+                                    10,
+                                  ),
+                                  decoration: BoxDecoration(
+                                    color: Colors.red,
+                                    borderRadius: BorderRadius.circular(10),
+                                  ),
+                                  child: const Icon(
+                                    Icons.delete,
+                                    size: 30,
+                                    color: Colors.white,
                                   ),
                                 ),
                               ),
-                            ),
-                            const SizedBox(
-                              width: 10,
-                            ),
-                            InkWell(
-                              enableFeedback: true,
-                              onTap: () {
-                                showConfirm(
-                                  context: context,
-                                  onCancel: () {},
-                                  onConfirm: () {
-                                    handleDeleteAccount(context);
-                                  },
-                                  title: "Delete My Account",
-                                  content:
-                                      "Are you Sure You Want To Delete Your Account",
-                                );
-                              },
-                              child: Container(
-                                padding: const EdgeInsets.all(
-                                  10,
-                                ),
-                                decoration: BoxDecoration(
-                                  color: Colors.red,
-                                  borderRadius: BorderRadius.circular(10),
-                                ),
-                                child: const Icon(
-                                  Icons.delete,
-                                  size: 30,
-                                  color: Colors.white,
-                                ),
-                              ),
-                            ),
-                          ],
+                            ],
+                          ),
                         ),
                         const SizedBox(
                           height: space,

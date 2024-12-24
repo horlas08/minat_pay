@@ -19,6 +19,7 @@ class User extends Equatable {
   final bool? userType;
   final num? refBal;
   final num? referrals;
+  final String? app_version;
 
   const User(
       {this.id,
@@ -38,6 +39,7 @@ class User extends Equatable {
       this.hasPalmPay,
       this.refBal,
       this.referrals,
+      this.app_version,
       this.userType});
 
   @override
@@ -64,6 +66,7 @@ class User extends Equatable {
     bool? userType,
     num? refBal,
     num? referrals,
+    String? app_version,
   }) {
     return User(
       id: id ?? this.id,
@@ -84,6 +87,7 @@ class User extends Equatable {
       userType: userType ?? this.userType,
       refBal: refBal ?? this.refBal,
       referrals: referrals ?? this.referrals,
+      app_version: app_version ?? this.app_version,
     );
   }
 
@@ -107,6 +111,7 @@ class User extends Equatable {
       'userType': userType,
       'refBal': refBal,
       'referrals': referrals,
+      'app_version': app_version,
     };
   }
 
@@ -130,6 +135,7 @@ class User extends Equatable {
       userType: map['user_type'] as bool,
       refBal: map['ref_bal'] as num,
       referrals: map['referrals'] as num,
+      app_version: map['app_version'] as String,
     );
   }
 
@@ -153,6 +159,7 @@ class User extends Equatable {
         hasPalmPay,
         userType,
         refBal,
-        referrals
+        referrals,
+        app_version
       ];
 }

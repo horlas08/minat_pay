@@ -5,6 +5,7 @@ import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
+import 'package:flutter_upgrade_version/flutter_upgrade_version.dart';
 import 'package:go_router/go_router.dart';
 import 'package:loader_overlay/loader_overlay.dart';
 import 'package:minat_pay/config/app.config.dart';
@@ -15,6 +16,7 @@ import 'package:minat_pay/widget/user/dashboard/transaction.dart';
 import 'package:onesignal_flutter/onesignal_flutter.dart';
 import 'package:pin_plus_keyboard/package/controllers/pin_input_controller.dart';
 import 'package:pin_plus_keyboard/package/pin_plus_keyboard_package.dart';
+import 'package:pub_semver/pub_semver.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:text_scroll/text_scroll.dart';
@@ -31,6 +33,7 @@ import '../../../helper/helper.dart';
 import '../../../helper/server.dart';
 import '../../../main.dart';
 import '../../../model/main_response.dart';
+import '../../../widget/Button.dart';
 import '../../../widget/user/dashboard/balance_card.dart';
 import '../../../widget/user/dashboard/header.dart';
 
@@ -214,14 +217,18 @@ class Dashboard extends HookWidget {
   Widget build(BuildContext context) {
     AsyncMemoizer<MainResponse> mainMemoizer = AsyncMemoizer<MainResponse>();
     final retry = useState('');
+    final updateAva = useState(false);
+    final modalShow = useState(true);
     RefreshController _refreshController =
         RefreshController(initialRefresh: false);
+
     void _onRefresh(BuildContext context, {bool showLoading = true}) async {
       if (showLoading) {
         _refreshController.requestLoading();
       }
 
       final res = await LoginVerifyWithOutPasswordService().request();
+
       if (res?.statusCode == HttpStatus.ok) {
         final accounts = (res?.data['data']['accounts'] as List)
             .map((itemWord) => itemWord as Map<String, dynamic>)
@@ -242,8 +249,8 @@ class Dashboard extends HookWidget {
       }
     }
 
+    final user = context.read<AppBloc>().state.user;
     useEffect(() {
-      final user = context.read<AppBloc>().state.user;
       if (user != null) {
         OneSignal.login(user.id.toString()).then(
           (_) async {
@@ -280,7 +287,7 @@ class Dashboard extends HookWidget {
             title: AutoSizeText(
               appServer.serverResponse.appconfiguration!.notificationTitle!,
               textAlign: TextAlign.center,
-              style: TextStyle(
+              style: const TextStyle(
                 fontSize: 18,
                 fontWeight: FontWeight.bold,
               ),
@@ -311,7 +318,7 @@ class Dashboard extends HookWidget {
     }
 
     return WidgetVisibilityDetector(
-      onAppear: () {
+      onAppear: () async {
         _onRefresh(context, showLoading: false);
       },
       child: Scaffold(
@@ -333,96 +340,347 @@ class Dashboard extends HookWidget {
                       padding: const EdgeInsets.all(20),
                       child: BlocBuilder<AppBloc, AppState>(
                         builder: (context, state) {
-                          return Column(
-                            children: [
-                              const UserHeader(),
-                              const SizedBox(
-                                height: 30,
-                              ),
-                              if (appServer.serverResponse.appconfiguration!
-                                      .notificationEnable! ==
-                                  'true')
-                                TouchableOpacity(
-                                  onTap: () {
-                                    showNotificationModal(
-                                      context,
-                                    );
+                          return updateAva.value
+                              ? Container(
+                                  child: const Column(
+                                    children: [
+                                      AutoSizeText(
+                                          "update available please update")
+                                    ],
+                                  ),
+                                )
+                              : WidgetVisibilityDetector(
+                                  onAppear: () async {
+                                    final data = await getPackageData();
+                                    Version latestVersion =
+                                        Version.parse(state.user!.app_version!);
+                                    Version installVersion =
+                                        Version.parse(data.version);
+
+                                    if (latestVersion > installVersion) {
+                                      updateAva.value = true;
+                                      modalShow.value = true;
+
+                                      if (context.mounted) {
+                                        if (modalShow.value) {
+                                          appModalWithoutRoot(
+                                            context,
+                                            title: "Update Available 🔥",
+                                            isDismissible: false,
+                                            child: Padding(
+                                              padding:
+                                                  const EdgeInsets.all(12.0),
+                                              child: Column(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment.start,
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.start,
+                                                children: [
+                                                  const AutoSizeText(
+                                                    "We've made some amazing improvements just for you! 🌟",
+                                                    maxLines: 1,
+                                                  ),
+                                                  const SizedBox(
+                                                    height: 14,
+                                                  ),
+                                                  const Center(
+                                                    child: AutoSizeText(
+                                                      "✨ What's New:",
+                                                      style: TextStyle(
+                                                          fontWeight:
+                                                              FontWeight.bold,
+                                                          fontSize: 20),
+                                                    ),
+                                                  ),
+                                                  const AutoSizeText(
+                                                    "🛠️ Enhanced performance and bug fixes for a smoother experience.",
+                                                  ),
+                                                  const AutoSizeText(
+                                                    "🎨 Fresh new features you'll love!",
+                                                  ),
+                                                  const AutoSizeText(
+                                                    "🔒 Extra security to keep you safe.",
+                                                  ),
+                                                  const AutoSizeText(
+                                                    "💡 Don't miss out! Update now to enjoy the best version of our app yet.",
+                                                  ),
+                                                  const AutoSizeText(
+                                                    "👉 Tap `Update Button` to get started!",
+                                                  ),
+                                                  const SizedBox(
+                                                    height: 15,
+                                                  ),
+                                                  const Center(
+                                                    child: AutoSizeText(
+                                                      "Your journey just got better. Let's go! 💪",
+                                                    ),
+                                                  ),
+                                                  const SizedBox(
+                                                    height: 20,
+                                                  ),
+                                                  Button(
+                                                    onpressed: () async {
+                                                      if (Platform.isAndroid) {
+                                                        InAppUpdateManager
+                                                            manager =
+                                                            InAppUpdateManager();
+                                                        AppUpdateInfo?
+                                                            appUpdateInfo =
+                                                            await manager
+                                                                .checkForUpdate();
+                                                        if (appUpdateInfo ==
+                                                            null)
+                                                          return; //Exception
+                                                        if (appUpdateInfo
+                                                                .updateAvailability ==
+                                                            UpdateAvailability
+                                                                .developerTriggeredUpdateInProgress) {
+                                                          ///If an in-app update is already running, resume the update.
+                                                          String? message = await manager
+                                                              .startAnUpdate(
+                                                                  type: AppUpdateType
+                                                                      .immediate);
+
+                                                          ///message return null when run update success
+                                                        } else if (appUpdateInfo
+                                                                .updateAvailability ==
+                                                            UpdateAvailability
+                                                                .updateAvailable) {
+                                                          ///Update available
+                                                          if (appUpdateInfo
+                                                              .immediateAllowed) {
+                                                            debugPrint(
+                                                                'Start an immediate update');
+                                                            String? message = await manager
+                                                                .startAnUpdate(
+                                                                    type: AppUpdateType
+                                                                        .immediate);
+
+                                                            ///message return null when run update success
+                                                          } else if (appUpdateInfo
+                                                              .flexibleAllowed) {
+                                                            debugPrint(
+                                                                'Start an flexible update');
+                                                            String? message = await manager
+                                                                .startAnUpdate(
+                                                                    type: AppUpdateType
+                                                                        .flexible);
+
+                                                            ///message return null when run update success
+                                                          } else {
+                                                            debugPrint(
+                                                                'Update available. Immediate & Flexible Update Flow not allow');
+                                                          }
+                                                        }
+                                                      }
+                                                      if (Platform.isIOS) {
+                                                        final packageInfo =
+                                                            await getPackageData();
+                                                        InAppUpdateManager
+                                                            manager =
+                                                            InAppUpdateManager();
+                                                        VersionInfo?
+                                                            appUpdateInfo =
+                                                            await UpgradeVersion
+                                                                .getiOSStoreVersion(
+                                                          packageInfo:
+                                                              packageInfo,
+                                                          regionCode: 'NG',
+                                                        );
+                                                        if (appUpdateInfo ==
+                                                            null)
+                                                          return; //Exception
+                                                        if (appUpdateInfo
+                                                            .canUpdate) {
+                                                          ///If an in-app update is already running, resume the update.
+                                                          String? message = await manager
+                                                              .startAnUpdate(
+                                                                  type: AppUpdateType
+                                                                      .immediate);
+                                                        }
+                                                      }
+                                                    },
+                                                    child: const Text(
+                                                      "Upgrade Now",
+                                                      style: TextStyle(
+                                                          color: Colors.white,
+                                                          fontSize: 20),
+                                                    ),
+                                                  )
+                                                ],
+                                              ),
+                                            ),
+                                          );
+                                          modalShow.value = false;
+                                        }
+                                      }
+                                      if (Platform.isAndroid) {
+                                        InAppUpdateManager manager =
+                                            InAppUpdateManager();
+                                        AppUpdateInfo? appUpdateInfo =
+                                            await manager.checkForUpdate();
+                                        if (appUpdateInfo == null)
+                                          return; //Exception
+                                        if (appUpdateInfo.updateAvailability ==
+                                            UpdateAvailability
+                                                .developerTriggeredUpdateInProgress) {
+                                          ///If an in-app update is already running, resume the update.
+                                          String? message =
+                                              await manager.startAnUpdate(
+                                                  type:
+                                                      AppUpdateType.immediate);
+
+                                          ///message return null when run update success
+                                        } else if (appUpdateInfo
+                                                .updateAvailability ==
+                                            UpdateAvailability
+                                                .updateAvailable) {
+                                          ///Update available
+                                          if (appUpdateInfo.immediateAllowed) {
+                                            debugPrint(
+                                                'Start an immediate update');
+                                            String? message =
+                                                await manager.startAnUpdate(
+                                                    type: AppUpdateType
+                                                        .immediate);
+
+                                            ///message return null when run update success
+                                          } else if (appUpdateInfo
+                                              .flexibleAllowed) {
+                                            debugPrint(
+                                                'Start an flexible update');
+                                            String? message =
+                                                await manager.startAnUpdate(
+                                                    type:
+                                                        AppUpdateType.flexible);
+
+                                            ///message return null when run update success
+                                          } else {
+                                            debugPrint(
+                                                'Update available. Immediate & Flexible Update Flow not allow');
+                                          }
+                                        }
+                                      }
+                                      if (Platform.isIOS) {
+                                        InAppUpdateManager manager =
+                                            InAppUpdateManager();
+                                        VersionInfo? appUpdateInfo =
+                                            await UpgradeVersion
+                                                .getiOSStoreVersion(
+                                          packageInfo: PackageInfo(),
+                                          regionCode: 'NG',
+                                        );
+                                        if (appUpdateInfo == null)
+                                          return; //Exception
+                                        if (appUpdateInfo.canUpdate) {
+                                          ///If an in-app update is already running, resume the update.
+                                          String? message =
+                                              await manager.startAnUpdate(
+                                                  type:
+                                                      AppUpdateType.immediate);
+                                        }
+                                      }
+                                    }
                                   },
-                                  child: Container(
-                                    margin: const EdgeInsets.symmetric(
-                                        vertical: 10, horizontal: 15),
-                                    padding: const EdgeInsets.all(8),
-                                    decoration: BoxDecoration(
-                                      color: AppColor.primaryColor,
-                                      borderRadius: BorderRadius.circular(30),
-                                    ),
-                                    child: Row(
-                                      children: [
-                                        Icon(
-                                          Icons.circle_notifications_outlined,
-                                          color: Colors.white,
-                                        ),
-                                        Expanded(
-                                          flex: 2,
-                                          child: TextScroll(
-                                            appServer
-                                                .serverResponse
-                                                .appconfiguration!
-                                                .notificationMessage!,
-                                            velocity: Velocity(
-                                                pixelsPerSecond: Offset(50, 0)),
-                                            style: TextStyle(
-                                              color: Colors.white,
-                                              fontWeight: FontWeight.w600,
-                                              fontSize: 14,
+                                  child: Column(
+                                    children: [
+                                      const UserHeader(),
+                                      const SizedBox(
+                                        height: 30,
+                                      ),
+                                      if (appServer
+                                              .serverResponse
+                                              .appconfiguration!
+                                              .notificationEnable! ==
+                                          'true')
+                                        TouchableOpacity(
+                                          onTap: () {
+                                            showNotificationModal(
+                                              context,
+                                            );
+                                          },
+                                          child: Container(
+                                            margin: const EdgeInsets.symmetric(
+                                                vertical: 10, horizontal: 15),
+                                            padding: const EdgeInsets.all(8),
+                                            decoration: BoxDecoration(
+                                              color: AppColor.primaryColor,
+                                              borderRadius:
+                                                  BorderRadius.circular(30),
+                                            ),
+                                            child: Row(
+                                              children: [
+                                                const Icon(
+                                                  Icons
+                                                      .circle_notifications_outlined,
+                                                  color: Colors.white,
+                                                ),
+                                                Expanded(
+                                                  flex: 2,
+                                                  child: TextScroll(
+                                                    appServer
+                                                        .serverResponse
+                                                        .appconfiguration!
+                                                        .notificationMessage!,
+                                                    velocity: const Velocity(
+                                                        pixelsPerSecond:
+                                                            Offset(50, 0)),
+                                                    style: const TextStyle(
+                                                      color: Colors.white,
+                                                      fontWeight:
+                                                          FontWeight.w600,
+                                                      fontSize: 14,
+                                                    ),
+                                                  ),
+                                                )
+                                              ],
                                             ),
                                           ),
-                                        )
-                                      ],
-                                    ),
-                                  ),
-                                ),
-                              const BalanceCard(),
-                              const SizedBox(
-                                height: 30,
-                              ),
-                              BlocListener<AppBloc, AppState>(
-                                listener: (context, state) {
-                                  if (state.user!.hasPin == false) {
-                                    final newUser =
-                                        state.user!.copyWith(hasPin: true);
-                                    print(newUser);
-                                  }
-                                },
-                                child: BlocBuilder<AppBloc, AppState>(
-                                  builder: (context, state) {
-                                    return WidgetVisibilityDetector(
-                                      onAppear: () {
-                                        print(state.user!.hasPin);
-                                        final newUser =
-                                            state.user!.copyWith(hasPin: true);
+                                        ),
+                                      const BalanceCard(),
+                                      const SizedBox(
+                                        height: 30,
+                                      ),
+                                      BlocListener<AppBloc, AppState>(
+                                        listener: (context, state) {
+                                          if (state.user!.hasPin == false) {
+                                            final newUser = state.user!
+                                                .copyWith(hasPin: true);
+                                            print(newUser);
+                                          }
+                                        },
+                                        child: BlocBuilder<AppBloc, AppState>(
+                                          builder: (context, state) {
+                                            return WidgetVisibilityDetector(
+                                              onAppear: () {
+                                                print(state.user!.hasPin);
+                                                final newUser = state.user!
+                                                    .copyWith(hasPin: true);
 
-                                        Future.delayed(
-                                          Duration.zero,
-                                          () {
-                                            if (context.mounted &&
-                                                state.user!.hasPin! == false) {
-                                              showPinModal(context, state);
-                                            }
+                                                Future.delayed(
+                                                  Duration.zero,
+                                                  () {
+                                                    if (context.mounted &&
+                                                        state.user!.hasPin! ==
+                                                            false) {
+                                                      showPinModal(
+                                                          context, state);
+                                                    }
+                                                  },
+                                                );
+                                              },
+                                              onDisappear: () {
+                                                print("do");
+                                              },
+                                              child: const QuickAction(),
+                                            );
                                           },
-                                        );
-                                      },
-                                      onDisappear: () {
-                                        print("do");
-                                      },
-                                      child: const QuickAction(),
-                                    );
-                                  },
-                                ),
-                              ),
-                              const Transaction(),
-                            ],
-                          );
+                                        ),
+                                      ),
+                                      const Transaction(),
+                                    ],
+                                  ),
+                                );
                         },
                       ),
                     ),
@@ -434,7 +692,7 @@ class Dashboard extends HookWidget {
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  Text(
+                  const Text(
                     "Error From Server",
                     style: TextStyle(fontSize: 25),
                   ),

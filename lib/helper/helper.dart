@@ -8,6 +8,7 @@ import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_upgrade_version/flutter_upgrade_version.dart';
 import 'package:form_validator/form_validator.dart';
 import 'package:go_router/go_router.dart';
 import 'package:in_app_review/in_app_review.dart';
@@ -759,6 +760,7 @@ Widget RowList(
   return Column(
     children: [
       Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Text(
             key.capitalize(),
@@ -768,9 +770,9 @@ Widget RowList(
               fontWeight: FontWeight.w100,
             ),
           ),
-          const Spacer(),
+          // const Spacer(),
           SizedBox(
-            // width: 200,
+            // width: double.maxFinite,
             child: Row(
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
@@ -857,6 +859,11 @@ Future<void> handleLogOut(BuildContext context) async {
   //     return await alertHelper(context, "error", res?.data['message']);
   //   }
   // }
+}
+
+Future<PackageInfo> getPackageData() async {
+  PackageInfo _packageInfo = await PackageManager.getPackageInfo();
+  return _packageInfo;
 }
 
 bool isLight(BuildContext context) {

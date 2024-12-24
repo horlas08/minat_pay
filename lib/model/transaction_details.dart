@@ -6,8 +6,8 @@ class TransactionDetailsModel {
   String? amount;
   String? message;
   String? datetime;
-  num? prev;
-  num? curr;
+  String? previous_balance;
+  String? current_balance;
   TransactionDetailsModel({
     this.original,
     this.status,
@@ -16,8 +16,8 @@ class TransactionDetailsModel {
     this.amount,
     this.message,
     this.datetime,
-    this.prev,
-    this.curr,
+    this.previous_balance,
+    this.current_balance,
     // this.data,
   });
 
@@ -30,8 +30,8 @@ class TransactionDetailsModel {
     amount = json['amount'];
     message = json['message'];
     datetime = json['datetime'];
-    prev = json['prev'];
-    curr = json['curr'];
+    current_balance = json['current balance'];
+    previous_balance = json['previous balance'];
     // data = json['data'] ?? {};
   }
 
@@ -46,8 +46,8 @@ class TransactionDetailsModel {
     data['amount'] = amount;
     data['message'] = message;
     data['datetime'] = datetime;
-    data['curr'] = curr;
-    data['prev'] = prev;
+    data['current balance'] = current_balance;
+    data['previous balance'] = previous_balance;
 
     return data;
   }
@@ -61,8 +61,8 @@ class TransactionDetailsModel {
       'amount': amount,
       'message': message,
       'datetime': datetime,
-      'prev': prev,
-      'curr': curr,
+      'previous balance': previous_balance,
+      'current balance': current_balance,
     };
   }
 
@@ -76,8 +76,8 @@ class TransactionDetailsModel {
       amount: map['amount'] as String,
       message: map['message'] as String,
       datetime: map['datetime'] as String,
-      prev: map['prev'] as num,
-      curr: map['curr'] as num,
+      previous_balance: map['previous balance'] as String,
+      current_balance: map['current balance'] as String,
       // data: map['data'] ?? {} as Map<String, dynamic>,
     );
   }
